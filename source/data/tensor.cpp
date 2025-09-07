@@ -140,7 +140,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
 }
 
 Tensor::~Tensor() {
-  if (0 == *ref_cnt_) {
+  if (nullptr != ref_cnt_ && 0 == *ref_cnt_) {
     m_deleter_(&data_);
     this->deallocRefCnt();
   }
