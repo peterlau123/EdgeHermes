@@ -64,7 +64,7 @@ Tensor::Tensor(const std::vector<uint32_t>& dims, DataType dtype, DeviceType dev
     , m_data_source_(DataSourceType::AUTO)
     , m_dtype_(dtype)
     , m_device_(device)
-    , ref_cnt_(0)
+    , ref_cnt_{nullptr}
     , m_deleter_(DefaultDeletor()) {
   // Check if the data type is valid
   ASSERT(dtype >= DataType::INT8 && dtype < DataType::TOTAL, "Invalid data type");
