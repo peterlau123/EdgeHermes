@@ -12,8 +12,8 @@ class BufferManagerTest : public ::testing::Test {
     // set config
     config.device_flags.set(DeviceType::CPU);
     config.cpu.alloc = std::make_shared<CPUAllocator>();
-    config.device_flags.set(DeviceType::CUDA);
-    config.gpu.alloc = std::make_shared<CUDAAllocator>();
+    config.device_flags.set(DeviceType::NVIDIA_GPU);
+    config.gpu.alloc = std::make_shared<GPUAllocator>();
 
     BufferManager::Builder::build(config);
   }

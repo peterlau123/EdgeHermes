@@ -42,10 +42,10 @@ class CPUAllocator : public Allocator<CPUAllocator> {
   void do_deallocate(void* ptr);
 };
 
-class CUDAAllocator : public Allocator<CUDAAllocator> {
+class GPUAllocator : public Allocator<GPUAllocator> {
  public:
-  CUDAAllocator();
-  ~CUDAAllocator();
+  GPUAllocator();
+  ~GPUAllocator();
 
   void* do_allocate(size_t size);
 

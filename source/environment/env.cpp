@@ -17,7 +17,7 @@ void Env::init(const Config& config) {
     }
 
     // Initialize GPU allocator if provided
-    if (config.device_flags.has(DeviceType::CUDA) && config.gpu_allocator) {
+    if (config.device_flags.has(DeviceType::NVIDIA_GPU) && config.gpu_allocator) {
       // Set up GPU environment with the provided allocator
       // (Implementation details would go here)
       bm_config.gpu.alloc = config.gpu_allocator;
@@ -26,11 +26,11 @@ void Env::init(const Config& config) {
     // Additional setup based on other configuration options can be added here
   } else {
     bm_config.device_flags.set(DeviceType::CPU);
-    bm_config.device_flags.set(DeviceType::CUDA);
+    bm_config.device_flags.set(DeviceType::NVIDIA_GPU);
     // Default CPU allocator
     bm_config.cpu.alloc = std::make_shared<CPUAllocator>();
     // Default GPU allocator
-    bm_config.gpu.alloc = std::make_shared<CUDAAllocator>();
+    bm_config.gpu.alloc = std::make_shared<GPUAllocator>();
   }
   BufferManager::Builder::build(bm_config);
 }
