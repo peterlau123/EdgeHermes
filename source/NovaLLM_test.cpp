@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "NovaLLM/NovaLLM-cpp.h"
+#include "NovaLLM/env.h"
 
 using namespace nova_llm;
 
@@ -9,10 +10,12 @@ class EngineImplTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // Setup code that will be called before each test
+    Env::init(Env::Config{});
   }
 
   void TearDown() override {
     // Cleanup code that will be called after each test
+    Env::deinit();
   }
 };
 
