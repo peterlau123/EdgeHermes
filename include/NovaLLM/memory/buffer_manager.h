@@ -64,7 +64,6 @@ class BufferManager {
   ~BufferManager();
 
  private:
-
   void destroy();
 
   BufferManager() = default;

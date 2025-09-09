@@ -91,7 +91,7 @@ void BufferHub::Level::refill(const nova_llm::Size& sz) {
     auto* one_block = hub->allocBlock();
     one_block->data = data + i * level_bytes;
     one_block->size = level_bytes;
-    one_block->ref_cnt = 1;// set ref_cnt to 1 when allocated
+    one_block->ref_cnt = 1;  // set ref_cnt to 1 when allocated
     auto it = this->block_list.insert(this->block_list.end(), one_block);
     this->free_map[one_block->data] = it;
   }
@@ -226,7 +226,7 @@ void BufferHub::eraseSizeLevel(const Size& level_sz) {
   }
 }
 
-BlockPtr BufferHub::getBlock(const Size& sz){
+BlockPtr BufferHub::getBlock(const Size& sz) {
   // round it to ceil level
   auto level_sz = gradeLevel(sz);
   if (!level_sz.isValid()) {

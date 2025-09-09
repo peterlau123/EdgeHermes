@@ -64,7 +64,7 @@ Tensor::Tensor(const std::vector<uint32_t>& dims, DataType dtype, DeviceType dev
     , m_data_source_(DataSourceType::AUTO)
     , m_dtype_(dtype)
     , m_device_(device)
-    , ref_cnt_{nullptr}
+    , ref_cnt_ {nullptr}
     , m_deleter_(DefaultDeletor()) {
   // Check if the data type is valid
   ASSERT(dtype >= DataType::INT8 && dtype < DataType::TOTAL, "Invalid data type");
@@ -133,7 +133,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
     m_data_source_ = other.dataFrom();
     m_dtype_ = other.dtype();
     m_device_ = other.device();
-    ref_cnt_ = other.ref_cnt_;//TODO:notice here
+    ref_cnt_ = other.ref_cnt_;  // TODO:notice here
     m_deleter_ = other.deleter();
   }
   return *this;

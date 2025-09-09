@@ -2,6 +2,7 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
@@ -115,13 +116,13 @@ using BlockPtr = Block::BlockPtr;
 
 class DefaultSizeLevelStrategy {
  public:
-  static std::vector<Size> byteSizes() ;
+  static std::vector<Size> byteSizes();
 
-  static std::vector<Size> kiloByteSizes() ;
+  static std::vector<Size> kiloByteSizes();
 
-  static std::vector<Size> megaByteSizes() ;
+  static std::vector<Size> megaByteSizes();
 
-  static std::vector<Size> gigaByteSizes() ;
+  static std::vector<Size> gigaByteSizes();
 };
 
 /*

@@ -74,9 +74,7 @@ Buffer BufferManager::fetch(size_t size, DeviceType device_type) {
   return buffer;
 }
 
-BufferManager::~BufferManager() {
-  destroy();
-}
+BufferManager::~BufferManager() { destroy(); }
 
 void BufferManager::destroy() {
   for (auto p : buffer_hubs_) {

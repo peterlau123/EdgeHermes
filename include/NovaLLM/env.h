@@ -3,22 +3,32 @@
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 
-
 namespace nova_llm {
 
-class Env{
-public:
-    struct Config{
-        // Configuration options for the environment
-        DeviceTypeFlags device_flags;
-        IAllocatorSharedPtr cpu_allocator{nullptr};
-        IAllocatorSharedPtr gpu_allocator{nullptr};
-        // Add more configuration options as needed
-    };
+class NOVA_LLM_API Env {
 
-    static void setup(const Config& config);
+ public:
+  struct Config {
+    /*
+    System will use default when false;User must set the following when true
+    when false,device_flags will be DeviceType::CPU|DeviceType::CUDA
+    cpu_allocator will be CPUAllocator
+    gpu_allocator will be CudaAllocator
+    */
+    bool enable_custom {false};
 
-    static void teardown();
+    // Configuration options for the environment
+    DeviceTypeFlags device_flags;
+
+    IAllocatorSharedPtr cpu_allocator {nullptr};
+
+    IAllocatorSharedPtr gpu_allocator {nullptr};
+    // Add more configuration options as needed
+  };
+
+  static void init(const Config& config);
+
+  static void deinit();
 };
 
-}
+}  // namespace nova_llm
