@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 3.14...3.22)
 
 project(BuildAll LANGUAGES CXX)
 
-include(../cmake/tools.cmake)
+# Use CMAKE_CURRENT_LIST_DIR for reliable path resolution
+get_filename_component(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # needed to generate test target
 enable_testing()

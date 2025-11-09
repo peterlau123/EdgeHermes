@@ -9,7 +9,9 @@ option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 # --- Import tools ----
 
-include(../cmake/tools.cmake)
+# Use CMAKE_CURRENT_LIST_DIR for reliable path resolution
+get_filename_component(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # ---- Dependencies ----
 
