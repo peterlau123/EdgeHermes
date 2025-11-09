@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 # ===================== Project Options =====================
-option(NOVA_LLM_ENABLE_LOGGING "Enable logging with spdlog" ON)
-option(NOVA_LLM_BUILD_TESTS "Build tests with GTest" OFF)
+include(cmake/options.cmake)
 
 # ===================== Project Info ========================
 project(
