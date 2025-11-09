@@ -1,4 +1,4 @@
-#include "NovalLM/utils/log.h"
+#include "NovaLLM/utils/log.h"
 
 #include <fmt/format.h>
 #include <spdlog/formatter.h>
