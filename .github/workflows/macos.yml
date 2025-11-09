@@ -148,10 +148,10 @@ jobs:
           echo "Using toolchain file: $TOOLCHAIN_FILE"
           cmake -S ../test -B . -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Debug
-          # run tests if available
-          if [ -f ./CTestTestfile.cmake ] || [ -n "$(find . -maxdepth 2 -name '*Test*' -type f)" ]; then
-            # ctest --output-on-failure || true
-          fi
+          #TODO: Run tests if CTest file exists or any test binary/file found (efficient check)
+          # if [ -f ./CTestTestfile.cmake ] || find . -maxdepth 2 -name '*Test*' -type f -print -quit | grep -q . 2>/dev/null; then
+          #  ctest --output-on-failure || true
+          # fi
 
   run_standalone:
     name: Build & Run Standalone
