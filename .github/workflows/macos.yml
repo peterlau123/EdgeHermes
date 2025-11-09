@@ -44,12 +44,21 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cp ../CMakePresets.json .
           conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=True
-          echo "Checking generated Conan files:"
-          find . -name "conan_toolchain.cmake" -type f
-          echo "Build with release preset"
-          cmake -S .. --preset release
+          # Find the actual toolchain file location and convert to absolute path
+          TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
+          if [ -z "$TOOLCHAIN_FILE" ]; then
+            echo "Error: conan_toolchain.cmake not found"
+            echo "Searching from: $(pwd)"
+            find . -type f -name "*.cmake" | head -10
+            exit 1
+          fi
+          echo "Using toolchain file: $TOOLCHAIN_FILE"
+          cmake -S .. -B . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DNOVA_LLM_BUILD_TESTS=ON \
+            -DNOVA_LLM_ENABLE_LOGGING=ON \
+            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Release
           cmake --install . --config Release
 
