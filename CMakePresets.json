@@ -17,7 +17,7 @@
         "NOVA_LLM_BUILD_TESTS": "ON",
         "NOVA_LLM_ENABLE_LOGGING": "ON"
       },
-      "toolchainFile": "${sourceDir}/build/conan/conan_toolchain.cmake"
+      "toolchainFile": "${sourceDir}/build/Release/generators/conan_toolchain.cmake"
     },
     {
       "name": "debug",
@@ -30,7 +30,7 @@
         "NOVA_LLM_BUILD_TESTS": "ON",
         "NOVA_LLM_ENABLE_LOGGING": "ON"
       },
-      "toolchainFile": "${sourceDir}/build/conan/conan_toolchain.cmake"
+      "toolchainFile": "${sourceDir}/build/Debug/generators/conan_toolchain.cmake"
     }
   ],
   "buildPresets": [

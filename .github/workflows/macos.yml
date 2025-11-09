@@ -45,7 +45,9 @@ jobs:
           mkdir -p build
           cd build
           cp ../CMakePresets.json .
-          conan install .. --output-folder=conan --build=missing -s build_type=Release -o build_tests=True
+          conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=True
+          echo "Checking generated Conan files:"
+          find . -name "conan_toolchain.cmake" -type f
           echo "Build with release preset"
           cmake -S .. --preset release
           cmake --build . --config Release
