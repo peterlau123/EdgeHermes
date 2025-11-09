@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
 
       - name: Build project and create package (Release)
         run: |
@@ -80,7 +80,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
 
   deps_build_debug:
     name: Build and create package (Debug)
@@ -95,7 +95,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
 
       - name: Build project and create package (Debug)
         run: |
@@ -119,7 +119,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
 
   run_test:
     name: Build & Run Tests
