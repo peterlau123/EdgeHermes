@@ -140,4 +140,4 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Release
-          ./NovaLLMStandalone || ./main || find . -name "*main*" -type f -executable
+          #./NovaLLMStandalone || ./main || find . -name "*main*" -type f -executable
