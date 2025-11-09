@@ -80,7 +80,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        generator: [Ninja, "Visual Studio 17 2022"]
+        generator: ["Visual Studio 17 2022"]
     steps:
       - *step_checkout
       - *step_setup_python
@@ -118,7 +118,7 @@ jobs:
     needs: deps_build_debug
     strategy:
       matrix:
-        generator: [Ninja, "Visual Studio 17 2022"]
+        generator: ["Visual Studio 17 2022"]
     steps:
       - *step_checkout
       - *step_setup_python
@@ -147,7 +147,7 @@ jobs:
     needs: deps_build_release
     strategy:
       matrix:
-        generator: [Ninja, "Visual Studio 17 2022"]
+        generator: ["Visual Studio 17 2022"]
     steps:
       - *step_checkout
       - *step_setup_python

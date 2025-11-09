@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <functional>
 #include <unordered_map>
-
+#include <memory>
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
