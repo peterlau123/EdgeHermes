@@ -65,7 +65,14 @@ jobs:
 
       - name: Create NovaLLM package
         run: |
-          conan create . --user=local --channel=testing --build=missing
+          # Return to project root directory
+          cd ..
+          # Create the package from the project root directory
+          # The package will be created as novallm/0.1.0@local/testing
+          conan create . --user=local --channel=testing --build=missing -s build_type=Release
+          # Verify the package was created and can be found
+          echo "Verifying package creation..."
+          conan search novallm/0.1.0@local/testing || conan list novallm/0.1.0@local/testing
 
       - name: Build and test
         run: |
