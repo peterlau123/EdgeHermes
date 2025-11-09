@@ -113,7 +113,7 @@ jobs:
           echo "pwd:"; pwd
           echo "ls -la (root):"; ls -la "$GITHUB_WORKSPACE" || true
           echo "ls -la (repo root):"; ls -la || true
-          echo "ls -la ../standalone:"; ls -la ../standalone || true
+          echo "ls -la standalone:"; ls -la standalone || true
 
           # Show whether the novallm package exists in local conan cache
           echo "Checking local Conan cache for novallm package..."
@@ -123,7 +123,7 @@ jobs:
           cd build-standalone
 
           # Run conan install for the standalone project; if it fails, dump files for debugging
-          conan install ../standalone --output-folder=conan --build=missing -s build_type=Release || (
+          conan install standalone --output-folder=conan --build=missing -s build_type=Release || (
             echo "conan install failed. Dumping current dir content:"; pwd; ls -la; echo "Dump ../standalone:"; ls -la ../standalone || true; exit 1
           )
 
