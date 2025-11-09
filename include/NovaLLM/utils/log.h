@@ -1,5 +1,9 @@
 #pragma once
-#include <spdlog/fmt/ostr.h>
+#if __has_include(<fmt/ostream.h>)
+#  include <fmt/ostream.h>
+#elif __has_include(<spdlog/fmt/ostr.h>)
+#  include <spdlog/fmt/ostr.h>
+#endif
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
