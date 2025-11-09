@@ -57,6 +57,10 @@ endif()
 add_library(${PROJECT_NAME} SHARED ${headers} ${sources})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
+if(WIN32)
+# Define export macro when building the library so Windows builds use __declspec(dllexport)
+target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_EXPORTS)
+endif()
 
 # ===================== Test Executable ====================
 if(NOVA_LLM_BUILD_TESTS)
