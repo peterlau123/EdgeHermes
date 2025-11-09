@@ -1,5 +1,4 @@
 #include <NovaLLM/NovaLLM-cpp.h>
-
 #include <cxxopts.hpp>
 #include <iostream>
 #include <string>
