@@ -2,6 +2,7 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
@@ -100,7 +101,7 @@ struct SizeEqual {
 
 struct Block {
   using DataPtr = uint8_t*;
-  using BlockPtr = Block*;
+  //using BlockPtr = Block*;
   DataPtr data = nullptr;
   uint64_t size = 0;
   int32_t ref_cnt = 0;
@@ -111,7 +112,7 @@ struct Block {
   }
 };
 
-using BlockPtr = Block::BlockPtr;
+using BlockPtr = Block*;
 
 class DefaultSizeLevelStrategy {
  public:
@@ -158,7 +159,7 @@ class BufferHub {
     uint32_t index = -1;
     Size level_size {static_cast<uint64_t>(0)};  // each block size at this level
 
-    using BlockPtr = Block*;
+    //using BlockPtr = Block*;
     std::list<BlockPtr> block_list;
     using BlockIterator = std::list<BlockPtr>::iterator;
     std::unordered_map<Block::DataPtr, BlockIterator> free_map;
