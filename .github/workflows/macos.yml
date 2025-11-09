@@ -65,11 +65,22 @@ jobs:
 
       - name: Create NovaLLM package
         run: |
-          # Return to project root directory
-          cd ..
+          # Diagnostic: print current directory and list files to help debug missing conanfile
+          echo "---- Workspace diagnostic before conan create ----"
+          echo "pwd:"; pwd
+          echo "ls -la (root):"; ls -la
+          echo "ls -la GITHUB_WORKSPACE:"; ls -la "$GITHUB_WORKSPACE" || true
+
+          # Ensure we are in the repository root (where conanfile.py is expected).
+          # Explicit cd to GITHUB_WORKSPACE is a safe default in Actions.
+          cd "$GITHUB_WORKSPACE" || true
+
           # Create the package from the project root directory
           # The package will be created as novallm/0.1.0@local/testing
-          conan create . --user=local --channel=testing --build=missing -s build_type=Release
+          conan create . --user=local --channel=testing --build=missing -s build_type=Release || (
+            echo "conan create failed. Listing directory to help debugging:"; ls -la; exit 1
+          )
+
           # Verify the package was created and can be found
           echo "Verifying package creation..."
           conan search novallm/0.1.0@local/testing || conan list novallm/0.1.0@local/testing
@@ -97,9 +108,25 @@ jobs:
 
       - name: Build and run standalone
         run: |
+          # Diagnostic: ensure we're in the expected workspace and show relevant files
+          echo "---- Standalone step diagnostic ----"
+          echo "pwd:"; pwd
+          echo "ls -la (root):"; ls -la "$GITHUB_WORKSPACE" || true
+          echo "ls -la (repo root):"; ls -la || true
+          echo "ls -la ../standalone:"; ls -la ../standalone || true
+
+          # Show whether the novallm package exists in local conan cache
+          echo "Checking local Conan cache for novallm package..."
+          conan search novallm/0.1.0@local/testing || true
+
           mkdir -p build-standalone
           cd build-standalone
-          conan install ../standalone --output-folder=conan --build=missing -s build_type=Release
+
+          # Run conan install for the standalone project; if it fails, dump files for debugging
+          conan install ../standalone --output-folder=conan --build=missing -s build_type=Release || (
+            echo "conan install failed. Dumping current dir content:"; pwd; ls -la; echo "Dump ../standalone:"; ls -la ../standalone || true; exit 1
+          )
+
           # Find the actual toolchain file location
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
           if [ -z "$TOOLCHAIN_FILE" ]; then
