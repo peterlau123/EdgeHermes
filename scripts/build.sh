@@ -100,9 +100,7 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 
-# Copy CMakePresets.json to build directory
-print_message "green" "Copying CMake presets..."
-cp CMakePresets.json "$BUILD_DIR/"
+# CMakePresets.json is no longer used - all builds use direct cmake commands
 
 # Print build configuration
 print_message "green" "\nBuild Configuration:"
