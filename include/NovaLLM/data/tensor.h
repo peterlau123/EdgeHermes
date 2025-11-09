@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <functional>
 #include <vector>
-
+#include <atomic>
 #include "../common/device.h"
 #include "../common/dtype.h"
 #include "NovaLLM/utils/macros.h"
@@ -125,7 +125,7 @@ class Tensor {
 
   DataSourceType dataFrom() const { return m_data_source_; }
 
-  uint32_t refCnt() const { return *ref_cnt_; }
+  uint32_t refCnt() const { return ref_cnt_?ref_cnt_->load():0; }
 
   Deleter deleter() const { return m_deleter_; }
 
