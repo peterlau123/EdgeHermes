@@ -15,9 +15,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "NOVA_LLM_BUILD_TESTS": "ON",
-        "NOVA_LLM_ENABLE_LOGGING": "ON",
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/conan/build/Release/generators"
-      }
+        "NOVA_LLM_ENABLE_LOGGING": "ON"
+      },
+      "toolchainFile": "${sourceDir}/build/conan/conan_toolchain.cmake"
     },
     {
       "name": "debug",
@@ -28,9 +28,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "NOVA_LLM_BUILD_TESTS": "ON",
-        "NOVA_LLM_ENABLE_LOGGING": "ON",
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/conan/build/Debug/generators"
-      }
+        "NOVA_LLM_ENABLE_LOGGING": "ON"
+      },
+      "toolchainFile": "${sourceDir}/build/conan/conan_toolchain.cmake"
     }
   ],
   "buildPresets": [
