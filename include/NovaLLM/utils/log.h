@@ -102,7 +102,7 @@ class Logger {
 
   void init(const std::string& /*name*/ = "NovaLLM",
             const std::string& /*logFile*/ = "NovaLLM.log",
-            spdlog::level::level_enum /*level*/ = spdlog::level::info) {}
+            spdlog::level::level_enum /*level*/ = spdlog::level::info);
 
   void setLevel(spdlog::level::level_enum /*level*/) {}
 
