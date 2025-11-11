@@ -13,18 +13,17 @@ project(
 )
 
 # ===================== Conan Dependencies ==================
-# 只在本地开发时 find_package
-if(NOT DEFINED CONAN_EXPORTED)
-  list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES cmake/conan_provider.cmake)
-  find_package(fmt REQUIRED)
-  if(NOVA_LLM_ENABLE_LOGGING)
-    find_package(spdlog REQUIRED)
-  endif()
-  if(NOVA_LLM_BUILD_TESTS)
-    find_package(GTest REQUIRED)
+# Find packages managed by Conan
+find_package(fmt REQUIRED)
+if(NOVA_LLM_ENABLE_LOGGING)
+  find_package(spdlog REQUIRED)
+endif()
+if(NOVA_LLM_BUILD_TESTS)
+  find_package(GTest REQUIRED)
+  if(NOT GTest_FOUND)
+    message(FATAL_ERROR "Google Test not found. Please install it or configure the path.")
   endif()
 endif()
-
 # ===================== Build Guards ========================
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please use a build directory.")
@@ -35,8 +34,8 @@ file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
 
 # Separate test sources
-#file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
-#list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
+file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
+list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -64,7 +63,7 @@ endif()
 
 # ===================== Test Executable ====================
 if(NOVA_LLM_BUILD_TESTS)
-  add_executable(${PROJECT_NAME}_test ${sources})
+  add_executable(${PROJECT_NAME}_test ${test_sources})
   add_definitions(-DEnableModuleTest=1)
   set_target_properties(${PROJECT_NAME}_test PROPERTIES 
     CXX_STANDARD 17
@@ -151,15 +150,6 @@ install(EXPORT ${PROJECT_NAME}Targets
 )
 
 
-# ===================== Conan Dependencies ==================
-# Find packages managed by Conan
-find_package(fmt REQUIRED)
-if(NOVA_LLM_ENABLE_LOGGING)
-  find_package(spdlog REQUIRED)
-endif()
-if(NOVA_LLM_BUILD_TESTS)
-  find_package(GTest REQUIRED)
-endif()
 
 # ===================== Summary =============================
 message(STATUS "\n==== NovaLLM Configuration Summary ====")
