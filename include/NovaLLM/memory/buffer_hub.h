@@ -7,6 +7,7 @@
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/utils/template.h"
+#include "NovaLLM/utils/macros.h"
 
 namespace nova_llm {
 
