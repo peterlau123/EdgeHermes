@@ -15,7 +15,7 @@ namespace nova_llm {
  * @details 支持多种数据类型(如INT8、FLOAT32等)和设备类型(CPU/GPU)，
  *          提供基本的张量运算操作，包括乘法和加法。
  */
-class Tensor {
+class NOVA_LLM_API Tensor {
  public:
   /**
    * @brief 数据来源枚举

@@ -13,7 +13,7 @@ namespace nova_llm {
  * */
 class BufferHub;
 
-class BufferManager {
+class NOVA_LLM_API BufferManager {
 
  public:
   struct Config {
