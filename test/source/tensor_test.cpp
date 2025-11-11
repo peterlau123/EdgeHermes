@@ -2,8 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#if EnableModuleTest
-
 using namespace nova_llm;
 
 class TensorTest : public ::testing::Test {
@@ -80,5 +78,3 @@ TEST_F(TensorTest, MemoryAllocation) {
   EXPECT_NE(tensor.data(), nullptr);
   EXPECT_EQ(tensor.totalElements(), 6);
 }
-
-#endif

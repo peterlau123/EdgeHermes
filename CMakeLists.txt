@@ -18,12 +18,6 @@ find_package(fmt REQUIRED)
 if(NOVA_LLM_ENABLE_LOGGING)
   find_package(spdlog REQUIRED)
 endif()
-if(NOVA_LLM_BUILD_TESTS)
-  find_package(GTest REQUIRED)
-  if(NOT GTest_FOUND)
-    message(FATAL_ERROR "Google Test not found. Please install it or configure the path.")
-  endif()
-endif()
 # ===================== Build Guards ========================
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please use a build directory.")
@@ -33,10 +27,7 @@ endif()
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
 
-# Separate test sources
-file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
-list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
-
+# ===================== Build Type ==========================
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
 endif()
@@ -59,25 +50,6 @@ target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>
 if(WIN32)
 # Define export macro when building the library so Windows builds use __declspec(dllexport)
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_EXPORTS)
-endif()
-
-# ===================== Test Executable ====================
-if(NOVA_LLM_BUILD_TESTS)
-  add_executable(${PROJECT_NAME}_test ${test_sources})
-  add_definitions(-DEnableModuleTest=1)
-  set_target_properties(${PROJECT_NAME}_test PROPERTIES 
-    CXX_STANDARD 17
-    INSTALL_RPATH "@executable_path/../lib"
-    BUILD_WITH_INSTALL_RPATH TRUE
-  )
-  target_include_directories(${PROJECT_NAME}_test PRIVATE ${PROJECT_SOURCE_DIR}/include)
-  target_link_libraries(${PROJECT_NAME}_test PRIVATE 
-    ${PROJECT_NAME}
-    GTest::gtest
-    GTest::gtest_main
-    GTest::gmock
-    GTest::gmock_main
-  )
 endif()
 
 # ===================== Link Dependencies ===================
@@ -106,16 +78,6 @@ install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION bin
         INCLUDES DESTINATION include
 )
-
-# Install test executable if tests are enabled
-if(NOVA_LLM_BUILD_TESTS)
-  install(TARGETS ${PROJECT_NAME}_test
-          RUNTIME DESTINATION bin
-  )
-  
-  # Note: GTest libraries are static and linked into the test executable
-  # No need to install them separately
-endif()
 
 install(DIRECTORY include/
         DESTINATION include/
@@ -157,5 +119,5 @@ message(STATUS "  Logging:         ${NOVA_LLM_ENABLE_LOGGING}")
 message(STATUS "  Build tests:     ${NOVA_LLM_BUILD_TESTS}")
 message(STATUS "  Install prefix:  ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "  C++ Standard:    17")
-message(STATUS "  Dependencies:     fmt, spdlog, gtest (via Conan)")
+message(STATUS "  Dependencies:     fmt, spdlog")
 message(STATUS "====================================\n")

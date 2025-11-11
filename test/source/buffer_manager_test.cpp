@@ -1,6 +1,5 @@
 #include "NovaLLM/memory/buffer_manager.h"
 
-#if EnableModuleTest
 #include <gtest/gtest.h>
 
 using namespace nova_llm;
@@ -52,6 +51,3 @@ TEST(BufferManagerTest, PutCpu) {
     EXPECT_EQ(buffer.size, 0);
     EXPECT_EQ(buffer.device_type, DeviceType::CPU);
 }
-
-
-#endif
