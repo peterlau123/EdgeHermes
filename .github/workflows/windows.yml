@@ -60,7 +60,7 @@ jobs:
           cd build
           conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=True
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
-          cmake -S .. -B . -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=Release -DNOVA_LLM_BUILD_TESTS=ON -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+          cmake -S .. -B . -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=Release  -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Release
           cmake --install . --config Release
       - name: Create NovaLLM package (conan, Release)
@@ -97,7 +97,7 @@ jobs:
           cd build-debug
           conan install .. --output-folder=. --build=missing -s build_type=Debug -o build_tests=True
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
-          cmake -S .. -B . -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=Debug -DNOVA_LLM_BUILD_TESTS=ON -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+          cmake -S .. -B . -G "${{ matrix.generator }}" -A x64 -DCMAKE_BUILD_TYPE=Debug  -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Debug
           cmake --install . --config Debug
       - name: Create NovaLLM package (conan, Debug)

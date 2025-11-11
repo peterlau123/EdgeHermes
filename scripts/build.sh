@@ -136,7 +136,6 @@ source build/${BUILD_TYPE}/generators/conanbuild.sh
 print_message "green" "Configuring project..."
 if ! cmake .. \
     -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-    -DNOVA_LLM_BUILD_TESTS="$ENABLE_TESTS" \
     -DNOVA_LLM_ENABLE_LOGGING="$ENABLE_LOGGING" \
     -DCMAKE_TOOLCHAIN_FILE=build/$BUILD_TYPE/generators/conan_toolchain.cmake; then
     print_message "red" "CMake configuration failed"
