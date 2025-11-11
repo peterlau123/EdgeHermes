@@ -35,8 +35,8 @@ file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
 
 # Separate test sources
-file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
-list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
+#file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
+#list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -64,7 +64,7 @@ endif()
 
 # ===================== Test Executable ====================
 if(NOVA_LLM_BUILD_TESTS)
-  add_executable(${PROJECT_NAME}_test ${test_sources})
+  add_executable(${PROJECT_NAME}_test ${sources})
   add_definitions(-DEnableModuleTest=1)
   set_target_properties(${PROJECT_NAME}_test PROPERTIES 
     CXX_STANDARD 17
