@@ -5,7 +5,7 @@ include(cmake/options.cmake)
 
 # ===================== Project Info ========================
 project(
-  NovaLLM
+  novallm
   VERSION 0.1.0
   DESCRIPTION "A lightweight and efficient C/C++ library for Large Language Model (LLM) inference"
   LANGUAGES CXX C
