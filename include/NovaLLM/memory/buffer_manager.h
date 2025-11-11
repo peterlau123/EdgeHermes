@@ -6,13 +6,12 @@
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 namespace nova_llm {
 /*
  * @todo: use segregated free list
  * */
-class BufferHub;
-
 class NOVA_LLM_API BufferManager {
 
  public:
