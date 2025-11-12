@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build project and create package (Release)
         run: |
@@ -79,7 +79,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
   deps_build_debug:
     name: Build and create package (Debug)
@@ -94,7 +94,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build project and create package (Debug)
         run: |
@@ -118,7 +118,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
   run_test:
     name: Build & Run Tests
@@ -134,13 +134,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', '**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build and run tests
         run: |
           mkdir -p build-test
           cd build-test
-          conan install ../test --output-folder=conan --build=novallm --build=missing -s build_type=Debug || (
+          conan install ../test --output-folder=conan --build=missing -s build_type=Debug || (
             echo "conan install for tests failed"; ls -la ..; exit 1
           )
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
@@ -166,7 +166,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', '**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build and run standalone
         run: |
