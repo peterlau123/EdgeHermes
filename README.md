@@ -65,6 +65,48 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
 
+### Scripted builds
+
+Unified wrapper (auto-detects OS):
+
+```bash
+scripts/build.sh --type Release --enable-logging ON --with-tests
+```
+
+Or call platform-specific scripts:
+
+```bash
+# macOS
+scripts/build_macos.sh --type Release --enable-logging ON --with-tests
+# Ubuntu/Linux
+scripts/build_ubuntu.sh --type Debug --enable-logging OFF
+# Windows (PowerShell)
+scripts/build_windows.ps1 -Configuration Release -EnableLogging ON -WithTests
+```
+
+### Makefile builds
+- Use scripts via Make: `make script-build` (honors BUILD_TYPE, ENABLE_LOGGING, ENABLE_TESTS)
+
+```bash
+# Build and install (Release by default)
+make install
+# Debug build with logging disabled
+make BUILD_TYPE=Debug ENABLE_LOGGING=OFF install
+# Build & run tests (scripted)
+make ENABLE_TESTS=ON script-test
+```
+
+```bash
+# Build and install (Release by default)
+make install
+
+# Debug build with logging disabled
+make BUILD_TYPE=Debug ENABLE_LOGGING=OFF install
+
+# Build & run tests
+make ENABLE_TESTS=ON test
+```
+
 3. **Run tests**
 ```bash
 # Run all tests
