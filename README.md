@@ -17,7 +17,6 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 - 🚀 **Lightweight**: Minimal dependencies, focusing on core functionality
 - 🔧 **Extensible**: Easy to extend with custom models and optimizations
 - 🎯 **Efficient**: Support for extreme low-bit quantization
-- ⚡ **Fast**: Integration with TVM for model compilation
 - 🛠️ **Flexible**: Support for OpenAI Triton and ThunderKittens kernels
 
 ## Supported Models
@@ -66,6 +65,48 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
 
+### Scripted builds
+
+Unified wrapper (auto-detects OS):
+
+```bash
+scripts/build.sh --type Release --enable-logging ON --with-tests
+```
+
+Or call platform-specific scripts:
+
+```bash
+# macOS
+scripts/build_macos.sh --type Release --enable-logging ON --with-tests
+# Ubuntu/Linux
+scripts/build_ubuntu.sh --type Debug --enable-logging OFF
+# Windows (PowerShell)
+scripts/build_windows.ps1 -Configuration Release -EnableLogging ON -WithTests
+```
+
+### Makefile builds
+- Use scripts via Make: `make script-build` (honors BUILD_TYPE, ENABLE_LOGGING, ENABLE_TESTS)
+
+```bash
+# Build and install (Release by default)
+make install
+# Debug build with logging disabled
+make BUILD_TYPE=Debug ENABLE_LOGGING=OFF install
+# Build & run tests (scripted)
+make ENABLE_TESTS=ON script-test
+```
+
+```bash
+# Build and install (Release by default)
+make install
+
+# Debug build with logging disabled
+make BUILD_TYPE=Debug ENABLE_LOGGING=OFF install
+
+# Build & run tests
+make ENABLE_TESTS=ON test
+```
+
 3. **Run tests**
 ```bash
 # Run all tests
@@ -110,15 +151,6 @@ open build/docs/html/index.html
 auto quantized_model = NovaLLM::quantize_model(model, NovaLLM::QuantizationType::INT8);
 ```
 
-### TVM Integration
-
-```cpp
-#include <NovaLLM/tvm.hpp>
-
-// Example TVM compilation
-auto compiled_model = NovaLLM::compile_with_tvm(model, "cuda");
-```
-
 ### Custom Kernel Integration
 
 ```cpp
@@ -138,7 +170,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [TVM](https://tvm.apache.org/) for model compilation support
 - [OpenAI Triton](https://github.com/openai/triton) for kernel optimizations
 - [ThunderKittens](https://github.com/HazyResearch/ThunderKittens) for kernel implementations
 

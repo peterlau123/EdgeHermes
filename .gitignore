@@ -1,5 +1,6 @@
 # Build and Conan
 build/
+build-test/
 cmake-build-*/
 install/
 CMakeFiles/
@@ -32,3 +33,5 @@ latex/
 *.gcno
 *.gcov
 coverage/
+CMakeUserPresets.json
+build-test/

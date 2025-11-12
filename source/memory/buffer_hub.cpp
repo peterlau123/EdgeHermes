@@ -1,4 +1,4 @@
-#include "buffer_hub.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 #include <algorithm>
 
@@ -91,7 +91,7 @@ void BufferHub::Level::refill(const nova_llm::Size& sz) {
     auto* one_block = hub->allocBlock();
     one_block->data = data + i * level_bytes;
     one_block->size = level_bytes;
-    one_block->ref_cnt = 0;
+    one_block->ref_cnt = 1;// set ref_cnt to 1 when allocated
     auto it = this->block_list.insert(this->block_list.end(), one_block);
     this->free_map[one_block->data] = it;
   }
@@ -148,8 +148,11 @@ BufferHub* BufferHub::Builder::build(const Config& config) {
 }
 
 void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
-  for (auto& p : (*hub)->buffers_) {
-    p.second.~Level();
+  if (hub && *hub) {
+    // Deleting the BufferHub will call destructors of its members (including Level),
+    // which will in turn call tearDownBlock to free internal allocations.
+    delete *hub;
+    *hub = nullptr;
   }
 }
 
@@ -226,7 +229,7 @@ void BufferHub::eraseSizeLevel(const Size& level_sz) {
   }
 }
 
-BlockPtr BufferHub::getBlock(const Size& sz) {
+BlockPtr BufferHub::getBlock(const Size& sz){
   // round it to ceil level
   auto level_sz = gradeLevel(sz);
   if (!level_sz.isValid()) {

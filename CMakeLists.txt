@@ -1,14 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
-# Add conan_provider.cmake to the list of files processed
-# by the project() command itself.
-# This MUST come BEFORE the project() command.
-list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES cmake/conan_provider.cmake)
-
 # ===================== Project Options =====================
-option(NOVA_LLM_ENABLE_LOGGING "Enable logging with spdlog" ON)
-option(NOVA_LLM_BUILD_TESTS "Build tests with GTest" OFF)
-option(NOVA_LLM_INTEGRATE_TVM "Integrate TVM" OFF)
+include(cmake/options.cmake)
 
 # ===================== Project Info ========================
 project(
@@ -20,14 +13,11 @@ project(
 )
 
 # ===================== Conan Dependencies ==================
+# Find packages managed by Conan
 find_package(fmt REQUIRED)
 if(NOVA_LLM_ENABLE_LOGGING)
   find_package(spdlog REQUIRED)
 endif()
-if(NOVA_LLM_BUILD_TESTS)
-  find_package(GTest REQUIRED)
-endif()
-
 # ===================== Build Guards ========================
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please use a build directory.")
@@ -37,10 +27,7 @@ endif()
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
 
-# Separate test sources
-file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*_test.cpp")
-list(FILTER sources EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/source/.*_test\\.cpp$")
-
+# ===================== Build Type ==========================
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
 endif()
@@ -60,28 +47,15 @@ endif()
 add_library(${PROJECT_NAME} SHARED ${headers} ${sources})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
-
-# ===================== Test Executable ====================
-if(NOVA_LLM_BUILD_TESTS)
-  add_executable(${PROJECT_NAME}_test ${test_sources})
-  set_target_properties(${PROJECT_NAME}_test PROPERTIES CXX_STANDARD 17)
-  target_include_directories(${PROJECT_NAME}_test PRIVATE ${PROJECT_SOURCE_DIR}/include)
-  target_link_libraries(${PROJECT_NAME}_test PRIVATE 
-    ${PROJECT_NAME}
-    GTest::gtest
-    GTest::gtest_main
-    GTest::gmock
-    GTest::gmock_main
-  )
+if(WIN32)
+# Define export macro when building the library so Windows builds use __declspec(dllexport)
+target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_EXPORTS)
 endif()
 
 # ===================== Link Dependencies ===================
 set(DEPENDENCY_LIST fmt::fmt)
 if(NOVA_LLM_ENABLE_LOGGING)
   list(APPEND DEPENDENCY_LIST spdlog::spdlog)
-endif()
-if(NOVA_LLM_INTEGRATE_TVM)
-  list(APPEND DEPENDENCY_LIST tvm::tvm)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE ${DEPENDENCY_LIST})
 
@@ -137,11 +111,13 @@ install(EXPORT ${PROJECT_NAME}Targets
         DESTINATION lib/cmake/${PROJECT_NAME}
 )
 
+
+
 # ===================== Summary =============================
 message(STATUS "\n==== NovaLLM Configuration Summary ====")
 message(STATUS "  Logging:         ${NOVA_LLM_ENABLE_LOGGING}")
 message(STATUS "  Build tests:     ${NOVA_LLM_BUILD_TESTS}")
 message(STATUS "  Install prefix:  ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "  C++ Standard:    17")
-message(STATUS "  Conan deps:      fmt, spdlog, gtest")
+message(STATUS "  Dependencies:     fmt, spdlog")
 message(STATUS "====================================\n")

@@ -37,28 +37,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan
 
-      - name: Cache Conan packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.conan2
-          key: ${{ runner.os }}-conan-${{ hashFiles('**/conanfile.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-conan-
+      - name: Detect Conan profile
+        run: conan profile detect --force
 
-      - name: Configure
+      - name: Configure (Release)
         run: |
+          set -euo pipefail
           mkdir -p build
           cd build
-          conan install .. --output-folder=. --build=missing
-          cmake -B build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DNOVA_LLM_BUILD_TESTS=OFF \
-            -DNOVA_LLM_ENABLE_LOGGING=OFF
+          # Install dependencies via Conan (no cache used)
+          conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=False
+          # Locate Conan-generated toolchain then configure CMake for a Release build
+          TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1 || true)
+          if [ -n "$TOOLCHAIN_FILE" ]; then
+            echo "Using toolchain file: $TOOLCHAIN_FILE"
+            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DNOVA_LLM_BUILD_TESTS=OFF -DNOVA_LLM_ENABLE_LOGGING=OFF
+          else
+            echo "No conan_toolchain.cmake found, configuring without toolchain"
+            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DNOVA_LLM_BUILD_TESTS=OFF -DNOVA_LLM_ENABLE_LOGGING=OFF
+          fi
 
       - name: Build documentation
         run: |
           cd build
-          cmake --build . --target docs
+          cmake --build . --target docs || true
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

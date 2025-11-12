@@ -2,64 +2,79 @@
 
 #include <gtest/gtest.h>
 
-namespace nova_llm {
-namespace test {
+using namespace nova_llm;
 
 class TensorTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    // Setup code that will be called before each test
+    // 测试前的设置
   }
 
   void TearDown() override {
-    // Cleanup code that will be called after each test
+    // 测试后的清理
   }
 };
 
-TEST_F(TensorTest, CreateTensorTest) {
-  Tensor tensor({2, 3});
-  EXPECT_EQ(tensor.dimensions().size(), 2);
-  EXPECT_EQ(tensor.dimensions()[0], 2);
-  EXPECT_EQ(tensor.dimensions()[1], 3);
+// 测试默认构造函数
+TEST_F(TensorTest, DefaultConstructor) {
+  Tensor tensor;
+  EXPECT_EQ(tensor.totalElements(), 0);
+  EXPECT_TRUE(tensor.dims().empty());
+  EXPECT_EQ(tensor.dtype(), DataType::UNKNOWN);
+  EXPECT_EQ(tensor.device(), DeviceType::UNKNOWN);
 }
 
-TEST_F(TensorTest, SetAndGetValueTest) {
-  Tensor tensor({2, 2});
-  tensor.setValue({0, 0}, 1.0f);
-  tensor.setValue({0, 1}, 2.0f);
-  tensor.setValue({1, 0}, 3.0f);
-  tensor.setValue({1, 1}, 4.0f);
+// 测试带维度的构造函数
+TEST_F(TensorTest, ConstructWithDims) {
+  std::vector<uint32_t> dims = {2, 3, 4};
+  Tensor tensor(dims, DataType::FLOAT32, DeviceType::CPU);
 
-  EXPECT_FLOAT_EQ(tensor.getValue({0, 0}), 1.0f);
-  EXPECT_FLOAT_EQ(tensor.getValue({0, 1}), 2.0f);
-  EXPECT_FLOAT_EQ(tensor.getValue({1, 0}), 3.0f);
-  EXPECT_FLOAT_EQ(tensor.getValue({1, 1}), 4.0f);
+  EXPECT_EQ(tensor.totalElements(), 24);  // 2*3*4
+  EXPECT_EQ(tensor.dims(), dims);
+  EXPECT_EQ(tensor.dtype(), DataType::FLOAT32);
+  EXPECT_EQ(tensor.device(), DeviceType::CPU);
 }
 
-TEST_F(TensorTest, InvalidIndexTest) {
-  Tensor tensor({2, 2});
-  EXPECT_THROW(tensor.getValue({2, 0}), std::out_of_range);
-  EXPECT_THROW(tensor.setValue({0, 2}, 1.0f), std::out_of_range);
+// 测试非法维度
+TEST_F(TensorTest, InvalidDimensions) {
+  std::vector<uint32_t> empty_dims;
+  EXPECT_THROW(Tensor tensor(empty_dims, DataType::FLOAT32, DeviceType::CPU),
+               std::invalid_argument);
+
+  std::vector<uint32_t> zero_dims = {2, 0, 4};
+  EXPECT_THROW(Tensor tensor(zero_dims, DataType::FLOAT32, DeviceType::CPU), std::invalid_argument);
 }
 
-TEST_F(TensorTest, ReshapeTest) {
-  Tensor tensor({2, 3});
-  tensor.reshape({3, 2});
-  EXPECT_EQ(tensor.dimensions().size(), 2);
-  EXPECT_EQ(tensor.dimensions()[0], 3);
-  EXPECT_EQ(tensor.dimensions()[1], 2);
+// 测试拷贝构造
+TEST_F(TensorTest, CopyConstruction) {
+  std::vector<uint32_t> dims = {2, 3};
+  Tensor original(dims, DataType::FLOAT32, DeviceType::CPU);
+  Tensor copied(original);
+
+  EXPECT_EQ(copied.totalElements(), original.totalElements());
+  EXPECT_EQ(copied.dims(), original.dims());
+  EXPECT_EQ(copied.dtype(), original.dtype());
+  EXPECT_EQ(copied.device(), original.device());
 }
 
-TEST_F(TensorTest, InvalidReshapeTest) {
-  Tensor tensor({2, 3});
-  EXPECT_THROW(tensor.reshape({2, 2}), std::invalid_argument);
+// 测试赋值运算符
+TEST_F(TensorTest, AssignmentOperator) {
+  std::vector<uint32_t> dims = {2, 3};
+  Tensor original(dims, DataType::FLOAT32, DeviceType::CPU);
+  Tensor assigned;
+  assigned = original;
+
+  EXPECT_EQ(assigned.totalElements(), original.totalElements());
+  EXPECT_EQ(assigned.dims(), original.dims());
+  EXPECT_EQ(assigned.dtype(), original.dtype());
+  EXPECT_EQ(assigned.device(), original.device());
 }
 
-TEST(TensorTest, BasicTest) {
-  Tensor tensor(10);
-  EXPECT_EQ(tensor.size(), 10);
+// 测试内存分配
+TEST_F(TensorTest, MemoryAllocation) {
+  std::vector<uint32_t> dims = {2, 3};
+  Tensor tensor(dims, DataType::FLOAT32, DeviceType::CPU);
+
   EXPECT_NE(tensor.data(), nullptr);
+  EXPECT_EQ(tensor.totalElements(), 6);
 }
-
-}  // namespace test
-}  // namespace nova_llm

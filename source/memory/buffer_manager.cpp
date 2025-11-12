@@ -3,7 +3,7 @@
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/utils/log.h"
 #include "NovaLLM/utils/macros.h"
-#include "buffer_hub.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 namespace nova_llm {
 
@@ -75,6 +75,10 @@ Buffer BufferManager::fetch(size_t size, DeviceType device_type) {
 }
 
 BufferManager::~BufferManager() {
+  destroy();
+}
+
+void BufferManager::destroy() {
   for (auto p : buffer_hubs_) {
     BufferHub::Builder::destroy(&(p.second));
   }

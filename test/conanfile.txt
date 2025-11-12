@@ -1,15 +1,13 @@
 [requires]
-NovaLLM/0.1.0
+novallm/0.1.0@local/testing
 gtest/1.12.1
-fmt/9.1.0
+fmt/10.2.1
+spdlog/1.12.0
 
 [generators]
 CMakeDeps
 CMakeToolchain
 
 [options]
-gtest:shared=False
-gtest:build_gmock=True
-gtest:build_gtest=True
-gtest:build_gtest_main=True
-gtest:build_gmock_main=True 
+gtest/1.12.1:shared=False
+gtest/1.12.1:build_gmock=True

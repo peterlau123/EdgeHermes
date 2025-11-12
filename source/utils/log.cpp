@@ -1,4 +1,6 @@
-#include "NovalLM/utils/log.h"
+#include "NovaLLM/utils/log.h"
+
+#if defined(NOVA_LLM_ENABLE_LOGGING) && NOVA_LLM_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
 #include <fmt/format.h>
 #include <spdlog/formatter.h>
@@ -42,3 +44,15 @@ void Logger::init(const std::string& name,
 }
 
 }  // namespace nova_llm
+
+#else
+
+namespace nova_llm {
+
+void Logger::init(const std::string& /*name*/, const std::string& /*logFile*/, spdlog::level::level_enum /*level*/) {
+  // No-op when spdlog is not available or logging is disabled
+}
+
+}  // namespace nova_llm
+
+#endif

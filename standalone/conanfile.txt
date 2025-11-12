@@ -1,12 +1,12 @@
 [requires]
-NovaLLM/0.1.0
+novallm/0.1.0@local/testing
 cxxopts/3.0.0
+spdlog/1.12.0
+fmt/10.2.1
 
 [generators]
 CMakeDeps
 CMakeToolchain
 
 [options]
-cxxopts:build_examples=False
-cxxopts:build_tests=False
-cxxopts:enable_install=True 
+spdlog/1.12.0:shared=True

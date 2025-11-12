@@ -3,40 +3,33 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout, CMakeDeps, CMakeToolchain
 from conan.tools.files import copy
 
-class NovaLLMConan(ConanFile):
-    name = "NovaLLM"
+class NovallmConan(ConanFile):
+    name = "novallm"
     version = "0.1.0" # Match your project version
+    exports_sources = "CMakeLists.txt", "source/*", "include/*", "cmake/*"
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeDeps","CMakeToolchain"
 
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "log_spdlog": [True, False], # Corresponds to NOVA_LLM_ENABLE_LOGGING
+        "enable_logging": [True, False], # Corresponds to NOVA_LLM_ENABLE_LOGGING
         "build_tests": [True, False], # Corresponds to NOVA_LLM_BUILD_TESTS
-        "integrate_tvm": [True, False], # Option to integrate TVM
     }
 
     default_options = {
         "shared": False,
         "fPIC": True,
-        "log_spdlog": True,
+        "enable_logging": True,
         "build_tests": False,
-        "integrate_tvm": False, # Default to NOT integrating TVM
     }
 
     # Requirements - these are the dependencies your project uses
     def requirements(self):
-        self.requires("fmt/11.1.3")
-        if self.options.log_spdlog:
-            self.requires("spdlog/1.15.1")
+        self.requires("fmt/10.2.1")
+        if self.options.enable_logging:
+            self.requires("spdlog/1.12.0")
         if self.options.build_tests:
             self.requires("gtest/1.12.1")
-        if self.options.integrate_tvm: #TODO
-            # *** IMPORTANT ***
-            # Replace 'user/channel' with the actual user and channel 
-            # you used when creating the local TVM package.
-            self.requires("tvm/0.20.0@user/channel") 
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -50,7 +43,12 @@ class NovaLLMConan(ConanFile):
             self.options.rm_safe("fPIC")
 
     def generate(self):
-        pass
+        deps = CMakeDeps(self)
+        deps.generate()
+        tc = CMakeToolchain(self)
+        tc.variables["NOVA_LLM_ENABLE_LOGGING"] = self.options.enable_logging
+        tc.variables["NOVA_LLM_BUILD_TESTS"] = self.options.build_tests
+        tc.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -63,6 +61,8 @@ class NovaLLMConan(ConanFile):
         copy(self, "LICENSE", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
 
     def package_info(self):
+        self.cpp_info.set_property("cmake_file_name", "NovaLLM")
+        self.cpp_info.set_property("cmake_target_name", "NovaLLM::NovaLLM")
         self.cpp_info.libs = ["NovaLLM"]
 
     # Note: For a project conanfile.py, you typically don't implement build(), package(), etc.

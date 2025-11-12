@@ -32,7 +32,7 @@ class NOVA_LLM_API Allocator : public IAllocator {
 };
 
 // CPUAllocator 现在只需要实现 do_allocate 和 do_deallocate
-class CPUAllocator : public Allocator<CPUAllocator> {
+class NOVA_LLM_API CPUAllocator : public Allocator<CPUAllocator> {
  public:
   CPUAllocator();
   ~CPUAllocator();
@@ -42,5 +42,16 @@ class CPUAllocator : public Allocator<CPUAllocator> {
   void do_deallocate(void* ptr);
 };
 
+#if defined(NOVA_LLM_CUDA_ON) && NOVA_LLM_CUDA_ON
+class NOVA_LLM_API CUDAAllocator : public Allocator<CUDAAllocator> {
+ public:
+  CUDAAllocator();
+  ~CUDAAllocator();
+
+  void* do_allocate(size_t size);
+
+  void do_deallocate(void* ptr);
+};
+#endif
 
 }  // namespace nova_llm

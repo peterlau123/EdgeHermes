@@ -4,12 +4,17 @@ project(NovaLLMStandalone LANGUAGES CXX)
 
 # --- Import tools ----
 
-include(../cmake/tools.cmake)
+# Use CMAKE_CURRENT_LIST_DIR for reliable path resolution
+get_filename_component(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # ---- Dependencies ----
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+# Find NovaLLM package and its dependencies
+find_package(NovaLLM REQUIRED)
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(cxxopts REQUIRED)
 
 # ---- Create standalone executable ----
 
@@ -19,4 +24,17 @@ add_executable(${PROJECT_NAME} ${sources})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "NovaLLM")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::NovaLLM CONAN_PKG::cxxopts)
+target_link_libraries(${PROJECT_NAME} 
+    PRIVATE 
+    NovaLLM::NovaLLM
+    fmt::fmt
+    spdlog::spdlog
+    cxxopts::cxxopts
+)
+
+# Enable compiler warnings
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wpedantic -Wextra -Werror)
+elseif(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+endif()

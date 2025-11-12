@@ -12,10 +12,15 @@
   (NOVA_LLM_VERSION_MAJOR * 10000 + NOVA_LLM_VERSION_MINOR * 100 + NOVA_LLM_VERSION_PATCH)
 
 // For API export and import
-#ifdef _WIN32
-#define NOVA_LLM_API __declspec(dllexport)
+#if defined(_WIN32)
+  // When building the library define NOVA_LLM_EXPORTS (set by CMake)
+  #if defined(NOVA_LLM_EXPORTS)
+    #define NOVA_LLM_API __declspec(dllexport)
+  #else
+    #define NOVA_LLM_API __declspec(dllimport)
+  #endif
 #else
-#define NOVA_LLM_API __attribute__((visibility("default")))
+  #define NOVA_LLM_API __attribute__((visibility("default")))
 #endif
 
 // For debugging and runtime check

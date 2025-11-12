@@ -2,18 +2,17 @@
 #include <cstddef>
 #include <functional>
 #include <unordered_map>
-
+#include <memory>
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 namespace nova_llm {
 /*
  * @todo: use segregated free list
  * */
-class BufferHub;
-
-class BufferManager {
+class NOVA_LLM_API BufferManager {
 
  public:
   struct Config {
@@ -40,8 +39,8 @@ class BufferManager {
 
   class Builder {
    public:
-    static BufferManager& build(const Config& config);
-    static BufferManager& getInstance();
+    NOVA_LLM_API static BufferManager& build(const Config& config);
+    NOVA_LLM_API static BufferManager& getInstance();
 
    private:
     static BufferManager buffer_manager;
@@ -64,6 +63,9 @@ class BufferManager {
   ~BufferManager();
 
  private:
+
+  void destroy();
+
   BufferManager() = default;
 
   bool init(const Config& config);
