@@ -39,8 +39,8 @@ class NOVA_LLM_API BufferManager {
 
   class Builder {
    public:
-    static BufferManager& build(const Config& config);
-    static BufferManager& getInstance();
+    NOVA_LLM_API static BufferManager& build(const Config& config);
+    NOVA_LLM_API static BufferManager& getInstance();
 
    private:
     static BufferManager buffer_manager;

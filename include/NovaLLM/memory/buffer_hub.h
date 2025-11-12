@@ -117,13 +117,13 @@ using BlockPtr = Block*;
 
 class DefaultSizeLevelStrategy {
  public:
-  static std::vector<Size> byteSizes() ;
+  NOVA_LLM_API static std::vector<Size> byteSizes() ;
 
-  static std::vector<Size> kiloByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> kiloByteSizes() ;
 
-  static std::vector<Size> megaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> megaByteSizes() ;
 
-  static std::vector<Size> gigaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> gigaByteSizes() ;
 };
 
 /*
@@ -170,9 +170,9 @@ class NOVA_LLM_API BufferHub {
 
   class Builder {
    public:
-    static BufferHub* build(const Config& config);
+    NOVA_LLM_API static BufferHub* build(const Config& config);
 
-    static void destroy(BufferHub** hub);
+    NOVA_LLM_API static void destroy(BufferHub** hub);
   };
 
   void initConfig(const Config& config);
