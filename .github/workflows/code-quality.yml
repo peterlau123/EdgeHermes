@@ -48,8 +48,20 @@ jobs:
           mkdir -p build
           cd build
           # Install dependencies (conan) and generate compile commands
-          conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=False || true
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=False
+          # Find the Conan-generated toolchain file
+          TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
+          if [ -z "$TOOLCHAIN_FILE" ]; then
+            echo "Error: conan_toolchain.cmake not found"
+            exit 1
+          fi
+          echo "Using toolchain: $TOOLCHAIN_FILE"
+          # Configure with toolchain to find Conan packages
+          cmake .. -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DNOVA_LLM_ENABLE_LOGGING=ON \
+            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           ninja -v || cmake --build . --config Release
 
       - name: Run cppcheck
