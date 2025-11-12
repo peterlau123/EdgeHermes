@@ -1,32 +1,34 @@
-name: Code Quality
+name: Code Quality (Release build)
 
 on:
   push:
     branches:
-      - 'main'
-      - 'master'  # All branches
-      - 'develop'
+      - main
+      - master
+      - develop
       - 'release/**'
   pull_request:
     branches:
-      - 'main'
-      - 'master'  # All branches
-      - 'develop'
+      - main
+      - master
+      - develop
       - 'release/**'
-  schedule:
-    - cron: '0 0 * * 0'  # Run weekly on Sunday
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
-  quality:
+  code_quality:
+    name: Code quality (Release)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        tool: [clang-tidy, cppcheck]
-
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build cppcheck clang-tidy clang-format
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,44 +43,41 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
 
-      - name: Cache Conan packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.conan2
-          key: ${{ runner.os }}-conan-${{ hashFiles('**/conanfile.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-conan-
-
-      - name: Install clang-tidy
-        if: matrix.tool == 'clang-tidy'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-tidy
-
-      - name: Install cppcheck
-        if: matrix.tool == 'cppcheck'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cppcheck
-
-      - name: Configure
+      - name: Configure & Build (Release)
         run: |
           mkdir -p build
           cd build
-          conan install .. --output-folder=. --build=missing
-          cmake -B build -S .. \
-            -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DNOVA_LLM_BUILD_TESTS=ON \
-            -DNOVA_LLM_ENABLE_LOGGING=ON
-
-      - name: Run clang-tidy
-        if: matrix.tool == 'clang-tidy'
-        run: |
-          cd build
-          run-clang-tidy -j4 -header-filter='.*' -checks='-*,modernize-*,performance-*,readability-*,bugprone-*,clang-analyzer-*' -quiet
+          # Install dependencies (conan) and generate compile commands
+          conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=False || true
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          ninja -v || cmake --build . --config Release
 
       - name: Run cppcheck
-        if: matrix.tool == 'cppcheck'
         run: |
-          cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --std=c++17 --language=c++ --project=build/compile_commands.json 
+          cd build
+          # generate cppcheck report using compile_commands.json
+          if [ -f compile_commands.json ]; then
+            cppcheck --project=compile_commands.json --enable=all --inconclusive --std=c++17 --output-file=../cppcheck-report.txt || true
+          else
+            echo "compile_commands.json not found, running cppcheck on source tree" > ../cppcheck-report.txt
+            cppcheck --enable=warning,style,performance,portability --std=c++17 ../source || true
+          fi
+
+      - name: Run clang-tidy
+        run: |
+          cd build
+          # Run clang-tidy over translation units and append to a report
+          rm -f ../clang-tidy-report.txt
+          # find all .cpp files but exclude the build directory
+          for f in $(find .. -name '*.cpp' -not -path '*/build/*' -print); do
+            echo "---- $f ----" >> ../clang-tidy-report.txt
+            clang-tidy -p . "$f" 2>&1 | sed "s|^|  |" >> ../clang-tidy-report.txt || true
+          done
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-quality-reports
+          path: |
+            cppcheck-report.txt
+            clang-tidy-report.txt

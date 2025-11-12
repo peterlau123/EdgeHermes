@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <functional>
 #include <vector>
-
+#include <atomic>
 #include "../common/device.h"
 #include "../common/dtype.h"
 #include "NovaLLM/utils/macros.h"
@@ -15,7 +15,7 @@ namespace nova_llm {
  * @details 支持多种数据类型(如INT8、FLOAT32等)和设备类型(CPU/GPU)，
  *          提供基本的张量运算操作，包括乘法和加法。
  */
-class Tensor {
+class NOVA_LLM_API Tensor {
  public:
   /**
    * @brief 数据来源枚举
@@ -125,7 +125,7 @@ class Tensor {
 
   DataSourceType dataFrom() const { return m_data_source_; }
 
-  uint32_t refCnt() const { return *ref_cnt_; }
+  uint32_t refCnt() const { return ref_cnt_?ref_cnt_->load():0; }
 
   Deleter deleter() const { return m_deleter_; }
 

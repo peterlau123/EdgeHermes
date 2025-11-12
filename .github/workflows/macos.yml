@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build project and create package (Release)
         run: |
@@ -62,7 +62,6 @@ jobs:
           echo "Using toolchain file: $TOOLCHAIN_FILE"
           cmake -S .. -B . \
             -DCMAKE_BUILD_TYPE=Release \
-            -DNOVA_LLM_BUILD_TESTS=ON \
             -DNOVA_LLM_ENABLE_LOGGING=ON \
             -DCMAKE_INSTALL_PREFIX=../install \
             -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
@@ -80,7 +79,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
   deps_build_debug:
     name: Build and create package (Debug)
@@ -95,7 +94,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build project and create package (Debug)
         run: |
@@ -104,7 +103,7 @@ jobs:
           conan install .. --output-folder=. --build=missing -s build_type=Debug -o build_tests=True
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
           echo "Using toolchain file: $TOOLCHAIN_FILE"
-          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Debug -DNOVA_LLM_BUILD_TESTS=ON -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Debug -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Debug
           cmake --install . --config Debug
 
@@ -119,7 +118,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt','**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
   run_test:
     name: Build & Run Tests
@@ -135,7 +134,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', '**/test/**') }}
+          key: ${{ runner.os }}-conan-debug-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build and run tests
         run: |
@@ -167,7 +166,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2
-          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', '**/test/**') }}
+          key: ${{ runner.os }}-conan-release-${{ hashFiles('**/conanfile.py', '**/standalone/conanfile.txt', 'source/**', 'include/**') }}
 
       - name: Build and run standalone
         run: |

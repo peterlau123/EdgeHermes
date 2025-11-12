@@ -3,7 +3,7 @@
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/utils/log.h"
 #include "NovaLLM/utils/macros.h"
-#include "buffer_hub.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 namespace nova_llm {
 

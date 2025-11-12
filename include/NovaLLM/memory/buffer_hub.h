@@ -2,10 +2,12 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/utils/template.h"
+#include "NovaLLM/utils/macros.h"
 
 namespace nova_llm {
 
@@ -100,7 +102,7 @@ struct SizeEqual {
 
 struct Block {
   using DataPtr = uint8_t*;
-  using BlockPtr = Block*;
+  //using BlockPtr = Block*;
   DataPtr data = nullptr;
   uint64_t size = 0;
   int32_t ref_cnt = 0;
@@ -111,17 +113,17 @@ struct Block {
   }
 };
 
-using BlockPtr = Block::BlockPtr;
+using BlockPtr = Block*;
 
 class DefaultSizeLevelStrategy {
  public:
-  static std::vector<Size> byteSizes() ;
+  NOVA_LLM_API static std::vector<Size> byteSizes() ;
 
-  static std::vector<Size> kiloByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> kiloByteSizes() ;
 
-  static std::vector<Size> megaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> megaByteSizes() ;
 
-  static std::vector<Size> gigaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> gigaByteSizes() ;
 };
 
 /*
@@ -134,7 +136,7 @@ class DefaultSizeLevelStrategy {
  *    for levels below 1gb, we allocate 1gb for each level
  *    for levels above 1gb, we allocate 4gb for the current level
  * */
-class BufferHub {
+class NOVA_LLM_API BufferHub {
  public:
   struct Config {
     DeviceType device_type;
@@ -158,7 +160,7 @@ class BufferHub {
     uint32_t index = -1;
     Size level_size {static_cast<uint64_t>(0)};  // each block size at this level
 
-    using BlockPtr = Block*;
+    //using BlockPtr = Block*;
     std::list<BlockPtr> block_list;
     using BlockIterator = std::list<BlockPtr>::iterator;
     std::unordered_map<Block::DataPtr, BlockIterator> free_map;
@@ -168,9 +170,9 @@ class BufferHub {
 
   class Builder {
    public:
-    static BufferHub* build(const Config& config);
+    NOVA_LLM_API static BufferHub* build(const Config& config);
 
-    static void destroy(BufferHub** hub);
+    NOVA_LLM_API static void destroy(BufferHub** hub);
   };
 
   void initConfig(const Config& config);

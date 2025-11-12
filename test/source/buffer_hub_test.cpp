@@ -1,6 +1,5 @@
-#include "buffer_hub.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
-#if EnableModuleTest
 #include <gtest/gtest.h>
 
 using namespace nova_llm;
@@ -80,5 +79,3 @@ TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
     EXPECT_EQ(buffer.data, nullptr);
     EXPECT_EQ(buffer.size, 0);
 }
-
-#endif

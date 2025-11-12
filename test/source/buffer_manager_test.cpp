@@ -1,6 +1,5 @@
 #include "NovaLLM/memory/buffer_manager.h"
 
-#if EnableModuleTest
 #include <gtest/gtest.h>
 
 using namespace nova_llm;
@@ -12,9 +11,11 @@ protected:
         //set config
         config.device_flags.set(DeviceType::CPU);
         config.cpu.alloc = std::make_shared<CPUAllocator>();
+        #if defined(NOVA_LLM_CUDA_ON) && NOVA_LLM_CUDA_ON
         config.device_flags.set(DeviceType::CUDA);
         config.gpu.alloc = std::make_shared<CUDAAllocator>();
-
+        #endif
+        
         BufferManager::Builder::build(config);
     }
 
@@ -50,6 +51,3 @@ TEST(BufferManagerTest, PutCpu) {
     EXPECT_EQ(buffer.size, 0);
     EXPECT_EQ(buffer.device_type, DeviceType::CPU);
 }
-
-
-#endif

@@ -1,4 +1,4 @@
-#include "buffer_hub.h"
+#include "NovaLLM/memory/buffer_hub.h"
 
 #include <algorithm>
 
@@ -148,8 +148,11 @@ BufferHub* BufferHub::Builder::build(const Config& config) {
 }
 
 void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
-  for (auto& p : (*hub)->buffers_) {
-    p.second.~Level();
+  if (hub && *hub) {
+    // Deleting the BufferHub will call destructors of its members (including Level),
+    // which will in turn call tearDownBlock to free internal allocations.
+    delete *hub;
+    *hub = nullptr;
   }
 }
 
