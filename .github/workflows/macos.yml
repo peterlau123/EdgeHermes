@@ -140,7 +140,7 @@ jobs:
         run: |
           mkdir -p build-test
           cd build-test
-          conan install ../test --output-folder=conan --build=missing -s build_type=Debug || (
+          conan install ../test --output-folder=conan --build=novallm --build=missing -s build_type=Debug || (
             echo "conan install for tests failed"; ls -la ..; exit 1
           )
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
