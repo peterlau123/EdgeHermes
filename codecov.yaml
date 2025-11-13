@@ -1,5 +1,36 @@
+# Codecov configuration for NovaLLM
+# See: https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+
+  precision: 2
+  round: down
+  range: "70...100"
+
 ignore:
-  - "test"
+  - "test/**"
+  - "standalone/**"
+  - "documentation/**"
+  - "build*/**"
+  - "cmake/**"
 
 comment:
+  layout: "reach,diff,flags,tree,footer"
+  behavior: default
   require_changes: true
+  require_base: false
+  require_head: true
+
+fixes:
+  - "before/:/after/"  # Path fixes if needed
