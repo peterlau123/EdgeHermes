@@ -4,6 +4,17 @@
 # Run manually: pre-commit run --all-files
 
 repos:
+  # Branch name validation - local hook (works out of the box)
+  - repo: local
+    hooks:
+      - id: check-branch-name
+        name: Check branch name format
+        entry: python3 .githooks/check_branch_name.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [post-checkout, manual]
+
   # Conventional Commits - enforce commit message format
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.0.0
