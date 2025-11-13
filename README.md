@@ -1,5 +1,6 @@
 [![Ubuntu](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml)
 [![Windows](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml)
+[![MacOS](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml)
 [![Code Quality](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml)
 [![Documentation](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml)
 [![codecov](https://codecov.io/gh/peterlau123/NovaLLM/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/NovaLLM)
