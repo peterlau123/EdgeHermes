@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Post-checkout hook to validate branch names
+# This hook runs after 'git checkout' or 'git switch'
+
+set -euo pipefail
+
+# Get the previous HEAD, new HEAD, and checkout type
+PREV_HEAD=$1
+NEW_HEAD=$2
+CHECKOUT_TYPE=$3  # 1 = branch checkout, 0 = file checkout
+
+# Only validate on branch checkouts
+if [ "$CHECKOUT_TYPE" != "1" ]; then
+  exit 0
+fi
+
+# Get the current branch name
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# Skip validation for special branches
+if [[ "$BRANCH_NAME" =~ ^(main|master|develop|release/.+|hotfix/.+)$ ]]; then
+  exit 0
+fi
+
+# Skip validation if we're in detached HEAD state
+if [ "$BRANCH_NAME" = "HEAD" ]; then
+  exit 0
+fi
+
+# Define the valid branch name pattern
+# Format: <type>-<description> or <type>/<description>
+# Where type is: feat, fix, docs, style, refactor, perf, test, build, ci, chore
+VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)([-/])[a-z0-9_-]+$"
+
+# Check if branch name matches the pattern
+if [[ ! "$BRANCH_NAME" =~ $VALID_PATTERN ]]; then
+  cat <<EOF
+╔════════════════════════════════════════════════════════════════╗
+║                  ❌ INVALID BRANCH NAME                        ║
+╚════════════════════════════════════════════════════════════════╝
+
+Branch: $BRANCH_NAME
+
+Branch names must follow this format:
+  <type>-<description>  or  <type>/<description>
+
+Valid types:
+  • feat      - New feature
+  • fix       - Bug fix
+  • docs      - Documentation changes
+  • style     - Code style changes
+  • refactor  - Code refactoring
+  • perf      - Performance improvements
+  • test      - Test changes
+  • build     - Build system changes
+  • ci        - CI/CD changes
+  • chore     - Other changes
+
+Examples:
+  ✅ feat-buffer-pooling
+  ✅ fix-windows-dll-exports
+  ✅ docs-update-readme
+  ✅ refactor/simplify-tensor-allocation
+  ✅ ci-add-coverage-reporting
+
+Current branch: ❌ $BRANCH_NAME
+
+To fix this, rename your branch:
+  git branch -m $BRANCH_NAME <type>-<proper-description>
+
+Or delete and recreate:
+  git checkout main
+  git branch -D $BRANCH_NAME
+  git checkout -b <type>-<proper-description>
+
+EOF
+  exit 1
+fi
+
+# Branch name is valid
+echo "✅ Branch name '$BRANCH_NAME' is valid"
+exit 0
