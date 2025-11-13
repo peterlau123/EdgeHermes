@@ -57,10 +57,25 @@ jobs:
             cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DNOVA_LLM_BUILD_TESTS=OFF -DNOVA_LLM_ENABLE_LOGGING=OFF
           fi
 
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+
       - name: Build documentation
         run: |
           cd build
-          cmake --build . --target docs || true
+          cmake --build . --target docs
+
+      - name: Check documentation output
+        run: |
+          if [ ! -d "docs/html" ]; then
+            echo "Error: Documentation not generated at docs/html"
+            ls -la docs/ || echo "docs/ directory not found"
+            exit 1
+          fi
+          echo "Documentation generated successfully"
+          ls -la docs/html/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -68,7 +83,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/docs/html
+          path: docs/html
 
       - name: Deploy to GitHub Pages
         id: deployment
