@@ -17,8 +17,9 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 
 - 🚀 **Lightweight**: Minimal dependencies, focusing on core functionality
 - 🔧 **Extensible**: Easy to extend with custom models and optimizations
-- 🎯 **Efficient**: Support for extreme low-bit quantization
-- 🛠️ **Flexible**: Support for OpenAI Triton and ThunderKittens kernels
+- 🎯 **Efficient**: Support for low-bit quantization and custom kernels
+- 🛠️ **Portable**: Support inference on MacOS/Linux/Windows platforms
+- 👨‍💻 **Developer-friendly**: Easy to use and integrate into other projects
 
 ## Supported Models
 
