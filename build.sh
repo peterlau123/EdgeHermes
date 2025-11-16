@@ -112,7 +112,8 @@ Build Targets:
   -a, --all               Build everything (main + tests + standalone + package)
 
 Build Options:
-  -c, --clean             Clean build directory before building
+  -c, --clean             Clean all build-* and install-* directories (including custom
+                          directories specified via --build-dir/--install-dir) before building
   --build-dir DIR         Set custom build directory (default: build)
   --install-dir DIR       Set custom install directory (default: install)
 
@@ -304,14 +305,45 @@ setup_conan() {
 clean_build_dirs() {
     print_header "Cleaning build directories"
     
-    if [[ -d "$BUILD_DIR" ]]; then
-        print_info "Removing $BUILD_DIR"
-        rm -rf "$BUILD_DIR"
+    local cleaned=false
+    local dirs_to_clean=()
+    
+    # First, add user-specified directories if they exist
+    if [[ -n "$BUILD_DIR" && -d "$BUILD_DIR" ]]; then
+        dirs_to_clean+=("$BUILD_DIR")
+    fi
+    if [[ -n "$INSTALL_DIR" && -d "$INSTALL_DIR" ]]; then
+        dirs_to_clean+=("$INSTALL_DIR")
     fi
     
-    if [[ -d "$INSTALL_DIR" ]]; then
-        print_info "Removing $INSTALL_DIR"
-        rm -rf "$INSTALL_DIR"
+    # Then, find all build and install directories
+    shopt -s nullglob  # Don't include pattern if no match
+    for dir in build build-* build_* install install-* install_*; do
+        if [[ -d "$dir" ]]; then
+            # Avoid duplicates
+            local already_added=false
+            for added_dir in "${dirs_to_clean[@]}"; do
+                if [[ "$dir" == "$added_dir" ]]; then
+                    already_added=true
+                    break
+                fi
+            done
+            if [[ "$already_added" == false ]]; then
+                dirs_to_clean+=("$dir")
+            fi
+        fi
+    done
+    shopt -u nullglob
+    
+    # Remove all collected directories
+    for dir in "${dirs_to_clean[@]}"; do
+        print_info "Removing $dir"
+        rm -rf "$dir"
+        cleaned=true
+    done
+    
+    if [[ "$cleaned" == false ]]; then
+        print_info "No build or install directories to clean"
     fi
     
     print_success "Clean complete"

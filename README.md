@@ -69,6 +69,42 @@ cmake --build .
 
 ### Scripted builds
 
+#### Option 1: Unified Build Script (Recommended)
+
+The root `build.sh` provides a comprehensive build system with full control:
+
+```bash
+# Basic build (Release mode)
+./build.sh
+
+# Build with tests
+./build.sh -t
+
+# Clean build (removes all build-* and install-* directories)
+./build.sh -c -r
+
+# Build everything (main + tests + standalone + package)
+./build.sh -a
+
+# Debug build with verbose output
+./build.sh -d -v
+
+# Show all options
+./build.sh --help
+```
+
+**Key features:**
+- `-c, --clean`: Cleans all `build-*` and `install-*` directories (including custom directories specified via `--build-dir`/`--install-dir`) before building
+- `-r, --release`: Build in Release mode (default)
+- `-d, --debug`: Build in Debug mode
+- `-t, --tests`: Build and run tests
+- `-s, --standalone`: Build standalone application
+- `-p, --package`: Create Conan package
+- `-a, --all`: Build everything
+- `-v, --verbose`: Enable verbose output
+
+#### Option 2: Platform-Specific Scripts
+
 Unified wrapper (auto-detects OS):
 
 ```bash
@@ -85,6 +121,8 @@ scripts/build_ubuntu.sh --type Debug --enable-logging OFF
 # Windows (PowerShell)
 scripts/build_windows.ps1 -Configuration Release -EnableLogging ON -WithTests
 ```
+
+**Note:** The root `build.sh` is more feature-rich and recommended for development, while `scripts/build.sh` is a lightweight wrapper for CI/CD pipelines.
 
 ### Makefile builds
 - Use scripts via Make: `make script-build` (honors BUILD_TYPE, ENABLE_LOGGING, ENABLE_TESTS)
