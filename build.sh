@@ -139,19 +139,23 @@ VERBOSE=false
 parse_args() {
     # Reset target flags if any target is explicitly specified
     local targets_specified=false
+    local main_explicitly_specified=false
     
     # First pass: check if any targets are specified
     for arg in "$@"; do
         case $arg in
+            -m|--main)
+                main_explicitly_specified=true
+                ;;
             -t|--tests|-s|--standalone|-p|--package|-a|--all)
                 targets_specified=true
-                break
                 ;;
         esac
     done
     
-    # If targets are specified, disable default main build
-    if [[ "$targets_specified" = true ]]; then
+    # If targets are specified but main is not explicitly requested, disable default main build
+    # We'll check package freshness later to decide if main needs to be built
+    if [[ "$targets_specified" = true && "$main_explicitly_specified" = false ]]; then
         BUILD_MAIN=false
     fi
     
@@ -295,6 +299,86 @@ setup_conan() {
         conan profile detect --force
     else
         print_info "Using existing Conan profile"
+    fi
+}
+
+# ============================================================================
+# Package Detection Functions
+# ============================================================================
+
+check_package_exists() {
+    local package_ref="novallm/0.1.0@local/testing"
+    if conan list "$package_ref" 2>/dev/null | grep -q "$package_ref"; then
+        return 0  # Package exists
+    else
+        return 1  # Package doesn't exist
+    fi
+}
+
+get_package_timestamp() {
+    local package_ref="novallm/0.1.0@local/testing"
+    # Get the package folder path from conan cache
+    local cache_info
+    cache_info=$(conan cache path "$package_ref" 2>/dev/null)
+    
+    if [[ -z "$cache_info" ]]; then
+        echo "0"  # Package doesn't exist
+        return
+    fi
+    
+    # Get the most recent modification time in the package
+    local package_time
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS
+        package_time=$(stat -f "%m" "$cache_info" 2>/dev/null || echo "0")
+    else
+        # Linux
+        package_time=$(stat -c "%Y" "$cache_info" 2>/dev/null || echo "0")
+    fi
+    
+    echo "$package_time"
+}
+
+get_source_timestamp() {
+    # Get the most recent modification time of source files
+    local newest_time=0
+    local file
+    
+    # Check source, include, and CMakeLists.txt files
+    while IFS= read -r -d '' file; do
+        local file_time
+        if [[ "$(uname)" == "Darwin" ]]; then
+            file_time=$(stat -f "%m" "$file" 2>/dev/null || echo "0")
+        else
+            file_time=$(stat -c "%Y" "$file" 2>/dev/null || echo "0")
+        fi
+        
+        if [[ $file_time -gt $newest_time ]]; then
+            newest_time=$file_time
+        fi
+    done < <(find source include CMakeLists.txt conanfile.py -type f -print0 2>/dev/null)
+    
+    echo "$newest_time"
+}
+
+is_package_outdated() {
+    if ! check_package_exists; then
+        print_info "Package not found in cache"
+        return 0  # Package doesn't exist, needs rebuild
+    fi
+    
+    local package_time
+    local source_time
+    
+    package_time=$(get_package_timestamp)
+    source_time=$(get_source_timestamp)
+    
+    if [[ $source_time -gt $package_time ]]; then
+        print_info "Source code is newer than cached package"
+        return 0  # Source is newer, needs rebuild
+    else
+        print_info "Cached package is up-to-date"
+        return 1  # Package is up-to-date
     fi
 }
 
@@ -563,8 +647,28 @@ main() {
     fi
     
     # Execute build targets
+    # If tests or standalone are requested but main wasn't explicitly requested,
+    # check if we need to rebuild main based on package freshness
+    local need_package=false
+    if [[ "$BUILD_TESTS" == true || "$BUILD_STANDALONE" == true ]]; then
+        need_package=true
+        if [[ "$BUILD_MAIN" == false ]]; then
+            print_header "Checking package freshness"
+            if is_package_outdated; then
+                print_info "Enabling main project build due to outdated/missing package"
+                BUILD_MAIN=true
+            fi
+        fi
+    fi
+    
     if [[ "$BUILD_MAIN" == true ]]; then
         build_main_project
+        
+        # Auto-create package if tests or standalone need it
+        if [[ "$need_package" == true || "$CREATE_PACKAGE" == true ]]; then
+            print_info "Creating/updating Conan package for downstream consumers..."
+            CREATE_PACKAGE=true
+        fi
     fi
     
     if [[ "$CREATE_PACKAGE" == true ]]; then
