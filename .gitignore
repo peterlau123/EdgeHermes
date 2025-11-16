@@ -35,3 +35,8 @@ latex/
 coverage/
 CMakeUserPresets.json
 build-test/
+build-debug/
+build-release/
+build-test-debug/
+install-debug/
+install-release/
