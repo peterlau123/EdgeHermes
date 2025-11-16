@@ -160,7 +160,6 @@ class NOVA_LLM_API BufferHub {
     uint32_t index = -1;
     Size level_size {static_cast<uint64_t>(0)};  // each block size at this level
 
-    //using BlockPtr = Block*;
     std::list<BlockPtr> block_list;
     using BlockIterator = std::list<BlockPtr>::iterator;
     std::unordered_map<Block::DataPtr, BlockIterator> free_map;

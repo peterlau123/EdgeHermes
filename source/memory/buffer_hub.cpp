@@ -53,6 +53,8 @@ std::vector<Size> DefaultSizeLevelStrategy::gigaByteSizes() {
 BlockPtr BufferHub::Level::fetchOneFreeBlock() {
   BlockPtr ret_block {nullptr};
   if (!free_map.empty()) {
+    LOG_INFO("Found free block at level %d", index);
+
     auto it = free_map.begin();
     auto block_it = it->second;
     (*block_it)->ref_cnt++;
@@ -60,7 +62,9 @@ BlockPtr BufferHub::Level::fetchOneFreeBlock() {
     free_map.erase(it);
     ret_block = *block_it;
   } else {
-    auto level_bytes = level_size.totalBytes();
+    LOG_INFO("No free block at level %d,refilling...", index);
+
+    auto level_bytes = this->level_size.totalBytes();
 
     auto kb_level = Size(0, 1, 0, 0);
     auto mb_level = Size(0, 0, 1, 0);
@@ -68,13 +72,22 @@ BlockPtr BufferHub::Level::fetchOneFreeBlock() {
     auto kb_bytes = kb_level.totalBytes();
     auto mb_bytes = mb_level.totalBytes();
     auto gb_bytes = gb_level.totalBytes();
-
-    if (level_bytes < kb_bytes) {
+    /**
+     * @brief: refill strategy
+     *      if level size < 1KB, refill 1KB blocks
+     *      else if level size < 1MB, refill 1MB blocks
+     *      else if level size < 1GB, refill 1GB blocks
+     *      else refill 4GB blocks
+     * 
+     */
+    if (level_bytes <= kb_bytes) {
       refill(kb_level);
-    } else if (level_bytes < mb_bytes) {
+    } else if (kb_bytes<level_bytes&&level_bytes <= mb_bytes) {
       refill(mb_level);
-    } else if (level_bytes < gb_bytes) {
+    } else if (mb_bytes<level_bytes&&level_bytes <= gb_bytes) {
       refill(gb_level);
+    }else{
+      refill(Size(0,0,0,4));//TODO:make it configurable
     }
     ret_block = *(free_map.begin()->second);
   }
@@ -159,7 +172,6 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
 void BufferHub::initConfig(const Config& config) {
   device_type_ = config.device_type;
   size_levels_ = config.size_levels;
-  // sort size levels in ascending order
   std::sort(size_levels_.begin(), size_levels_.end(), [](const Size& a, const Size& b) {
     return a.totalBytes() < b.totalBytes();
   });
