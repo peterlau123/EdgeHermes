@@ -63,47 +63,23 @@ BlockPtr BufferHub::Level::fetchOneFreeBlock() {
     ret_block = *block_it;
   } else {
     LOG_INFO("No free block at level %d,refilling...", index);
-
-    auto level_bytes = this->level_size.totalBytes();
-
-    auto kb_level = Size(0, 1, 0, 0);
-    auto mb_level = Size(0, 0, 1, 0);
-    auto gb_level = Size(0, 0, 0, 1);
-    auto kb_bytes = kb_level.totalBytes();
-    auto mb_bytes = mb_level.totalBytes();
-    auto gb_bytes = gb_level.totalBytes();
-    /**
-     * @brief: refill strategy
-     *      if level size < 1KB, refill 1KB blocks
-     *      else if level size < 1MB, refill 1MB blocks
-     *      else if level size < 1GB, refill 1GB blocks
-     *      else refill 4GB blocks
-     * 
-     */
-    if (level_bytes <= kb_bytes) {
-      refill(kb_level);
-    } else if (kb_bytes<level_bytes&&level_bytes <= mb_bytes) {
-      refill(mb_level);
-    } else if (mb_bytes<level_bytes&&level_bytes <= gb_bytes) {
-      refill(gb_level);
-    }else{
-      refill(Size(0,0,0,4));//TODO:make it configurable
-    }
+    auto block_bytes = this->block_size.totalBytes();
+    refill(Size(expand_factor*block_bytes));//每次分配expand_factor倍的内存块
     ret_block = *(free_map.begin()->second);
   }
   return ret_block;
 }
 
-void BufferHub::Level::refill(const nova_llm::Size& sz) {
-  auto dst_size = sz.totalBytes();
-  auto level_bytes = this->level_size.totalBytes();
-  uint64_t cnt = dst_size / level_bytes;
+void BufferHub::Level::refill(const nova_llm::Size& dst_sz) {
+  auto dst_total_bytes = dst_sz.totalBytes();
+  auto block_bytes = this->block_size.totalBytes();
+  uint64_t cnt = dst_total_bytes / block_bytes;
 
-  auto* data = this->hub->allocData(dst_size);
+  auto* data = this->hub->allocData(dst_total_bytes);
   for (uint64_t i = 0; i < cnt; i++) {
     auto* one_block = hub->allocBlock();
-    one_block->data = data + i * level_bytes;
-    one_block->size = level_bytes;
+    one_block->data = data + i * block_bytes;
+    one_block->size = block_bytes;
     one_block->ref_cnt = 1;// set ref_cnt to 1 when allocated
     auto it = this->block_list.insert(this->block_list.end(), one_block);
     this->free_map[one_block->data] = it;
@@ -164,6 +140,9 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
   if (hub && *hub) {
     // Deleting the BufferHub will call destructors of its members (including Level),
     // which will in turn call tearDownBlock to free internal allocations.
+    (*hub)->size_levels_.clear();
+    (*hub)->buffers_.clear();
+
     delete *hub;
     *hub = nullptr;
   }
@@ -171,13 +150,13 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
 
 void BufferHub::initConfig(const Config& config) {
   device_type_ = config.device_type;
-  size_levels_ = config.size_levels;
+  this->size_levels_ = config.size_levels;
   std::sort(size_levels_.begin(), size_levels_.end(), [](const Size& a, const Size& b) {
     return a.totalBytes() < b.totalBytes();
   });
-  size_limit_ = config.size_limit;
-  warning_level_ = config.warning_level;
-  allocator_ = config.allocator;
+  this->size_limit_ = config.size_limit;
+  this->warning_level_ = config.warning_level;
+  this->allocator_ = config.allocator;
 }
 
 Block::DataPtr BufferHub::allocData(uint64_t sz) {
@@ -219,9 +198,9 @@ void BufferHub::tearDownBlock(BlockPtr& block) {
   }
 }
 
-void BufferHub::addSizeLevel(uint32_t index, const Size& level_sz) {
-  auto& level = buffers_[level_sz];
-  level.level_size = level_sz;
+void BufferHub::addSizeLevel(uint32_t index, const Size& level_block_sz) {
+  auto& level = buffers_[level_block_sz];
+  level.block_size = level_block_sz;
   level.index = index;
   level.hub = this;
 }
@@ -269,7 +248,7 @@ void BufferHub::putBlock(const BlockPtr& block_ptr) {
     auto& level = buffers_[level_size];
     level.putOneBlock(block_ptr);
   } else {
-    LOG_ERROR("Level with size %d is not found!", level_size.totalBytes());
+    LOG_ERROR("Level size %d is not found in buffers!", level_size.totalBytes());
   }
 }
 
@@ -290,17 +269,18 @@ void BufferHub::putBlockFromBuffer(const Buffer& buffer) {
   }
 }
 
+//TODO: optim the level selection algorithm
 Size BufferHub::gradeLevel(const Size& sz) const {
   Size ret;
   uint32_t level_index = 0;
   size_t i = 0;
-  for (; i < size_levels_.size(); i++) {
-    if (sz.totalBytes() < size_levels_[i].totalBytes()) {
+  for (; i < this->size_levels_.size(); i++) {
+    if (sz.totalBytes() <= this->size_levels_[i].totalBytes()) {
       level_index = i;
       break;
     }
   }
-  if (size_levels_.size() == i) {
+  if (this->size_levels_.size() == i) {
     LOG_ERROR("Cannot grade to current levels for size %d", sz.totalBytes());
     return Size {};
   }

@@ -15,7 +15,7 @@ protected:
         BufferHub::Config config;
         //set config
         config.device_type = DeviceType::CPU;
-        config.size_levels=std::vector<Size>{Size(0, 0, 0, 1)};
+        config.size_levels=std::vector<Size>{Size(8, 4, 2, 1)};
         config.allocator = std::make_shared<CPUAllocator>();
 
         buffer_hub_ = BufferHub::Builder::build(config);
@@ -35,7 +35,7 @@ TEST_F(CPUBufferHubTest, GetBlock) {
     auto *block = getBufferHub()->getBlock(Size(1024));
 
     EXPECT_NE(block, nullptr);
-    EXPECT_EQ(block->data, nullptr);
+    EXPECT_NE(block->data, nullptr);
     EXPECT_EQ(block->size, 1024);
     EXPECT_EQ(block->ref_cnt, 1);
 

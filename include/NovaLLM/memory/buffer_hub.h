@@ -18,19 +18,22 @@ struct Size {
   uint64_t mb_ = 0;
   uint64_t gb_ = 0;
   uint64_t total_bytes_ = 0;
-  const uint64_t ratio_ = 1024;
+  const uint64_t ratio_ = 1<<10;
 
   void convert_in_units(uint64_t bytes) {
-    auto down_ratio = std::pow(ratio_, 3);
+    auto down_ratio = ratio_*ratio_*ratio_;//std::pow(ratio_, 3);
 
+    //number of gb units
     gb_ = bytes / down_ratio;
     bytes -= gb_ * down_ratio;
     down_ratio /= ratio_;
-
+    
+    //number of mb units
     mb_ = bytes / down_ratio;
     bytes -= mb_ * down_ratio;
     down_ratio /= ratio_;
 
+    //number of kb units
     kb_ = bytes / down_ratio;
     bytes -= kb_ * down_ratio;
 
@@ -77,6 +80,22 @@ struct Size {
     convert_in_units(total_bytes_);
   }
 
+  uint64_t gb() const {
+    return this->gb_; 
+  }
+
+  uint64_t mb() const {
+    return this->mb_; 
+  }
+
+  uint64_t kb() const {
+    return this->kb_; 
+  }
+
+  uint64_t b() const {
+    return this->b_; 
+  }
+
   Size& operator=(const Size& rhs) {
     total_bytes_ = rhs.totalBytes();
     convert_in_units(total_bytes_);
@@ -102,13 +121,11 @@ struct SizeEqual {
 
 struct Block {
   using DataPtr = uint8_t*;
-  //using BlockPtr = Block*;
   DataPtr data = nullptr;
   uint64_t size = 0;
   int32_t ref_cnt = 0;
 
   bool isValid() const {
-    // return data != nullptr && (prev != nullptr || next != nullptr) && 0 != size;
     return data != nullptr && 0 != size;
   }
 };
@@ -147,19 +164,19 @@ class NOVA_LLM_API BufferHub {
     IAllocatorSharedPtr allocator;
   };
 
+  /**
+   * @brief Buffers at the specified size level
+   * 
+   */
   struct Level {
    public:
     BlockPtr fetchOneFreeBlock();
-
     void putOneBlock(const BlockPtr& block_ptr);
-
     void refill(const Size& sz);
-
     ~Level();
-
-    uint32_t index = -1;
-    Size level_size {static_cast<uint64_t>(0)};  // each block size at this level
-
+    uint32_t index = -1;//level index in buffer hub
+    Size block_size {static_cast<uint64_t>(0)};  // each block size at this level
+    uint32_t expand_factor=2;
     std::list<BlockPtr> block_list;
     using BlockIterator = std::list<BlockPtr>::iterator;
     std::unordered_map<Block::DataPtr, BlockIterator> free_map;
@@ -202,12 +219,14 @@ class NOVA_LLM_API BufferHub {
   BufferHub() = default;
 
   std::unordered_map<Size, Level, SizeHash, SizeEqual> buffers_;
+
   DeviceType device_type_;
+
   std::vector<Size> size_levels_;  // ensure that levels are in ascending order
+
   Size size_limit_ {0, 0, 0, 4};   // Memory in buffer hub cannot exceed this limit
 
-  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
-  float warning_level_ = 0.95;
+  float warning_level_ = 0.95;// Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
 };
