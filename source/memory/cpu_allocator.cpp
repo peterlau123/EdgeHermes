@@ -1,6 +1,6 @@
-#include "NovaLLM/memory/allocator.h"
-
 #include <cstdlib>
+
+#include "NovaLLM/memory/allocator.h"
 
 namespace nova_llm {
 

@@ -2,9 +2,7 @@
 
 namespace nova_llm {
 
-bool DeviceTypeFlags::has(DeviceType type) const {
-  return (flags_ & static_cast<uint32_t>(type)) != 0;
-}
+bool DeviceTypeFlags::has(DeviceType type) const { return (flags_ & static_cast<uint32_t>(type)) != 0; }
 
 // 添加设备
 void DeviceTypeFlags::set(DeviceType type) { flags_ |= static_cast<uint32_t>(type); }

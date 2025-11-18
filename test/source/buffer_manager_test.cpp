@@ -5,49 +5,47 @@
 using namespace nova_llm;
 
 class BufferManagerTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        BufferManager::Config config;
-        //set config
-        config.device_flags.set(DeviceType::CPU);
-        config.cpu.alloc = std::make_shared<CPUAllocator>();
-        #if defined(NOVA_LLM_CUDA_ON) && NOVA_LLM_CUDA_ON
-        config.device_flags.set(DeviceType::CUDA);
-        config.gpu.alloc = std::make_shared<CUDAAllocator>();
-        #endif
-        
-        BufferManager::Builder::build(config);
-    }
+ protected:
+  void SetUp() override {
+    BufferManager::Config config;
+    // set config
+    config.device_flags.set(DeviceType::CPU);
+    config.cpu.alloc = std::make_shared<CPUAllocator>();
+#if defined(NOVA_LLM_CUDA_ON) && NOVA_LLM_CUDA_ON
+    config.device_flags.set(DeviceType::CUDA);
+    config.gpu.alloc = std::make_shared<CUDAAllocator>();
+#endif
 
-    void TearDown() override {
-        BufferManager::Builder::getInstance().~BufferManager();
-    }
+    BufferManager::Builder::build(config);
+  }
+
+  void TearDown() override { BufferManager::Builder::getInstance().~BufferManager(); }
 };
 
 TEST(BufferManagerTest, Init) {
-    auto& buffer_manager = BufferManager::Builder::getInstance();
-    EXPECT_TRUE(buffer_manager.isInited());
+  auto& buffer_manager = BufferManager::Builder::getInstance();
+  EXPECT_TRUE(buffer_manager.isInited());
 }
 
 TEST(BufferManagerTest, FetchCpu) {
-    auto& buffer_manager = BufferManager::Builder::getInstance();
+  auto& buffer_manager = BufferManager::Builder::getInstance();
 
-    auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
+  auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
 
-    EXPECT_NE(buffer.data, nullptr);
-    EXPECT_EQ(buffer.size, 1024);
-    EXPECT_EQ(buffer.device_type, DeviceType::CPU);
+  EXPECT_NE(buffer.data, nullptr);
+  EXPECT_EQ(buffer.size, 1024);
+  EXPECT_EQ(buffer.device_type, DeviceType::CPU);
 
-    buffer_manager.put(buffer);
+  buffer_manager.put(buffer);
 }
 
 TEST(BufferManagerTest, PutCpu) {
-    auto& buffer_manager = BufferManager::Builder::getInstance();
+  auto& buffer_manager = BufferManager::Builder::getInstance();
 
-    auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
+  auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
 
-    buffer_manager.put(buffer);
-    EXPECT_EQ(buffer.data, nullptr);
-    EXPECT_EQ(buffer.size, 0);
-    EXPECT_EQ(buffer.device_type, DeviceType::CPU);
+  buffer_manager.put(buffer);
+  EXPECT_EQ(buffer.data, nullptr);
+  EXPECT_EQ(buffer.size, 0);
+  EXPECT_EQ(buffer.device_type, DeviceType::CPU);
 }

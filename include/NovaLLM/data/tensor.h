@@ -1,8 +1,9 @@
 #pragma once
+#include <atomic>
 #include <cstdint>
 #include <functional>
 #include <vector>
-#include <atomic>
+
 #include "../common/device.h"
 #include "../common/dtype.h"
 #include "NovaLLM/utils/macros.h"
@@ -58,11 +59,7 @@ class NOVA_LLM_API Tensor {
    * @param device 设备类型
    * @param deleter 自定义删除器，默认使用DefaultDeletor
    */
-  Tensor(const void* data,
-         const std::vector<uint32_t>& dims,
-         DataType dtype,
-         DeviceType device,
-         Deleter deleter = DefaultDeletor());
+  Tensor(const void* data, const std::vector<uint32_t>& dims, DataType dtype, DeviceType device, Deleter deleter = DefaultDeletor());
 
   /**
    * @brief 拷贝构造函数
@@ -125,7 +122,7 @@ class NOVA_LLM_API Tensor {
 
   DataSourceType dataFrom() const { return m_data_source_; }
 
-  uint32_t refCnt() const { return ref_cnt_?ref_cnt_->load():0; }
+  uint32_t refCnt() const { return ref_cnt_ ? ref_cnt_->load() : 0; }
 
   Deleter deleter() const { return m_deleter_; }
 
@@ -147,7 +144,7 @@ class NOVA_LLM_API Tensor {
   std::vector<uint32_t> dims_;  ///< 张量的维度数组
   uint32_t ele_cnt_ {0};        ///< 元素总数
   void* data_ {nullptr};        ///< 数据缓冲区
-  uint64_t capacity_ {0};  ///< 数据缓冲区大小，单位为字节，大于等于size_*sizeof(m_dtype_)
+  uint64_t capacity_ {0};       ///< 数据缓冲区大小，单位为字节，大于等于size_*sizeof(m_dtype_)
   DataSourceType m_data_source_ {DataSourceType::AUTO};
   DataType m_dtype_ {DataType::UNKNOWN};       ///< 数据类型
   DeviceType m_device_ {DeviceType::UNKNOWN};  ///< 设备类型

@@ -57,15 +57,7 @@ Tensor::Tensor()
     , m_deleter_(DefaultDeletor()) {}
 
 Tensor::Tensor(const std::vector<uint32_t>& dims, DataType dtype, DeviceType device)
-    : dims_(dims)
-    , ele_cnt_(0)
-    , data_(nullptr)
-    , capacity_(0)
-    , m_data_source_(DataSourceType::AUTO)
-    , m_dtype_(dtype)
-    , m_device_(device)
-    , ref_cnt_{nullptr}
-    , m_deleter_(DefaultDeletor()) {
+    : dims_(dims), ele_cnt_(0), data_(nullptr), capacity_(0), m_data_source_(DataSourceType::AUTO), m_dtype_(dtype), m_device_(device), ref_cnt_ {nullptr}, m_deleter_(DefaultDeletor()) {
   // Check if the data type is valid
   ASSERT(dtype >= DataType::INT8 && dtype < DataType::TOTAL, "Invalid data type");
   // Check if the device type is valid
@@ -77,9 +69,7 @@ Tensor::Tensor(const std::vector<uint32_t>& dims, DataType dtype, DeviceType dev
   this->data_ = buffer.data;
   this->capacity_ = buffer.size;
   m_deleter_ = [&](void** data) {
-    Buffer buffer {static_cast<decltype(std::declval<Buffer>().data)>(*data),
-                   static_cast<decltype(std::declval<Buffer>().size)>(capacity_),
-                   m_device_};
+    Buffer buffer {static_cast<decltype(std::declval<Buffer>().data)>(*data), static_cast<decltype(std::declval<Buffer>().size)>(capacity_), m_device_};
     buffer_manager.put(buffer);
     *data = nullptr;
   };
@@ -87,11 +77,7 @@ Tensor::Tensor(const std::vector<uint32_t>& dims, DataType dtype, DeviceType dev
   *ref_cnt_ = 1;
 }
 
-Tensor::Tensor(const void* data,
-               const std::vector<uint32_t>& dims,
-               DataType dtype,
-               DeviceType device,
-               Deleter deleter) {
+Tensor::Tensor(const void* data, const std::vector<uint32_t>& dims, DataType dtype, DeviceType device, Deleter deleter) {
   ASSERT(nullptr != data, "data cannot be null!");
   ASSERT(DataType::UNKNOWN < dtype, "data type must be specified!");
   ASSERT(DeviceType::UNKNOWN < device, "device type must be specified!");
@@ -133,7 +119,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
     m_data_source_ = other.dataFrom();
     m_dtype_ = other.dtype();
     m_device_ = other.device();
-    ref_cnt_ = other.ref_cnt_;//TODO:notice here
+    ref_cnt_ = other.ref_cnt_;  // TODO:notice here
     m_deleter_ = other.deleter();
   }
   return *this;

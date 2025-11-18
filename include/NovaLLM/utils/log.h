@@ -4,18 +4,19 @@
 //  - If NOVA_LLM_ENABLE_LOGGING is defined and spdlog is available, use spdlog.
 //  - Otherwise provide a no-op Logger and a minimal spdlog::level::level_enum so callers compile.
 
-#include <string>
 #include <memory>
+#include <string>
 
 // Prefer spdlog when logging is enabled and available
 #if defined(NOVA_LLM_ENABLE_LOGGING) && NOVA_LLM_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
 #if __has_include(<fmt/ostream.h>)
-#  include <fmt/ostream.h>
+#include <fmt/ostream.h>
 #elif __has_include(<spdlog/fmt/ostr.h>)
-#  include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/ostr.h>
 #endif
 #include <spdlog/spdlog.h>
+
 #include <filesystem>
 
 namespace nova_llm {
@@ -27,9 +28,7 @@ class Logger {
     return instance;
   }
 
-  void init(const std::string& name = "NovaLLM",
-            const std::string& logFile = "NovaLLM.log",
-            spdlog::level::level_enum level = spdlog::level::info);
+  void init(const std::string& name = "NovaLLM", const std::string& logFile = "NovaLLM.log", spdlog::level::level_enum level = spdlog::level::info);
 
   void setLevel(spdlog::level::level_enum level) {
     if (logger_) logger_->set_level(level);
@@ -100,9 +99,7 @@ class Logger {
     return instance;
   }
 
-  void init(const std::string& /*name*/ = "NovaLLM",
-            const std::string& /*logFile*/ = "NovaLLM.log",
-            spdlog::level::level_enum /*level*/ = spdlog::level::info);
+  void init(const std::string& /*name*/ = "NovaLLM", const std::string& /*logFile*/ = "NovaLLM.log", spdlog::level::level_enum /*level*/ = spdlog::level::info);
 
   void setLevel(spdlog::level::level_enum /*level*/) {}
 

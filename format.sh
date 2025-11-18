@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the directories to search for C++ files
-DIRECTORIES=("include" "source" "standalone" "test")
+DIRECTORIES=("include" "source" "standalone/source" "test/source")
 
 # Find all C++ source and header files in the specified directories
 FILES=$(find "${DIRECTORIES[@]}" -type f \( -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.cu" -o -name "*.cuh" \) 2>/dev/null)

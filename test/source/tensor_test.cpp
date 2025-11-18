@@ -38,8 +38,7 @@ TEST_F(TensorTest, ConstructWithDims) {
 // 测试非法维度
 TEST_F(TensorTest, InvalidDimensions) {
   std::vector<uint32_t> empty_dims;
-  EXPECT_THROW(Tensor tensor(empty_dims, DataType::FLOAT32, DeviceType::CPU),
-               std::invalid_argument);
+  EXPECT_THROW(Tensor tensor(empty_dims, DataType::FLOAT32, DeviceType::CPU), std::invalid_argument);
 
   std::vector<uint32_t> zero_dims = {2, 0, 4};
   EXPECT_THROW(Tensor tensor(zero_dims, DataType::FLOAT32, DeviceType::CPU), std::invalid_argument);
