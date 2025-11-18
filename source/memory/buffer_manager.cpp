@@ -1,9 +1,9 @@
 #include "NovaLLM/memory/buffer_manager.h"
 
 #include "NovaLLM/memory/allocator.h"
+#include "NovaLLM/memory/buffer_hub.h"
 #include "NovaLLM/utils/log.h"
 #include "NovaLLM/utils/macros.h"
-#include "NovaLLM/memory/buffer_hub.h"
 
 namespace nova_llm {
 
@@ -28,24 +28,7 @@ bool BufferManager::init(const nova_llm::BufferManager::Config &config) {
   }
   bool ret = false;
   if (config.device_flags.has(DeviceType::CPU)) {
-    BufferHub::Config cfg;
-    cfg.allocator = config.cpu.alloc;
-
-    auto byte_sizes = DefaultSizeLevelStrategy::byteSizes();
-    cfg.size_levels.insert(cfg.size_levels.end(), byte_sizes.begin(), byte_sizes.end());
-    // for size below 1kb
-    auto kilobyte_sizes = DefaultSizeLevelStrategy::kiloByteSizes();
-    cfg.size_levels.insert(cfg.size_levels.end(), kilobyte_sizes.begin(), kilobyte_sizes.end());
-    // for size below 1mb
-    auto mb_sizes = DefaultSizeLevelStrategy::megaByteSizes();
-    cfg.size_levels.insert(cfg.size_levels.end(), mb_sizes.begin(), mb_sizes.end());
-    // for size below 1gb
-    auto gb_sizes = DefaultSizeLevelStrategy::gigaByteSizes();
-    cfg.size_levels.insert(cfg.size_levels.end(), gb_sizes.begin(), gb_sizes.end());
-
-    cfg.size_limit = Size(0, 0, 0, 4);
-    cfg.warning_level = 0.95;
-
+    BufferHubConfig cfg(DeviceType::CPU, config.cpu.alloc, Size(0, 0, 0, 4));
     buffer_hubs_[DeviceType::CPU] = BufferHub::Builder::build(cfg);
     ret |= true;
   }
@@ -74,9 +57,7 @@ Buffer BufferManager::fetch(size_t size, DeviceType device_type) {
   return buffer;
 }
 
-BufferManager::~BufferManager() {
-  destroy();
-}
+BufferManager::~BufferManager() { destroy(); }
 
 void BufferManager::destroy() {
   for (auto p : buffer_hubs_) {

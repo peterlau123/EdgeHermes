@@ -6,6 +6,65 @@
 
 namespace nova_llm {
 
+void Size::convert_in_units(uint64_t bytes) {
+  auto down_ratio = ratio_ * ratio_ * ratio_;  // std::pow(ratio_, 3);
+
+  // number of gb units
+  gb_ = bytes / down_ratio;
+  bytes -= gb_ * down_ratio;
+  down_ratio /= ratio_;
+
+  // number of mb units
+  mb_ = bytes / down_ratio;
+  bytes -= mb_ * down_ratio;
+  down_ratio /= ratio_;
+
+  // number of kb units
+  kb_ = bytes / down_ratio;
+  bytes -= kb_ * down_ratio;
+
+  b_ = bytes;
+}
+
+Size::Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb) {
+  b_ = b;
+  kb_ = kb;
+  mb_ = mb;
+  gb_ = gb;
+
+  if (ratio_ < b_) {
+    auto kb_cnt = b_ / ratio_;
+    b_ -= kb_cnt * ratio_;
+    kb_ += kb_cnt;
+  }
+
+  if (ratio_ < kb_) {
+    auto mb_cnt = kb_ / ratio_;
+    kb_ -= mb_cnt * ratio_;
+    mb_ += mb_cnt;
+  }
+
+  if (ratio_ < mb_) {
+    auto gb_cnt = mb_ / ratio_;
+    mb_ -= gb_cnt * ratio_;
+    gb_ += gb_cnt;
+  }
+
+  total_bytes_ = b_ + kb_ * ratio_ + mb_ * ratio_ * ratio_ + gb_ * ratio_ * ratio_ * ratio_;
+}
+
+namespace {
+class DefaultSizeLevelStrategy {
+ public:
+  static std::vector<Size> byteSizes();
+
+  static std::vector<Size> kiloByteSizes();
+
+  static std::vector<Size> megaByteSizes();
+
+  static std::vector<Size> gigaByteSizes();
+};
+
 std::vector<Size> DefaultSizeLevelStrategy::byteSizes() {
   std::vector<Size> ret;
   uint32_t base = 64;
@@ -47,6 +106,16 @@ std::vector<Size> DefaultSizeLevelStrategy::gigaByteSizes() {
     ret.push_back(Size(0, 0, 0, i));
     i *= ratio;
   }
+  return ret;
+}
+}  // namespace
+
+std::vector<Size> LevelAssignStrategy::assignLevels() {
+  std::vector<Size> ret;
+  ret.insert(ret.end(), DefaultSizeLevelStrategy::byteSizes().begin(), DefaultSizeLevelStrategy::byteSizes().end());
+  ret.insert(ret.end(), DefaultSizeLevelStrategy::kiloByteSizes().begin(), DefaultSizeLevelStrategy::kiloByteSizes().end());
+  ret.insert(ret.end(), DefaultSizeLevelStrategy::megaByteSizes().begin(), DefaultSizeLevelStrategy::megaByteSizes().end());
+  ret.insert(ret.end(), DefaultSizeLevelStrategy::gigaByteSizes().begin(), DefaultSizeLevelStrategy::gigaByteSizes().end());
   return ret;
 }
 
@@ -127,7 +196,7 @@ BufferHub* BufferHub::Builder::build(const BufferHubConfig& config) {
   auto* hub = new BufferHub;
   hub->initConfig(config);
   int index = 0;
-  for (auto v : config.size_levels) {
+  for (auto v : config.sizeLevels()) {
     hub->addSizeLevel(index, v);
     ++index;
   }
@@ -147,12 +216,12 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
 }
 
 void BufferHub::initConfig(const BufferHubConfig& config) {
-  device_type_ = config.device_type;
-  this->size_levels_ = config.size_levels;
+  device_type_ = config.deviceType();
+  this->size_levels_ = config.sizeLevels();
   std::sort(size_levels_.begin(), size_levels_.end(), [](const Size& a, const Size& b) { return a.totalBytes() < b.totalBytes(); });
-  this->size_limit_ = config.size_limit;
-  this->warning_level_ = config.warning_level;
-  this->allocator_ = config.allocator;
+  this->size_limit_ = config.sizeLimit();
+  this->warning_level_ = config.warningLevel();
+  this->allocator_ = config.allocator();
 }
 
 Block::DataPtr BufferHub::allocData(uint64_t sz) { return static_cast<Block::DataPtr>(this->allocator_->allocate(sz)); }

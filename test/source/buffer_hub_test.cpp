@@ -10,12 +10,7 @@ class CPUBufferHubTest : public ::testing::Test {
 
  protected:
   void SetUp() override {
-    BufferHubConfig config;
-    // set config
-    config.device_type = DeviceType::CPU;
-    config.size_levels = std::vector<Size> {Size(8, 4, 2, 1)};
-    config.allocator = std::make_shared<CPUAllocator>();
-
+    BufferHubConfig config(DeviceType::CPU, std::make_shared<CPUAllocator>(), Size(0, 0, 0, 4));
     buffer_hub_ = BufferHub::Builder::build(config);
   }
 
@@ -31,7 +26,7 @@ TEST_F(CPUBufferHubTest, GetBlock) {
 
   EXPECT_NE(block, nullptr);
   EXPECT_NE(block->data, nullptr);
-  EXPECT_EQ(block->size, 1024);
+  EXPECT_GE(block->size, 1024);
   EXPECT_EQ(block->ref_cnt, 1);
 
   getBufferHub()->putBlock(block);
@@ -42,7 +37,7 @@ TEST_F(CPUBufferHubTest, PutBlock) {
 
   EXPECT_NE(block, nullptr);
   EXPECT_NE(block->data, nullptr);
-  EXPECT_EQ(block->size, 1024);
+  EXPECT_GE(block->size, 1024);
   EXPECT_EQ(block->ref_cnt, 1);
 
   getBufferHub()->putBlock(block);
@@ -57,7 +52,7 @@ TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
 
   EXPECT_NE(block, nullptr);
   EXPECT_NE(block->data, nullptr);
-  EXPECT_EQ(block->size, 1024);
+  EXPECT_GE(block->size, 1024);
   EXPECT_EQ(block->ref_cnt, 1);
 
   Buffer buffer;

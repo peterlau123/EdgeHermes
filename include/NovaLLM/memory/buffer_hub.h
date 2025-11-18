@@ -21,25 +21,7 @@ struct Size {
   uint64_t total_bytes_ = 0;
   const uint64_t ratio_ = 1 << 10;
 
-  void convert_in_units(uint64_t bytes) {
-    auto down_ratio = ratio_ * ratio_ * ratio_;  // std::pow(ratio_, 3);
-
-    // number of gb units
-    gb_ = bytes / down_ratio;
-    bytes -= gb_ * down_ratio;
-    down_ratio /= ratio_;
-
-    // number of mb units
-    mb_ = bytes / down_ratio;
-    bytes -= mb_ * down_ratio;
-    down_ratio /= ratio_;
-
-    // number of kb units
-    kb_ = bytes / down_ratio;
-    bytes -= kb_ * down_ratio;
-
-    b_ = bytes;
-  }
+  void convert_in_units(uint64_t bytes);
 
  public:
   Size() = default;
@@ -49,32 +31,7 @@ struct Size {
     convert_in_units(total_bytes_);
   }
 
-  Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb) {
-    b_ = b;
-    kb_ = kb;
-    mb_ = mb;
-    gb_ = gb;
-
-    if (ratio_ < b_) {
-      auto kb_cnt = b_ / ratio_;
-      b_ -= kb_cnt * ratio_;
-      kb_ += kb_cnt;
-    }
-
-    if (ratio_ < kb_) {
-      auto mb_cnt = kb_ / ratio_;
-      kb_ -= mb_cnt * ratio_;
-      mb_ += mb_cnt;
-    }
-
-    if (ratio_ < mb_) {
-      auto gb_cnt = mb_ / ratio_;
-      mb_ -= gb_cnt * ratio_;
-      gb_ += gb_cnt;
-    }
-
-    total_bytes_ = b_ + kb_ * ratio_ + mb_ * ratio_ * ratio_ + gb_ * ratio_ * ratio_ * ratio_;
-  }
+  Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb);
 
   Size(const Size& rhs) {
     total_bytes_ = rhs.totalBytes();
@@ -121,34 +78,46 @@ struct Block {
 
 using BlockPtr = Block*;
 
-class DefaultSizeLevelStrategy {
+class LevelAssignStrategy {
  public:
-  NOVA_LLM_API static std::vector<Size> byteSizes();
-
-  NOVA_LLM_API static std::vector<Size> kiloByteSizes();
-
-  NOVA_LLM_API static std::vector<Size> megaByteSizes();
-
-  NOVA_LLM_API static std::vector<Size> gigaByteSizes();
+  virtual std::vector<Size> assignLevels();
 };
 
-struct BufferHubConfig {
-  DeviceType device_type;
-  std::vector<Size> size_levels {{
-      ,
-      ,
-      ,
-  }};                            // ensure that levels are in ascending order
-  Size size_limit {0, 0, 0, 8};  // Memory in buffer hub cannot exceed this limit
-  float warning_level = 0.95;    // Be cautious when memory in buffer hub exceeds size_limit*warning_level
-  IAllocatorSharedPtr allocator;
+class BufferHubConfig {
+ public:
+  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit, LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
+      : device_type_(device_type), allocator_(allocator), size_limit_(size_limit), warning_level_(warning_level), level_assign_strategy_(strategy) {
+    size_levels_ = strategy.assignLevels();
+  };
+
+  void setLevelAssignStrategy(LevelAssignStrategy strategy) { size_levels_ = strategy.assignLevels(); }
+
+  void setWarningLevel(float warning_level) { warning_level_ = warning_level; }
+
+  DeviceType deviceType() const { return device_type_; }
+
+  const std::vector<Size>& sizeLevels() const { return size_levels_; }
+
+  Size sizeLimit() const { return size_limit_; }
+
+  float warningLevel() const { return warning_level_; }
+
+  IAllocatorSharedPtr allocator() const { return allocator_; }
+
+ private:
+  DeviceType device_type_;
+  std::vector<Size> size_levels_;  // ensure that levels are in ascending order
+  Size size_limit_;                // Memory in buffer hub cannot exceed this limit
+  float warning_level_;            // Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  IAllocatorSharedPtr allocator_;
+  LevelAssignStrategy level_assign_strategy_;
 };
 
 /**
  * @brief Buffers at the specified size level
  *
  */
-struct BufferHubLevel {
+class BufferHubLevel {
  public:
   BlockPtr fetchOneFreeBlock();
   void putOneBlock(const BlockPtr& block_ptr);
