@@ -1,13 +1,14 @@
 #pragma once
+#include <cmath>
 #include <list>
 #include <unordered_map>
 #include <vector>
-#include <cmath>
+
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
-#include "NovaLLM/utils/template.h"
 #include "NovaLLM/utils/macros.h"
+#include "NovaLLM/utils/template.h"
 
 namespace nova_llm {
 
@@ -18,22 +19,22 @@ struct Size {
   uint64_t mb_ = 0;
   uint64_t gb_ = 0;
   uint64_t total_bytes_ = 0;
-  const uint64_t ratio_ = 1<<10;
+  const uint64_t ratio_ = 1 << 10;
 
   void convert_in_units(uint64_t bytes) {
-    auto down_ratio = ratio_*ratio_*ratio_;//std::pow(ratio_, 3);
+    auto down_ratio = ratio_ * ratio_ * ratio_;  // std::pow(ratio_, 3);
 
-    //number of gb units
+    // number of gb units
     gb_ = bytes / down_ratio;
     bytes -= gb_ * down_ratio;
     down_ratio /= ratio_;
-    
-    //number of mb units
+
+    // number of mb units
     mb_ = bytes / down_ratio;
     bytes -= mb_ * down_ratio;
     down_ratio /= ratio_;
 
-    //number of kb units
+    // number of kb units
     kb_ = bytes / down_ratio;
     bytes -= kb_ * down_ratio;
 
@@ -80,21 +81,13 @@ struct Size {
     convert_in_units(total_bytes_);
   }
 
-  uint64_t gb() const {
-    return this->gb_; 
-  }
+  uint64_t gb() const { return this->gb_; }
 
-  uint64_t mb() const {
-    return this->mb_; 
-  }
+  uint64_t mb() const { return this->mb_; }
 
-  uint64_t kb() const {
-    return this->kb_; 
-  }
+  uint64_t kb() const { return this->kb_; }
 
-  uint64_t b() const {
-    return this->b_; 
-  }
+  uint64_t b() const { return this->b_; }
 
   Size& operator=(const Size& rhs) {
     total_bytes_ = rhs.totalBytes();
@@ -114,9 +107,7 @@ struct SizeHash {
 };
 
 struct SizeEqual {
-  bool operator()(const Size& lhs, const Size& rhs) const {
-    return lhs.totalBytes() == rhs.totalBytes();
-  }
+  bool operator()(const Size& lhs, const Size& rhs) const { return lhs.totalBytes() == rhs.totalBytes(); }
 };
 
 struct Block {
@@ -125,22 +116,52 @@ struct Block {
   uint64_t size = 0;
   int32_t ref_cnt = 0;
 
-  bool isValid() const {
-    return data != nullptr && 0 != size;
-  }
+  bool isValid() const { return data != nullptr && 0 != size; }
 };
 
 using BlockPtr = Block*;
 
 class DefaultSizeLevelStrategy {
  public:
-  NOVA_LLM_API static std::vector<Size> byteSizes() ;
+  NOVA_LLM_API static std::vector<Size> byteSizes();
 
-  NOVA_LLM_API static std::vector<Size> kiloByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> kiloByteSizes();
 
-  NOVA_LLM_API static std::vector<Size> megaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> megaByteSizes();
 
-  NOVA_LLM_API static std::vector<Size> gigaByteSizes() ;
+  NOVA_LLM_API static std::vector<Size> gigaByteSizes();
+};
+
+struct BufferHubConfig {
+  DeviceType device_type;
+  std::vector<Size> size_levels {{
+      ,
+      ,
+      ,
+  }};                            // ensure that levels are in ascending order
+  Size size_limit {0, 0, 0, 8};  // Memory in buffer hub cannot exceed this limit
+  float warning_level = 0.95;    // Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  IAllocatorSharedPtr allocator;
+};
+
+/**
+ * @brief Buffers at the specified size level
+ *
+ */
+struct BufferHubLevel {
+ public:
+  BlockPtr fetchOneFreeBlock();
+  void putOneBlock(const BlockPtr& block_ptr);
+  void refill(const Size& sz);
+  ~BufferHubLevel();
+  uint32_t index = -1;                         // level index in buffer hub
+  Size block_size {static_cast<uint64_t>(0)};  // each block size at this level
+  uint32_t expand_factor = 2;
+  std::list<BlockPtr> block_list;
+  using BlockIterator = std::list<BlockPtr>::iterator;
+  std::unordered_map<Block::DataPtr, BlockIterator> free_map;
+  std::unordered_map<Block::DataPtr, BlockIterator> busy_map;
+  BufferHub* hub;
 };
 
 /*
@@ -155,43 +176,17 @@ class DefaultSizeLevelStrategy {
  * */
 class NOVA_LLM_API BufferHub {
  public:
-  struct Config {
-    DeviceType device_type;
-    std::vector<Size> size_levels;  // ensure that levels are in ascending order
-    Size size_limit {0, 0, 0, 8};   // Memory in buffer hub cannot exceed this limit
-    float warning_level =
-        0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
-    IAllocatorSharedPtr allocator;
-  };
-
-  /**
-   * @brief Buffers at the specified size level
-   * 
-   */
-  struct Level {
-   public:
-    BlockPtr fetchOneFreeBlock();
-    void putOneBlock(const BlockPtr& block_ptr);
-    void refill(const Size& sz);
-    ~Level();
-    uint32_t index = -1;//level index in buffer hub
-    Size block_size {static_cast<uint64_t>(0)};  // each block size at this level
-    uint32_t expand_factor=2;
-    std::list<BlockPtr> block_list;
-    using BlockIterator = std::list<BlockPtr>::iterator;
-    std::unordered_map<Block::DataPtr, BlockIterator> free_map;
-    std::unordered_map<Block::DataPtr, BlockIterator> busy_map;
-    BufferHub* hub;
-  };
+  friend class BufferHubConfig;
+  friend class BufferHubLevel;
 
   class Builder {
    public:
-    NOVA_LLM_API static BufferHub* build(const Config& config);
+    NOVA_LLM_API static BufferHub* build(const BufferHubConfig& config);
 
     NOVA_LLM_API static void destroy(BufferHub** hub);
   };
 
-  void initConfig(const Config& config);
+  void initConfig(const BufferHubConfig& config);
 
   BlockPtr getBlock(const Size& sz);
 
@@ -218,15 +213,15 @@ class NOVA_LLM_API BufferHub {
 
   BufferHub() = default;
 
-  std::unordered_map<Size, Level, SizeHash, SizeEqual> buffers_;
+  std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
 
   DeviceType device_type_;
 
   std::vector<Size> size_levels_;  // ensure that levels are in ascending order
 
-  Size size_limit_ {0, 0, 0, 4};   // Memory in buffer hub cannot exceed this limit
+  Size size_limit_ {0, 0, 0, 4};  // Memory in buffer hub cannot exceed this limit
 
-  float warning_level_ = 0.95;// Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
 };

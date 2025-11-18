@@ -1,8 +1,9 @@
 #pragma once
 #include <cstddef>
 #include <functional>
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
+
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
@@ -63,7 +64,6 @@ class NOVA_LLM_API BufferManager {
   ~BufferManager();
 
  private:
-
   void destroy();
 
   BufferManager() = default;

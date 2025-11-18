@@ -50,7 +50,7 @@ std::vector<Size> DefaultSizeLevelStrategy::gigaByteSizes() {
   return ret;
 }
 
-BlockPtr BufferHub::Level::fetchOneFreeBlock() {
+BlockPtr BufferHubLevel::fetchOneFreeBlock() {
   BlockPtr ret_block {nullptr};
   if (!free_map.empty()) {
     LOG_INFO("Found free block at level %d", index);
@@ -64,13 +64,13 @@ BlockPtr BufferHub::Level::fetchOneFreeBlock() {
   } else {
     LOG_INFO("No free block at level %d,refilling...", index);
     auto block_bytes = this->block_size.totalBytes();
-    refill(Size(expand_factor*block_bytes));//每次分配expand_factor倍的内存块
+    refill(Size(expand_factor * block_bytes));  // 每次分配expand_factor倍的内存块
     ret_block = *(free_map.begin()->second);
   }
   return ret_block;
 }
 
-void BufferHub::Level::refill(const nova_llm::Size& dst_sz) {
+void BufferHubLevel::refill(const nova_llm::Size& dst_sz) {
   auto dst_total_bytes = dst_sz.totalBytes();
   auto block_bytes = this->block_size.totalBytes();
   uint64_t cnt = dst_total_bytes / block_bytes;
@@ -80,13 +80,13 @@ void BufferHub::Level::refill(const nova_llm::Size& dst_sz) {
     auto* one_block = hub->allocBlock();
     one_block->data = data + i * block_bytes;
     one_block->size = block_bytes;
-    one_block->ref_cnt = 1;// set ref_cnt to 1 when allocated
+    one_block->ref_cnt = 1;  // set ref_cnt to 1 when allocated
     auto it = this->block_list.insert(this->block_list.end(), one_block);
     this->free_map[one_block->data] = it;
   }
 }
 
-void BufferHub::Level::putOneBlock(const BlockPtr& block_ptr) {
+void BufferHubLevel::putOneBlock(const BlockPtr& block_ptr) {
   BlockPtr dst_block(block_ptr);
   if (block_list.empty()) {
     auto ret_it = block_list.insert(block_list.end(), dst_block);
@@ -100,9 +100,7 @@ void BufferHub::Level::putOneBlock(const BlockPtr& block_ptr) {
       (*it)->ref_cnt = 0;
       free_map.insert({(*it)->data, it});
     } else if (in_free_m) {
-      LOG_WARN("Block %p already in block list at level %d",
-               static_cast<void*>(dst_block->data),
-               index);
+      LOG_WARN("Block %p already in block list at level %d", static_cast<void*>(dst_block->data), index);
     } else {  // in_busy_m is true
       auto& it = busy_map[dst_block->data];
       auto& busy_block = *it;
@@ -117,7 +115,7 @@ void BufferHub::Level::putOneBlock(const BlockPtr& block_ptr) {
   }
 }
 
-BufferHub::Level::~Level() {
+BufferHubLevel::~BufferHubLevel() {
   free_map.clear();
   busy_map.clear();
   for (auto& block_ptr : block_list) {
@@ -125,7 +123,7 @@ BufferHub::Level::~Level() {
   }
 }
 
-BufferHub* BufferHub::Builder::build(const Config& config) {
+BufferHub* BufferHub::Builder::build(const BufferHubConfig& config) {
   auto* hub = new BufferHub;
   hub->initConfig(config);
   int index = 0;
@@ -148,20 +146,16 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
   }
 }
 
-void BufferHub::initConfig(const Config& config) {
+void BufferHub::initConfig(const BufferHubConfig& config) {
   device_type_ = config.device_type;
   this->size_levels_ = config.size_levels;
-  std::sort(size_levels_.begin(), size_levels_.end(), [](const Size& a, const Size& b) {
-    return a.totalBytes() < b.totalBytes();
-  });
+  std::sort(size_levels_.begin(), size_levels_.end(), [](const Size& a, const Size& b) { return a.totalBytes() < b.totalBytes(); });
   this->size_limit_ = config.size_limit;
   this->warning_level_ = config.warning_level;
   this->allocator_ = config.allocator;
 }
 
-Block::DataPtr BufferHub::allocData(uint64_t sz) {
-  return static_cast<Block::DataPtr>(this->allocator_->allocate(sz));
-}
+Block::DataPtr BufferHub::allocData(uint64_t sz) { return static_cast<Block::DataPtr>(this->allocator_->allocate(sz)); }
 
 void BufferHub::deallocData(Block::DataPtr& data_ptr) {
   if (data_ptr) {
@@ -170,9 +164,7 @@ void BufferHub::deallocData(Block::DataPtr& data_ptr) {
   }
 }
 
-BlockPtr BufferHub::allocBlock() {
-  return static_cast<BlockPtr>(this->allocator_->allocate(sizeof(Block)));
-}
+BlockPtr BufferHub::allocBlock() { return static_cast<BlockPtr>(this->allocator_->allocate(sizeof(Block))); }
 
 void BufferHub::deallocateBlock(BlockPtr& block_ptr) {
   if (block_ptr) {
@@ -210,17 +202,16 @@ void BufferHub::eraseSizeLevel(const Size& level_sz) {
   if (buffers_.count(level_sz)) {
     if (buffers_[level_sz].busy_map.empty()) {
       auto& level = buffers_[level_sz];
-      level.~Level();
+      level.~BufferHubLevel();
     } else {
-      LOG_WARN("Level with size %d is in use,cannot erase now,please try some time later",
-               level_sz.totalBytes());
+      LOG_WARN("Level with size %d is in use,cannot erase now,please try some time later", level_sz.totalBytes());
     }
   } else {
     LOG_WARN("Level with size %d is not found!", level_sz.totalBytes());  // TODO:optimize
   }
 }
 
-BlockPtr BufferHub::getBlock(const Size& sz){
+BlockPtr BufferHub::getBlock(const Size& sz) {
   // round it to ceil level
   auto level_sz = gradeLevel(sz);
   if (!level_sz.isValid()) {
@@ -269,7 +260,7 @@ void BufferHub::putBlockFromBuffer(const Buffer& buffer) {
   }
 }
 
-//TODO: optim the level selection algorithm
+// TODO: optim the level selection algorithm
 Size BufferHub::gradeLevel(const Size& sz) const {
   Size ret;
   uint32_t level_index = 0;
