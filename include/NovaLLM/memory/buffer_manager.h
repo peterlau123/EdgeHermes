@@ -59,7 +59,8 @@ class NOVA_LLM_API BufferManager {
 
   Buffer fetch(size_t size, DeviceType device_type);
 
-  void put(const Buffer& buffer);
+  // Return a buffer obtained from fetch back to the pool and clear it.
+  void put(Buffer& buffer);
 
   ~BufferManager();
 

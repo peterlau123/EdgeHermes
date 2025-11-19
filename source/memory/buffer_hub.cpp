@@ -121,21 +121,26 @@ std::vector<Size> LevelAssignStrategy::assignLevels() {
 
 BlockPtr BufferHubLevel::fetchOneFreeBlock() {
   BlockPtr ret_block {nullptr};
+
+  if (free_map.empty()) {
+    LOG_INFO("No free block at level %d,refilling...", index);
+    auto block_bytes = this->block_size.totalBytes();
+    refill(Size(expand_factor * block_bytes));  // allocate expand_factor blocks
+  }
+
   if (!free_map.empty()) {
     LOG_INFO("Found free block at level %d", index);
-
     auto it = free_map.begin();
     auto block_it = it->second;
+    // Transition from free to busy: increment ref_cnt from 0 to 1
     (*block_it)->ref_cnt++;
     busy_map.insert({it->first, it->second});
     free_map.erase(it);
     ret_block = *block_it;
   } else {
-    LOG_INFO("No free block at level %d,refilling...", index);
-    auto block_bytes = this->block_size.totalBytes();
-    refill(Size(expand_factor * block_bytes));  // 每次分配expand_factor倍的内存块
-    ret_block = *(free_map.begin()->second);
+    LOG_WARN("Unable to fetch free block at level %d even after refill", index);
   }
+
   return ret_block;
 }
 
@@ -144,12 +149,13 @@ void BufferHubLevel::refill(const nova_llm::Size& dst_sz) {
   auto block_bytes = this->block_size.totalBytes();
   uint64_t cnt = dst_total_bytes / block_bytes;
 
-  auto* data = this->hub->allocData(dst_total_bytes);
+  // Allocate data per block so that each pointer we free was directly allocated
+  // Blocks start in the free list with ref_cnt == 0.
   for (uint64_t i = 0; i < cnt; i++) {
     auto* one_block = hub->allocBlock();
-    one_block->data = data + i * block_bytes;
+    one_block->data = hub->allocData(block_bytes);
     one_block->size = block_bytes;
-    one_block->ref_cnt = 1;  // set ref_cnt to 1 when allocated
+    one_block->ref_cnt = 0;  // free blocks have ref_cnt == 0
     auto it = this->block_list.insert(this->block_list.end(), one_block);
     this->free_map[one_block->data] = it;
   }
@@ -173,12 +179,13 @@ void BufferHubLevel::putOneBlock(const BlockPtr& block_ptr) {
     } else {  // in_busy_m is true
       auto& it = busy_map[dst_block->data];
       auto& busy_block = *it;
-      if (0 == --busy_block->ref_cnt) {
-        busy_map.erase(busy_block->data);
-        busy_block->ref_cnt = 0;
-        free_map[dst_block->data] = it;
-      } else {
+      // Decrease ref count once; when it reaches zero, move block back to free_map
+      if (busy_block->ref_cnt > 0) {
         busy_block->ref_cnt--;
+      }
+      if (busy_block->ref_cnt == 0) {
+        busy_map.erase(busy_block->data);
+        free_map[dst_block->data] = it;
       }
     }
   }
@@ -190,6 +197,15 @@ BufferHubLevel::~BufferHubLevel() {
   for (auto& block_ptr : block_list) {
     hub->tearDownBlock(block_ptr);
   }
+}
+
+BufferHub::BufferHub() {}
+
+BufferHub::~BufferHub() {
+  // Let the map manage BufferHubLevel destruction
+  buffers_.clear();
+  // Clear configuration metadata
+  size_levels_.clear();
 }
 
 BufferHub* BufferHub::Builder::build(const BufferHubConfig& config) {
@@ -207,8 +223,7 @@ void BufferHub::Builder::destroy(nova_llm::BufferHub** hub) {
   if (hub && *hub) {
     // Deleting the BufferHub will call destructors of its members (including Level),
     // which will in turn call tearDownBlock to free internal allocations.
-    (*hub)->size_levels_.clear();
-    (*hub)->buffers_.clear();
+    //(*hub)->~BufferHub();
 
     delete *hub;
     *hub = nullptr;
@@ -267,17 +282,20 @@ void BufferHub::addSizeLevel(uint32_t index, const Size& level_block_sz) {
 }
 
 void BufferHub::eraseSizeLevel(const Size& level_sz) {
-  // NOTE:cautious,make sure the size level is not in use
-  if (buffers_.count(level_sz)) {
-    if (buffers_[level_sz].busy_map.empty()) {
-      auto& level = buffers_[level_sz];
-      level.~BufferHubLevel();
-    } else {
-      LOG_WARN("Level with size %d is in use,cannot erase now,please try some time later", level_sz.totalBytes());
-    }
-  } else {
+  auto it = buffers_.find(level_sz);
+  if (it == buffers_.end()) {
     LOG_WARN("Level with size %d is not found!", level_sz.totalBytes());  // TODO:optimize
+    return;
   }
+
+  auto& level = it->second;
+  if (!level.busy_map.empty()) {
+    LOG_WARN("Level with size %d is in use,cannot erase now,please try some time later", level_sz.totalBytes());
+    return;
+  }
+
+  // Erasing from the map will automatically destroy the BufferHubLevel
+  buffers_.erase(it);
 }
 
 BlockPtr BufferHub::getBlock(const Size& sz) {
@@ -312,7 +330,7 @@ void BufferHub::putBlock(const BlockPtr& block_ptr) {
   }
 }
 
-void BufferHub::putBlockFromBuffer(const Buffer& buffer) {
+void BufferHub::putBlockFromBuffer(Buffer& buffer) {
   if (0 == buffer.size || nullptr == buffer.data) {
     return;
   }
@@ -327,6 +345,10 @@ void BufferHub::putBlockFromBuffer(const Buffer& buffer) {
   } else {
     LOG_ERROR("Level with size %d cannot be found in this memory hub", level_sz.totalBytes());
   }
+
+  // Clear the Buffer to avoid dangling pointers for callers.
+  buffer.data = nullptr;
+  buffer.size = 0;
 }
 
 // TODO: optim the level selection algorithm

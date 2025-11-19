@@ -37,7 +37,7 @@ bool BufferManager::init(const nova_llm::BufferManager::Config &config) {
   return ret;
 }
 
-void BufferManager::put(const Buffer &buffer) {
+void BufferManager::put(Buffer &buffer) {
   if (nullptr == buffer.data || 0 == buffer.size) {
     return;
   }

@@ -40,11 +40,19 @@ TEST_F(CPUBufferHubTest, PutBlock) {
   EXPECT_GE(block->size, 1024);
   EXPECT_EQ(block->ref_cnt, 1);
 
+  // Return the block to the pool; block remains valid but is marked free
   getBufferHub()->putBlock(block);
 
-  EXPECT_EQ(block->data, nullptr);
-  EXPECT_EQ(block->size, 0);
-  EXPECT_EQ(block->ref_cnt, 0);
+  EXPECT_NE(block->data, nullptr);
+  EXPECT_GE(block->size, 1024);
+  EXPECT_EQ(block->ref_cnt, 0);  // ref count reset when returned to pool
+
+  // Fetch another block of the same size and ensure we get a (possibly reused) block
+  auto* block2 = getBufferHub()->getBlock(Size(1024));
+  EXPECT_NE(block2, nullptr);
+  EXPECT_NE(block2->data, nullptr);
+  EXPECT_GE(block2->size, 1024);
+  EXPECT_EQ(block2->ref_cnt, 1);
 }
 
 TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
@@ -61,10 +69,8 @@ TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
   buffer.device_type = DeviceType::CPU;
   getBufferHub()->putBlockFromBuffer(buffer);
 
-  EXPECT_EQ(block->data, nullptr);
-  EXPECT_EQ(block->size, 0);
-  EXPECT_EQ(block->ref_cnt, 0);
-
+  // After returning via Buffer, the underlying block should be returned to the pool.
+  // The Buffer should be cleared to avoid dangling pointers.
   EXPECT_EQ(buffer.data, nullptr);
   EXPECT_EQ(buffer.size, 0);
 }

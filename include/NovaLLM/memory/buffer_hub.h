@@ -113,6 +113,7 @@ class BufferHubConfig {
   LevelAssignStrategy level_assign_strategy_;
 };
 
+class BufferHub;
 /**
  * @brief Buffers at the specified size level
  *
@@ -161,7 +162,8 @@ class NOVA_LLM_API BufferHub {
 
   void putBlock(const BlockPtr& block);
 
-  void putBlockFromBuffer(const Buffer& buffer);
+  // Return a buffer to the pool and clear the Buffer to avoid dangling pointers.
+  void putBlockFromBuffer(Buffer& buffer);
 
  private:
   Block::DataPtr allocData(uint64_t sz);
@@ -180,7 +182,9 @@ class NOVA_LLM_API BufferHub {
 
   [[nodiscard]] Size gradeLevel(const Size& sz) const;
 
-  BufferHub() = default;
+  BufferHub();
+
+  ~BufferHub();
 
   std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
 
