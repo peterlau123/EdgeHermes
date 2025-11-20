@@ -184,8 +184,8 @@ void BufferHubLevel::putOneBlock(const BlockPtr& block_ptr) {
         busy_block->ref_cnt--;
       }
       if (busy_block->ref_cnt == 0) {
+        free_map[dst_block->data] = it;//NOTE: Be cautious about the order of operations here
         busy_map.erase(busy_block->data);
-        free_map[dst_block->data] = it;
       }
     }
   }
