@@ -31,7 +31,7 @@ class NOVA_LLM_API Tensor {
    * @brief 默认删除器
    */
   struct DefaultDeletor {
-    void operator()(void** data) {}
+    void operator()(void** /*data*/) {}
   };
 
   using Deleter = std::function<void(void**)>;

@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME} ${sources})
 
 # Add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_ROOT}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/conan/include
 )

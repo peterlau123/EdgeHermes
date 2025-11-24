@@ -119,8 +119,8 @@ std::vector<Size> LevelAssignStrategy::assignLevels() {
   return ret;
 }
 
-BlockPtr BufferHubLevel::fetchOneFreeBlock() {
-  BlockPtr ret_block {nullptr};
+BlockRawPtr BufferHubLevel::fetchOneFreeBlock() {
+  BlockRawPtr ret_block {nullptr};
 
   if (free_map.empty()) {
     LOG_INFO("No free block at level %d,refilling...", index);
@@ -136,7 +136,7 @@ BlockPtr BufferHubLevel::fetchOneFreeBlock() {
     (*block_it)->ref_cnt++;
     busy_map.insert({it->first, it->second});
     free_map.erase(it);
-    ret_block = *block_it;
+    ret_block = block_it->get();  // Return non-owning pointer
   } else {
     LOG_WARN("Unable to fetch free block at level %d even after refill", index);
   }
@@ -152,41 +152,42 @@ void BufferHubLevel::refill(const nova_llm::Size& dst_sz) {
   // Allocate data per block so that each pointer we free was directly allocated
   // Blocks start in the free list with ref_cnt == 0.
   for (uint64_t i = 0; i < cnt; i++) {
-    auto* one_block = hub->allocBlock();
-    one_block->data = hub->allocData(block_bytes);
-    one_block->size = block_bytes;
+    auto one_block = hub->setUpBlock(Size(block_bytes));
     one_block->ref_cnt = 0;  // free blocks have ref_cnt == 0
-    auto it = this->block_list.insert(this->block_list.end(), one_block);
-    this->free_map[one_block->data] = it;
+    auto* block_ptr = one_block.get();
+    auto it = this->block_list.insert(this->block_list.end(), std::move(one_block));
+    this->free_map[block_ptr->data] = it;
   }
 }
 
-void BufferHubLevel::putOneBlock(const BlockPtr& block_ptr) {
-  BlockPtr dst_block(block_ptr);
+void BufferHubLevel::putOneBlock(BlockRawPtr block_ptr) {
+  if (block_ptr == nullptr) {
+    return;
+  }
+  
   if (block_list.empty()) {
-    auto ret_it = block_list.insert(block_list.end(), dst_block);
-    (*ret_it)->ref_cnt = 0;
-    free_map.insert({dst_block->data, ret_it});
-  } else {
-    bool in_free_m = free_map.count(dst_block->data);
-    bool in_busy_m = busy_map.count(dst_block->data);
-    if (!in_free_m && !in_busy_m) {
-      auto it = block_list.insert(block_list.end(), dst_block);
-      (*it)->ref_cnt = 0;
-      free_map.insert({(*it)->data, it});
-    } else if (in_free_m) {
-      LOG_WARN("Block %p already in block list at level %d", static_cast<void*>(dst_block->data), index);
-    } else {  // in_busy_m is true
-      auto& it = busy_map[dst_block->data];
-      auto& busy_block = *it;
-      // Decrease ref count once; when it reaches zero, move block back to free_map
-      if (busy_block->ref_cnt > 0) {
-        busy_block->ref_cnt--;
-      }
-      if (busy_block->ref_cnt == 0) {
-        free_map[dst_block->data] = it;//NOTE: Be cautious about the order of operations here
-        busy_map.erase(busy_block->data);
-      }
+    LOG_WARN("putOneBlock called on empty block_list at level %d", index);
+    return;
+  }
+  
+  bool in_free_m = free_map.count(block_ptr->data);
+  bool in_busy_m = busy_map.count(block_ptr->data);
+  
+  if (!in_free_m && !in_busy_m) {
+    LOG_WARN("Block %p not found in level %d", static_cast<void*>(block_ptr->data), index);
+    return;
+  } else if (in_free_m) {
+    LOG_WARN("Block %p already in free list at level %d", static_cast<void*>(block_ptr->data), index);
+  } else {  // in_busy_m is true
+    auto it = busy_map[block_ptr->data];
+    auto& busy_block = *it;
+    // Decrease ref count once; when it reaches zero, move block back to free_map
+    if (busy_block->ref_cnt > 0) {
+      busy_block->ref_cnt--;
+    }
+    if (busy_block->ref_cnt == 0) {
+      free_map[block_ptr->data] = it;  // NOTE: Be cautious about the order of operations here
+      busy_map.erase(busy_block->data);
     }
   }
 }
@@ -194,9 +195,14 @@ void BufferHubLevel::putOneBlock(const BlockPtr& block_ptr) {
 BufferHubLevel::~BufferHubLevel() {
   free_map.clear();
   busy_map.clear();
+  // Blocks are automatically cleaned up when unique_ptrs are destroyed
+  // but we need to manually free the data
   for (auto& block_ptr : block_list) {
-    hub->tearDownBlock(block_ptr);
+    if (block_ptr && block_ptr->data) {
+      hub->deallocData(block_ptr->data);
+    }
   }
+  block_list.clear();  // unique_ptrs will deallocate Block structs
 }
 
 BufferHub::BufferHub() {}
@@ -248,12 +254,15 @@ void BufferHub::deallocData(Block::DataPtr& data_ptr) {
   }
 }
 
-BlockPtr BufferHub::allocBlock() { return static_cast<BlockPtr>(this->allocator_->allocate(sizeof(Block))); }
+BlockPtr BufferHub::allocBlock() {
+  auto* raw_ptr = static_cast<Block*>(this->allocator_->allocate(sizeof(Block)));
+  return BlockPtr(raw_ptr);
+}
 
-void BufferHub::deallocateBlock(BlockPtr& block_ptr) {
-  if (block_ptr) {
-    this->allocator_->deallocate(block_ptr);
-    block_ptr = nullptr;
+void BufferHub::deallocateBlock(BlockPtr block) {
+  if (block) {
+    Block* raw = block.release();
+    this->allocator_->deallocate(raw);
   }
 }
 
@@ -265,12 +274,12 @@ BlockPtr BufferHub::setUpBlock(const Size& sz) {
   return block;
 }
 
-void BufferHub::tearDownBlock(BlockPtr& block) {
+void BufferHub::tearDownBlock(BlockPtr block) {
   if (block) {
     deallocData(block->data);
     block->size = 0;
     block->ref_cnt = 0;
-    deallocateBlock(block);
+    deallocateBlock(std::move(block));
   }
 }
 
@@ -309,7 +318,7 @@ void BufferHub::eraseSizeLevel(const Size& level_sz) {
   buffers_.erase(it);
 }
 
-BlockPtr BufferHub::getBlock(const Size& sz) {
+BlockRawPtr BufferHub::getBlock(const Size& sz) {
   std::unique_lock<std::shared_mutex> lock(mutex_);
   
   // round it to ceil level
@@ -318,11 +327,11 @@ BlockPtr BufferHub::getBlock(const Size& sz) {
     return nullptr;
   }
   // search the block list
-  BlockPtr ret_block {nullptr};
+  BlockRawPtr ret_block {nullptr};
   if (buffers_.count(level_sz)) {
     auto& level = buffers_[level_sz];
     auto block = level.fetchOneFreeBlock();
-    if (block->isValid()) {
+    if (block && block->isValid()) {
       ret_block = block;
     }
   }
@@ -332,7 +341,11 @@ BlockPtr BufferHub::getBlock(const Size& sz) {
   return ret_block;
 }
 
-void BufferHub::putBlock(const BlockPtr& block_ptr) {
+void BufferHub::putBlock(BlockRawPtr block_ptr) {
+  if (!block_ptr) {
+    return;
+  }
+  
   std::unique_lock<std::shared_mutex> lock(mutex_);
   
   auto size = block_ptr->size;
@@ -357,7 +370,7 @@ void BufferHub::putBlockFromBuffer(Buffer& buffer) {
     auto* data = static_cast<Block::DataPtr>(buffer.data);
     if (level.busy_map.count(data)) {
       auto block_it = level.busy_map[data];
-      level.putOneBlock(*block_it);
+      level.putOneBlock(block_it->get());  // Get raw pointer from unique_ptr
     }
   } else {
     LOG_ERROR("Level with size %d cannot be found in this memory hub", level_sz.totalBytes());

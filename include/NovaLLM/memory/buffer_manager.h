@@ -55,7 +55,7 @@ class NOVA_LLM_API BufferManager {
 
   BufferManager& operator=(BufferManager&&) = delete;  // Disable move assignment
 
-  [[nodiscard("Do not drop isInit return value")]] bool isInited() const { return is_init_; }
+  [[nodiscard]] bool isInited() const { return is_init_; }
 
   Buffer fetch(size_t size, DeviceType device_type);
 

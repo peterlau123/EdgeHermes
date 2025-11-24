@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <list>
+#include <memory>
 #include <mutex>
 #include <shared_mutex>
 #include <unordered_map>
@@ -81,7 +82,10 @@ struct Block {
   bool isValid() const { return data != nullptr && 0 != size; }
 };
 
-using BlockPtr = Block*;
+// BlockPtr for owning pointers (used in collections)
+using BlockPtr = std::unique_ptr<Block>;
+// Raw non-owning pointer for temporary access
+using BlockRawPtr = Block*;
 
 class LevelAssignStrategy {
  public:
@@ -91,7 +95,11 @@ class LevelAssignStrategy {
 class BufferHubConfig {
  public:
   BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit, LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
-      : device_type_(device_type), allocator_(allocator), size_limit_(size_limit), warning_level_(warning_level), level_assign_strategy_(strategy) {
+      : device_type_(device_type),
+        size_limit_(size_limit),
+        warning_level_(warning_level),
+        allocator_(allocator),
+        level_assign_strategy_(strategy) {
     size_levels_ = strategy.assignLevels();
   };
 
@@ -125,14 +133,16 @@ class BufferHub;
  */
 class BufferHubLevel {
  public:
-  BlockPtr fetchOneFreeBlock();
-  void putOneBlock(const BlockPtr& block_ptr);
+  // Returns non-owning pointer since pool retains ownership
+  BlockRawPtr fetchOneFreeBlock();
+  // Accepts non-owning pointer for blocks already in the pool
+  void putOneBlock(BlockRawPtr block_ptr);
   void refill(const Size& sz);
   ~BufferHubLevel();
   uint32_t index = -1;                         // level index in buffer hub
   Size block_size {static_cast<uint64_t>(0)};  // each block size at this level
   uint32_t expand_factor = 2;
-  std::list<BlockPtr> block_list;
+  std::list<BlockPtr> block_list;  // Owns the blocks
   using BlockIterator = std::list<BlockPtr>::iterator;
   std::unordered_map<Block::DataPtr, BlockIterator> free_map;
   std::unordered_map<Block::DataPtr, BlockIterator> busy_map;
@@ -163,27 +173,32 @@ class NOVA_LLM_API BufferHub {
 
   void initConfig(const BufferHubConfig& config);
 
-  BlockPtr getBlock(const Size& sz);
+  // Returns non-owning pointer to block managed by pool
+  BlockRawPtr getBlock(const Size& sz);
 
-  void putBlock(const BlockPtr& block);
+  // Accepts non-owning pointer to block managed by pool
+  void putBlock(BlockRawPtr block);
 
   // Return a buffer to the pool and clear the Buffer to avoid dangling pointers.
   void putBlockFromBuffer(Buffer& buffer);
+
+  void addSizeLevel(uint32_t index, const Size& level_sz);
+
+  void eraseSizeLevel(const Size& level_sz);
 
  private:
   Block::DataPtr allocData(uint64_t sz);
   void deallocData(Block::DataPtr& data_ptr);
 
+  // Creates a new block with ownership
   BlockPtr allocBlock();
-  void deallocateBlock(BlockPtr& block_ptr);
+  void deallocateBlock(BlockPtr block);
 
-  BlockPtr setUpBlock(const Size& sz);  // alloc and init block
+  // Creates and initializes a new block
+  BlockPtr setUpBlock(const Size& sz);
 
-  void tearDownBlock(BlockPtr& block);
-
-  void addSizeLevel(uint32_t index, const Size& level_sz);
-
-  void eraseSizeLevel(const Size& level_sz);
+  // Cleans up and destroys a block
+  void tearDownBlock(BlockPtr block);
 
   [[nodiscard]] Size gradeLevel(const Size& sz) const;
 
@@ -205,5 +220,7 @@ class NOVA_LLM_API BufferHub {
   float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
+
+};
 
 }  // namespace nova_llm
