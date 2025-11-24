@@ -1,6 +1,8 @@
 #pragma once
 #include <cmath>
 #include <list>
+#include <mutex>
+#include <shared_mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -189,6 +191,9 @@ class NOVA_LLM_API BufferHub {
 
   ~BufferHub();
 
+  // Thread safety: protects all mutable state
+  mutable std::shared_mutex mutex_;
+
   std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
 
   DeviceType device_type_;
@@ -200,6 +205,5 @@ class NOVA_LLM_API BufferHub {
   float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
-};
 
 }  // namespace nova_llm

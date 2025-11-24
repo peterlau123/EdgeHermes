@@ -275,6 +275,8 @@ void BufferHub::tearDownBlock(BlockPtr& block) {
 }
 
 void BufferHub::addSizeLevel(uint32_t index, const Size& level_block_sz) {
+  std::unique_lock<std::shared_mutex> lock(mutex_);
+  
   auto& level = buffers_[level_block_sz];
   level.block_size = level_block_sz;
   level.index = index;
@@ -282,23 +284,34 @@ void BufferHub::addSizeLevel(uint32_t index, const Size& level_block_sz) {
 }
 
 void BufferHub::eraseSizeLevel(const Size& level_sz) {
+  std::unique_lock<std::shared_mutex> lock(mutex_);
+  
   auto it = buffers_.find(level_sz);
   if (it == buffers_.end()) {
-    LOG_WARN("Level with size %d is not found!", level_sz.totalBytes());  // TODO:optimize
+    LOG_WARN("Level with size %llu is not found!", level_sz.totalBytes());
     return;
   }
 
   auto& level = it->second;
   if (!level.busy_map.empty()) {
-    LOG_WARN("Level with size %d is in use,cannot erase now,please try some time later", level_sz.totalBytes());
+    LOG_ERROR("Level with size %llu has %zu busy blocks, cannot erase now", 
+              level_sz.totalBytes(), level.busy_map.size());
     return;
   }
 
-  // Erasing from the map will automatically destroy the BufferHubLevel
+  // Free all blocks in the block_list before erasing
+  // The destructor will be called, but let's be explicit about cleanup
+  LOG_INFO("Erasing level with size %llu, freeing %zu blocks", 
+           level_sz.totalBytes(), level.block_list.size());
+  
+  // Erasing from the map will call BufferHubLevel destructor,
+  // which properly frees all blocks via tearDownBlock
   buffers_.erase(it);
 }
 
 BlockPtr BufferHub::getBlock(const Size& sz) {
+  std::unique_lock<std::shared_mutex> lock(mutex_);
+  
   // round it to ceil level
   auto level_sz = gradeLevel(sz);
   if (!level_sz.isValid()) {
@@ -320,6 +333,8 @@ BlockPtr BufferHub::getBlock(const Size& sz) {
 }
 
 void BufferHub::putBlock(const BlockPtr& block_ptr) {
+  std::unique_lock<std::shared_mutex> lock(mutex_);
+  
   auto size = block_ptr->size;
   Size level_size(size);
   if (buffers_.count(level_size)) {
@@ -331,6 +346,8 @@ void BufferHub::putBlock(const BlockPtr& block_ptr) {
 }
 
 void BufferHub::putBlockFromBuffer(Buffer& buffer) {
+  std::unique_lock<std::shared_mutex> lock(mutex_);
+  
   if (0 == buffer.size || nullptr == buffer.data) {
     return;
   }
