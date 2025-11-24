@@ -12,6 +12,9 @@
 
 namespace nova_llm {
 
+// Forward declaration
+class BufferHub;
+
 struct Size {
  private:
   uint64_t b_ = 0;
