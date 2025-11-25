@@ -64,9 +64,9 @@ class NOVA_LLM_API BufferManager {
 
   ~BufferManager();
 
- private:
   void destroy();
 
+ private:
   BufferManager() = default;
 
   bool init(const Config& config);

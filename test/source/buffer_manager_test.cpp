@@ -19,15 +19,15 @@ class BufferManagerTest : public ::testing::Test {
     BufferManager::Builder::build(config);
   }
 
-  void TearDown() override { BufferManager::Builder::getInstance().~BufferManager(); }
+  void TearDown() override { BufferManager::Builder::getInstance().destroy(); }
 };
 
-TEST(BufferManagerTest, Init) {
+TEST_F(BufferManagerTest, Init) {
   auto& buffer_manager = BufferManager::Builder::getInstance();
   EXPECT_TRUE(buffer_manager.isInited());
 }
 
-TEST(BufferManagerTest, FetchCpu) {
+TEST_F(BufferManagerTest, FetchCpu) {
   auto& buffer_manager = BufferManager::Builder::getInstance();
 
   auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
@@ -39,7 +39,7 @@ TEST(BufferManagerTest, FetchCpu) {
   buffer_manager.put(buffer);
 }
 
-TEST(BufferManagerTest, PutCpu) {
+TEST_F(BufferManagerTest, PutCpu) {
   auto& buffer_manager = BufferManager::Builder::getInstance();
 
   auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);

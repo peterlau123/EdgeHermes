@@ -1,4 +1,5 @@
 #include "NovaLLM/data/tensor.h"
+#include "NovaLLM/memory/buffer_manager.h"
 
 #include <gtest/gtest.h>
 
@@ -7,11 +8,17 @@ using namespace nova_llm;
 class TensorTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    // 测试前的设置
+    BufferManager::Config config;
+    // set config
+    config.device_flags.set(DeviceType::CPU);
+    config.cpu.alloc = std::make_shared<CPUAllocator>();
+    // Use a smaller size for testing if needed, or default 4GB
+    // But since BufferManager is a singleton, we must ensure it's initialized.
+    BufferManager::Builder::build(config);
   }
 
   void TearDown() override {
-    // 测试后的清理
+    BufferManager::Builder::getInstance().destroy();
   }
 };
 
@@ -38,10 +45,12 @@ TEST_F(TensorTest, ConstructWithDims) {
 // 测试非法维度
 TEST_F(TensorTest, InvalidDimensions) {
   std::vector<uint32_t> empty_dims;
-  EXPECT_THROW(Tensor tensor(empty_dims, DataType::FLOAT32, DeviceType::CPU), std::invalid_argument);
+  // ASSERT macro throws std::runtime_error
+  EXPECT_THROW(Tensor tensor(empty_dims, DataType::FLOAT32, DeviceType::CPU), std::runtime_error);
 
   std::vector<uint32_t> zero_dims = {2, 0, 4};
-  EXPECT_THROW(Tensor tensor(zero_dims, DataType::FLOAT32, DeviceType::CPU), std::invalid_argument);
+  // ASSERT macro throws std::runtime_error
+  EXPECT_THROW(Tensor tensor(zero_dims, DataType::FLOAT32, DeviceType::CPU), std::runtime_error);
 }
 
 // 测试拷贝构造
