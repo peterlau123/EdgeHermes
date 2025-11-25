@@ -3,7 +3,6 @@
 #include <list>
 #include <memory>
 #include <mutex>
-#include <shared_mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -106,20 +105,40 @@ class BufferHub;
  */
 class BufferHubLevel {
  public:
+  // Default constructor required for unordered_map
+  BufferHubLevel() = default;
+  
+  void initialize(uint32_t index, const Size& block_size, BufferHub* hub);
+
   // Returns non-owning pointer since pool retains ownership
   BlockRawPtr fetchOneFreeBlock();
+
   // Accepts non-owning pointer for blocks already in the pool
   void putOneBlock(BlockRawPtr block_ptr);
-  void refill(const Size& sz);
+  
+  // Attempts to put a block back by its data pointer. Returns true if successful.
+  bool tryPutBlock(Block::DataPtr data);
+
+  size_t busyBlockCount() const;
+
+  size_t totalBlocks() const;
+  
   ~BufferHubLevel();
-  uint32_t index = -1;                         // level index in buffer hub
-  Size block_size {static_cast<uint64_t>(0)};  // each block size at this level
-  uint32_t expand_factor = 2;
-  std::list<BlockPtr> block_list;  // Owns the blocks
+
+ private:
+  void refill(const Size& sz);
+
+  uint32_t index_ = -1;                        // level index in buffer hub
+  Size block_size_ {static_cast<uint64_t>(0)}; // each block size at this level
+  uint32_t expand_factor_ = 2;
+  
+  std::list<BlockPtr> block_list_; // Owns the blocks
   using BlockIterator = std::list<BlockPtr>::iterator;
-  std::unordered_map<Block::DataPtr, BlockIterator> free_map;
-  std::unordered_map<Block::DataPtr, BlockIterator> busy_map;
-  BufferHub* hub;
+  
+  std::unordered_map<Block::DataPtr, BlockIterator> free_map_;
+  std::unordered_map<Block::DataPtr, BlockIterator> busy_map_;
+  
+  BufferHub* hub_ = nullptr;
 };
 
 /*
@@ -180,7 +199,7 @@ class NOVA_LLM_API BufferHub {
   ~BufferHub();
 
   // Thread safety: protects all mutable state
-  mutable std::shared_mutex mutex_;
+  mutable std::mutex mutex_;
 
   std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
 
