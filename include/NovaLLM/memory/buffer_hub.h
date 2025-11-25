@@ -20,49 +20,22 @@ class BufferHub;
 
 struct Size {
  private:
-  uint64_t b_ = 0;
-  uint64_t kb_ = 0;
-  uint64_t mb_ = 0;
-  uint64_t gb_ = 0;
-  uint64_t total_bytes_ = 0;
-  const uint64_t ratio_ = 1 << 10;
-
-  void convert_in_units(uint64_t bytes);
+  uint64_t bytes_ = 0;
 
  public:
   Size() = default;
 
-  explicit Size(uint64_t sz) {
-    total_bytes_ = sz;
-    convert_in_units(total_bytes_);
-  }
+  explicit Size(uint64_t bytes) : bytes_(bytes) {}
 
-  Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb);
+  Size(const Size& rhs) = default;
 
-  Size(const Size& rhs) {
-    total_bytes_ = rhs.totalBytes();
-    convert_in_units(total_bytes_);
-  }
+  Size& operator=(const Size& rhs) = default;
 
-  uint64_t gb() const { return this->gb_; }
+  [[nodiscard]] uint64_t totalBytes() const { return bytes_; }
 
-  uint64_t mb() const { return this->mb_; }
+  bool operator==(const Size& rhs) const { return bytes_ == rhs.bytes_; }
 
-  uint64_t kb() const { return this->kb_; }
-
-  uint64_t b() const { return this->b_; }
-
-  Size& operator=(const Size& rhs) {
-    total_bytes_ = rhs.totalBytes();
-    convert_in_units(total_bytes_);
-    return *this;
-  }
-
-  [[nodiscard]] uint64_t totalBytes() const { return total_bytes_; }
-
-  bool operator==(const Size& rhs) const { return totalBytes() == rhs.totalBytes(); }
-
-  [[nodiscard]] bool isValid() const { return totalBytes() != 0; }
+  [[nodiscard]] bool isValid() const { return bytes_ != 0; }
 };
 
 struct SizeHash {
@@ -94,7 +67,7 @@ class LevelAssignStrategy {
 
 class BufferHubConfig {
  public:
-  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit, LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
+  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
       : device_type_(device_type),
         size_limit_(size_limit),
         warning_level_(warning_level),
@@ -215,7 +188,7 @@ class NOVA_LLM_API BufferHub {
 
   std::vector<Size> size_levels_;  // ensure that levels are in ascending order
 
-  Size size_limit_ {0, 0, 0, 4};  // Memory in buffer hub cannot exceed this limit
+  Size size_limit_;  // Memory in buffer hub cannot exceed this limit
 
   float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 

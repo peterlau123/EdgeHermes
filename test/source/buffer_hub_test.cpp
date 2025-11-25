@@ -14,7 +14,7 @@ class CPUBufferHubTest : public ::testing::Test {
 
  protected:
   void SetUp() override {
-    BufferHubConfig config(DeviceType::CPU, std::make_shared<CPUAllocator>(), Size(0, 0, 0, 4));
+    BufferHubConfig config(DeviceType::CPU, std::make_shared<CPUAllocator>(), Size(4ULL * 1024 * 1024 * 1024));
     buffer_hub_ = BufferHub::Builder::build(config);
   }
 

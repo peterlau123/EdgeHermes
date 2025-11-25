@@ -6,52 +6,7 @@
 
 namespace nova_llm {
 
-void Size::convert_in_units(uint64_t bytes) {
-  auto down_ratio = ratio_ * ratio_ * ratio_;  // std::pow(ratio_, 3);
-
-  // number of gb units
-  gb_ = bytes / down_ratio;
-  bytes -= gb_ * down_ratio;
-  down_ratio /= ratio_;
-
-  // number of mb units
-  mb_ = bytes / down_ratio;
-  bytes -= mb_ * down_ratio;
-  down_ratio /= ratio_;
-
-  // number of kb units
-  kb_ = bytes / down_ratio;
-  bytes -= kb_ * down_ratio;
-
-  b_ = bytes;
-}
-
-Size::Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb) {
-  b_ = b;
-  kb_ = kb;
-  mb_ = mb;
-  gb_ = gb;
-
-  if (ratio_ < b_) {
-    auto kb_cnt = b_ / ratio_;
-    b_ -= kb_cnt * ratio_;
-    kb_ += kb_cnt;
-  }
-
-  if (ratio_ < kb_) {
-    auto mb_cnt = kb_ / ratio_;
-    kb_ -= mb_cnt * ratio_;
-    mb_ += mb_cnt;
-  }
-
-  if (ratio_ < mb_) {
-    auto gb_cnt = mb_ / ratio_;
-    mb_ -= gb_cnt * ratio_;
-    gb_ += gb_cnt;
-  }
-
-  total_bytes_ = b_ + kb_ * ratio_ + mb_ * ratio_ * ratio_ + gb_ * ratio_ * ratio_ * ratio_;
-}
+// Size class is now header-only with simplified implementation
 
 namespace {
 class DefaultSizeLevelStrategy {
@@ -70,7 +25,7 @@ std::vector<Size> DefaultSizeLevelStrategy::byteSizes() {
   uint32_t base = 64;
   uint32_t ratio = 2;
   for (uint64_t i = base; i < 1024;) {
-    ret.push_back(Size(i, 0, 0, 0));
+    ret.push_back(Size(i));  // bytes
     i *= ratio;
   }
   return ret;
@@ -81,7 +36,7 @@ std::vector<Size> DefaultSizeLevelStrategy::kiloByteSizes() {
   uint32_t base = 4;
   uint32_t ratio = 2;
   for (uint64_t i = base; i < 1024;) {
-    ret.push_back(Size(0, i, 0, 0));
+    ret.push_back(Size(i * 1024));  // kilobytes to bytes
     i *= ratio;
   }
   return ret;
@@ -92,7 +47,7 @@ std::vector<Size> DefaultSizeLevelStrategy::megaByteSizes() {
   uint32_t base = 2;
   uint32_t ratio = 2;
   for (uint64_t i = base; i < 1024;) {
-    ret.push_back(Size(0, 0, i, 0));
+    ret.push_back(Size(i * 1024 * 1024));  // megabytes to bytes
     i *= ratio;
   }
   return ret;
@@ -103,7 +58,7 @@ std::vector<Size> DefaultSizeLevelStrategy::gigaByteSizes() {
   uint32_t base = 1;
   uint32_t ratio = 2;
   for (uint64_t i = base; i < 10;) {
-    ret.push_back(Size(0, 0, 0, i));
+    ret.push_back(Size(i * 1024ULL * 1024 * 1024));  // gigabytes to bytes
     i *= ratio;
   }
   return ret;

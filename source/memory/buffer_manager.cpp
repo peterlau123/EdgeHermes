@@ -28,7 +28,7 @@ bool BufferManager::init(const nova_llm::BufferManager::Config &config) {
   }
   bool ret = false;
   if (config.device_flags.has(DeviceType::CPU)) {
-    BufferHubConfig cfg(DeviceType::CPU, config.cpu.alloc, Size(0, 0, 0, 4));
+    BufferHubConfig cfg(DeviceType::CPU, config.cpu.alloc, Size(4UL*1024*1024*1024));
     buffer_hubs_[DeviceType::CPU] = BufferHub::Builder::build(cfg);
     ret |= true;
   }
