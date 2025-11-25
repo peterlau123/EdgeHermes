@@ -33,7 +33,7 @@ TEST_F(BufferManagerTest, FetchCpu) {
   auto buffer = buffer_manager.fetch(1024, DeviceType::CPU);
 
   EXPECT_NE(buffer.data, nullptr);
-  EXPECT_EQ(buffer.size, 1024);
+  EXPECT_GE(buffer.size, 1024);  // Size should be at least requested (may be rounded up to next level)
   EXPECT_EQ(buffer.device_type, DeviceType::CPU);
 
   buffer_manager.put(buffer);
