@@ -1,4 +1,11 @@
 #pragma once
+
+// Disable C4251 warning on Windows (DLL interface for STL containers)
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
 #include <cmath>
 #include <list>
 #include <memory>
@@ -66,7 +73,7 @@ class LevelAssignStrategy {
 
 class BufferHubConfig {
  public:
-  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
+  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95f)
       : device_type_(device_type),
         size_limit_(size_limit),
         warning_level_(warning_level),
@@ -128,7 +135,7 @@ class BufferHubLevel {
  private:
   void refill(const Size& sz);
 
-  uint32_t index_ = -1;                        // level index in buffer hub
+  uint32_t index_ = static_cast<uint32_t>(-1); // level index in buffer hub
   Size block_size_ {static_cast<uint64_t>(0)}; // each block size at this level
   uint32_t expand_factor_ = 2;
   
@@ -209,10 +216,14 @@ class NOVA_LLM_API BufferHub {
 
   Size size_limit_;  // Memory in buffer hub cannot exceed this limit
 
-  float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  float warning_level_ = 0.95f; // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
 
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

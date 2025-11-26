@@ -1,4 +1,11 @@
 #pragma once
+
+// Disable C4251 warning on Windows (DLL interface for STL containers)
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
@@ -153,3 +160,7 @@ class NOVA_LLM_API Tensor {
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

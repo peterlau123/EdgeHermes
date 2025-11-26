@@ -89,7 +89,7 @@ TEST_F(CPUBufferHubTest, ConcurrentAddSizeLevel) {
 
   // Each thread adds multiple size levels
   for (int t = 0; t < num_threads; ++t) {
-    threads.emplace_back([this, t, &success_count,&num_levels_per_thread]() {
+    threads.emplace_back([this, t, &success_count]() {
       for (int i = 0; i < num_levels_per_thread; ++i) {
         // Create unique sizes for each thread to avoid conflicts
         uint64_t size_bytes = (1 << 20) * (t * num_levels_per_thread + i + 100);  // 100MB+
@@ -153,7 +153,7 @@ TEST_F(CPUBufferHubTest, ConcurrentGetBlock) {
 
   // Multiple threads requesting blocks of the same size concurrently
   for (int t = 0; t < num_threads; ++t) {
-    threads.emplace_back([this, t, &thread_blocks, &successful_gets,&blocks_per_thread]() {
+    threads.emplace_back([this, t, &thread_blocks, &successful_gets]() {
       for (int i = 0; i < blocks_per_thread; ++i) {
         auto* block = getBufferHub()->getBlock(Size(4096));  // 4KB blocks
         if (block != nullptr && block->data != nullptr) {
