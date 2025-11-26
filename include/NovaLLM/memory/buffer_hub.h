@@ -24,7 +24,7 @@ namespace nova_llm {
 // Forward declaration
 class BufferHub;
 
-struct Size {
+struct NOVA_LLM_API Size {
  private:
   uint64_t bytes_ = 0;
 
@@ -71,7 +71,7 @@ class LevelAssignStrategy {
   virtual std::vector<Size> assignLevels();
 };
 
-class BufferHubConfig {
+class NOVA_LLM_API BufferHubConfig {
  public:
   BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95f)
       : device_type_(device_type),
@@ -110,7 +110,7 @@ class BufferHub;
  * @brief Buffers at the specified size level
  *
  */
-class BufferHubLevel {
+class NOVA_LLM_API BufferHubLevel {
  public:
   // Default constructor required for unordered_map
   BufferHubLevel() = default;
