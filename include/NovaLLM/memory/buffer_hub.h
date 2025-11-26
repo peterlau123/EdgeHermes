@@ -114,7 +114,15 @@ class NOVA_LLM_API BufferHubLevel {
  public:
   // Default constructor required for unordered_map
   BufferHubLevel() = default;
-  
+
+  // Move constructor and assignment for unique_ptr compatibility
+  BufferHubLevel(BufferHubLevel&&) = default;
+  BufferHubLevel& operator=(BufferHubLevel&&) = default;
+
+  // Copy operations deleted to prevent unique_ptr copying
+  BufferHubLevel(const BufferHubLevel&) = delete;
+  BufferHubLevel& operator=(const BufferHubLevel&) = delete;
+
   void initialize(uint32_t index, const Size& block_size, BufferHub* hub);
 
   // Returns non-owning pointer since pool retains ownership
@@ -208,7 +216,7 @@ class NOVA_LLM_API BufferHub {
   // Thread safety: protects all mutable state
   mutable std::mutex mutex_;
 
-  std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
+  std::unordered_map<Size, std::unique_ptr<BufferHubLevel>, SizeHash, SizeEqual> buffers_;
 
   DeviceType device_type_;
 
@@ -226,4 +234,5 @@ class NOVA_LLM_API BufferHub {
 
 #ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 #endif
