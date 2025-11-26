@@ -65,7 +65,7 @@ std::vector<Size> DefaultSizeLevelStrategy::gigaByteSizes() {
 }
 }  // namespace
 
-std::vector<Size> LevelAssignStrategy::assignLevels() {
+NOVA_LLM_API std::vector<Size> LevelAssignStrategy::assignLevels() {
   std::vector<Size> ret;
   ret.insert(ret.end(), DefaultSizeLevelStrategy::byteSizes().begin(), DefaultSizeLevelStrategy::byteSizes().end());
   ret.insert(ret.end(), DefaultSizeLevelStrategy::kiloByteSizes().begin(), DefaultSizeLevelStrategy::kiloByteSizes().end());
