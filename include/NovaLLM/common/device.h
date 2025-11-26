@@ -10,9 +10,9 @@ struct DeviceTypeFlags {
  public:
   [[nodiscard]] bool has(DeviceType type) const;
 
-  void set(DeviceType type);
+  NOVA_LLM_API void set(DeviceType type);
 
-  void clear(DeviceType type);
+  NOVA_LLM_API void clear(DeviceType type);
 
   [[nodiscard]] constexpr DeviceType get() const;
 
