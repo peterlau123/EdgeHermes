@@ -66,7 +66,7 @@ using BlockPtr = std::unique_ptr<Block>;
 // Raw non-owning pointer for temporary access
 using BlockRawPtr = Block*;
 
-class LevelAssignStrategy {
+class NOVA_LLM_API LevelAssignStrategy {
  public:
   virtual std::vector<Size> assignLevels();
 };
@@ -234,5 +234,4 @@ class NOVA_LLM_API BufferHub {
 
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif
 #endif

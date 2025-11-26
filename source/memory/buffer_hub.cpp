@@ -266,7 +266,7 @@ void BufferHub::addSizeLevel(uint32_t index, const Size& level_block_sz) {
   std::lock_guard<std::mutex> lock(mutex_);
   
   auto& level = buffers_[level_block_sz];
-  level.initialize(index, level_block_sz, this);
+  level->initialize(index, level_block_sz, this);
 }
 
 void BufferHub::eraseSizeLevel(const Size& level_sz) {
@@ -279,16 +279,16 @@ void BufferHub::eraseSizeLevel(const Size& level_sz) {
   }
 
   auto& level = it->second;
-  if (level.busyBlockCount() > 0) {
+  if (level->busyBlockCount() > 0) {
     LOG_ERROR("Level with size %llu has %zu busy blocks, cannot erase now", 
-              level_sz.totalBytes(), level.busyBlockCount());
+              level_sz.totalBytes(), level->busyBlockCount());
     return;
   }
 
   // Free all blocks in the block_list before erasing
   // The destructor will be called, but let's be explicit about cleanup
   LOG_INFO("Erasing level with size %llu, freeing %zu blocks", 
-           level_sz.totalBytes(), level.totalBlocks());
+           level_sz.totalBytes(), level->totalBlocks());
   
   // Erasing from the map will call BufferHubLevel destructor,
   // which properly frees all blocks via tearDownBlock
@@ -307,7 +307,7 @@ BlockRawPtr BufferHub::getBlock(const Size& sz) {
   BlockRawPtr ret_block {nullptr};
   if (buffers_.count(level_sz)) {
     auto& level = buffers_[level_sz];
-    auto block = level.fetchOneFreeBlock();
+    auto block = level->fetchOneFreeBlock();
     if (block && block->isValid()) {
       ret_block = block;
     }
@@ -329,7 +329,7 @@ void BufferHub::putBlock(BlockRawPtr block_ptr) {
   Size level_size(size);
   if (buffers_.count(level_size)) {
     auto& level = buffers_[level_size];
-    level.putOneBlock(block_ptr);
+    level->putOneBlock(block_ptr);
   } else {
     LOG_ERROR("Level size %d is not found in buffers!", level_size.totalBytes());
   }
@@ -346,7 +346,7 @@ void BufferHub::putBlockFromBuffer(Buffer& buffer) {
     auto& level = buffers_[level_sz];
     auto* data = static_cast<Block::DataPtr>(buffer.data);
     
-    if (!level.tryPutBlock(data)) {
+    if (!level->tryPutBlock(data)) {
        // Maybe log warning if data was expected to be there?
        // But original code just did nothing if not found in busy_map.
        // Actually original code: if (level.busy_map.count(data)) { ... }
