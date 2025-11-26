@@ -82,8 +82,8 @@ TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
 
 // Concurrent access tests
 TEST_F(CPUBufferHubTest, ConcurrentAddSizeLevel) {
-  const int num_threads = 10;
-  const int num_levels_per_thread = 5;
+  constexpr int num_threads = 10;
+  constexpr int num_levels_per_thread = 5;
   std::vector<std::thread> threads;
   std::atomic<int> success_count {0};
 
@@ -145,8 +145,8 @@ TEST_F(CPUBufferHubTest, ConcurrentEraseSizeLevel) {
 }
 
 TEST_F(CPUBufferHubTest, ConcurrentGetBlock) {
-  const int num_threads = 20;
-  const int blocks_per_thread = 5;
+  constexpr int num_threads = 20;
+  constexpr int blocks_per_thread = 5;
   std::vector<std::thread> threads;
   std::vector<std::vector<BlockRawPtr>> thread_blocks(num_threads);
   std::atomic<int> successful_gets {0};
