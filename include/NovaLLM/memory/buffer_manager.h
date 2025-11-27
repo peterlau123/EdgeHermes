@@ -8,6 +8,10 @@
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/memory/buffer_hub.h"
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 // Feature flag for AMP system
 #ifndef USE_AMP_BUFFER_MANAGER
@@ -82,3 +86,7 @@ class NOVA_LLM_API BufferManager {
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

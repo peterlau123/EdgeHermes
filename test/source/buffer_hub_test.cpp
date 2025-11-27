@@ -82,14 +82,14 @@ TEST_F(CPUBufferHubTest, PutBlockFromBuffer) {
 
 // Concurrent access tests
 TEST_F(CPUBufferHubTest, ConcurrentAddSizeLevel) {
-  const int num_threads = 10;
-  const int num_levels_per_thread = 5;
+  constexpr int num_threads = 10;
+  constexpr int num_levels_per_thread = 5;
   std::vector<std::thread> threads;
   std::atomic<int> success_count {0};
 
   // Each thread adds multiple size levels
   for (int t = 0; t < num_threads; ++t) {
-    threads.emplace_back([this, t, &success_count,&num_levels_per_thread]() {
+    threads.emplace_back([this, t, &success_count, num_levels_per_thread=num_levels_per_thread]() {
       for (int i = 0; i < num_levels_per_thread; ++i) {
         // Create unique sizes for each thread to avoid conflicts
         uint64_t size_bytes = (1 << 20) * (t * num_levels_per_thread + i + 100);  // 100MB+
@@ -145,15 +145,15 @@ TEST_F(CPUBufferHubTest, ConcurrentEraseSizeLevel) {
 }
 
 TEST_F(CPUBufferHubTest, ConcurrentGetBlock) {
-  const int num_threads = 20;
-  const int blocks_per_thread = 5;
+  constexpr int num_threads = 20;
+  constexpr int blocks_per_thread = 5;
   std::vector<std::thread> threads;
   std::vector<std::vector<BlockRawPtr>> thread_blocks(num_threads);
   std::atomic<int> successful_gets {0};
 
   // Multiple threads requesting blocks of the same size concurrently
   for (int t = 0; t < num_threads; ++t) {
-    threads.emplace_back([this, t, &thread_blocks, &successful_gets,&blocks_per_thread]() {
+    threads.emplace_back([this, t, &thread_blocks, &successful_gets, blocks_per_thread=blocks_per_thread]() {
       for (int i = 0; i < blocks_per_thread; ++i) {
         auto* block = getBufferHub()->getBlock(Size(4096));  // 4KB blocks
         if (block != nullptr && block->data != nullptr) {

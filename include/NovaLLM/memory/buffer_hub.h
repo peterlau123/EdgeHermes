@@ -1,4 +1,11 @@
 #pragma once
+
+// Disable C4251 warning on Windows (DLL interface for STL containers)
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
 #include <cmath>
 #include <list>
 #include <memory>
@@ -17,7 +24,7 @@ namespace nova_llm {
 // Forward declaration
 class BufferHub;
 
-struct Size {
+struct NOVA_LLM_API Size {
  private:
   uint64_t bytes_ = 0;
 
@@ -59,14 +66,14 @@ using BlockPtr = std::unique_ptr<Block>;
 // Raw non-owning pointer for temporary access
 using BlockRawPtr = Block*;
 
-class LevelAssignStrategy {
+class NOVA_LLM_API LevelAssignStrategy {
  public:
   virtual std::vector<Size> assignLevels();
 };
 
-class BufferHubConfig {
+class NOVA_LLM_API BufferHubConfig {
  public:
-  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95)
+  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95f)
       : device_type_(device_type),
         size_limit_(size_limit),
         warning_level_(warning_level),
@@ -103,11 +110,19 @@ class BufferHub;
  * @brief Buffers at the specified size level
  *
  */
-class BufferHubLevel {
+class NOVA_LLM_API BufferHubLevel {
  public:
   // Default constructor required for unordered_map
   BufferHubLevel() = default;
-  
+
+  // Move constructor and assignment for unique_ptr compatibility
+  BufferHubLevel(BufferHubLevel&&) = default;
+  BufferHubLevel& operator=(BufferHubLevel&&) = default;
+
+  // Copy operations deleted to prevent unique_ptr copying
+  BufferHubLevel(const BufferHubLevel&) = delete;
+  BufferHubLevel& operator=(const BufferHubLevel&) = delete;
+
   void initialize(uint32_t index, const Size& block_size, BufferHub* hub);
 
   // Returns non-owning pointer since pool retains ownership
@@ -128,7 +143,7 @@ class BufferHubLevel {
  private:
   void refill(const Size& sz);
 
-  uint32_t index_ = -1;                        // level index in buffer hub
+  uint32_t index_ = static_cast<uint32_t>(-1); // level index in buffer hub
   Size block_size_ {static_cast<uint64_t>(0)}; // each block size at this level
   uint32_t expand_factor_ = 2;
   
@@ -201,7 +216,7 @@ class NOVA_LLM_API BufferHub {
   // Thread safety: protects all mutable state
   mutable std::mutex mutex_;
 
-  std::unordered_map<Size, BufferHubLevel, SizeHash, SizeEqual> buffers_;
+  std::unordered_map<Size, std::unique_ptr<BufferHubLevel>, SizeHash, SizeEqual> buffers_;
 
   DeviceType device_type_;
 
@@ -209,10 +224,14 @@ class NOVA_LLM_API BufferHub {
 
   Size size_limit_;  // Memory in buffer hub cannot exceed this limit
 
-  float warning_level_ = 0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  float warning_level_ = 0.95f; // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
 
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

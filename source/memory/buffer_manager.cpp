@@ -4,6 +4,7 @@
 #include "NovaLLM/memory/buffer_hub.h"
 #include "NovaLLM/utils/log.h"
 #include "NovaLLM/utils/macros.h"
+// Disable C4251 warning on Windows (DLL interface for STL containers)
 
 #if USE_AMP_BUFFER_MANAGER
 #include "NovaLLM/memory/amp_buffer_manager.h"
