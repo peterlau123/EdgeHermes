@@ -33,8 +33,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_BINARY_DIR}/conan/include
 )
 
-target_link_libraries(${PROJECT_NAME} 
-    PRIVATE 
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
     NovaLLM::NovaLLM
     GTest::gtest
     GTest::gtest_main
@@ -45,6 +45,11 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+
+# Define import macro for Windows (tests consume the DLL, library exports)
+if(WIN32)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_IMPORTS)
+endif()
 
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
