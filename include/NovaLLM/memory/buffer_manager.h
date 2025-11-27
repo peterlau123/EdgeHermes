@@ -9,6 +9,11 @@
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/memory/buffer_hub.h"
 
+// Feature flag for AMP system
+#ifndef USE_AMP_BUFFER_MANAGER
+#define USE_AMP_BUFFER_MANAGER 0
+#endif
+
 namespace nova_llm {
 /*
  * @todo: use segregated free list

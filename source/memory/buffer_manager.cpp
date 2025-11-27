@@ -5,6 +5,11 @@
 #include "NovaLLM/utils/log.h"
 #include "NovaLLM/utils/macros.h"
 
+#if USE_AMP_BUFFER_MANAGER
+#include "NovaLLM/memory/amp_buffer_manager.h"
+#include "NovaLLM/memory/allocator_wrapper.h"
+#endif
+
 namespace nova_llm {
 
 
