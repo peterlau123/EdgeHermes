@@ -1,5 +1,6 @@
 [![Ubuntu](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml)
 [![Windows](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml)
+[![MacOS](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml)
 [![Code Quality](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml)
 [![Documentation](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml)
 [![codecov](https://codecov.io/gh/peterlau123/NovaLLM/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/NovaLLM)
@@ -16,8 +17,9 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 
 - 🚀 **Lightweight**: Minimal dependencies, focusing on core functionality
 - 🔧 **Extensible**: Easy to extend with custom models and optimizations
-- 🎯 **Efficient**: Support for extreme low-bit quantization
-- 🛠️ **Flexible**: Support for OpenAI Triton and ThunderKittens kernels
+- 🎯 **Efficient**: Support for low-bit quantization and custom kernels
+- 🛠️ **Portable**: Support inference on MacOS/Linux/Windows platforms
+- 👨‍💻 **Developer-friendly**: Easy to use and integrate into other projects
 
 ## Supported Models
 
@@ -67,6 +69,42 @@ cmake --build .
 
 ### Scripted builds
 
+#### Option 1: Unified Build Script (Recommended)
+
+The root `build.sh` provides a comprehensive build system with full control:
+
+```bash
+# Basic build (Release mode)
+./build.sh
+
+# Build with tests
+./build.sh -t
+
+# Clean build (removes all build-* and install-* directories)
+./build.sh -c -r
+
+# Build everything (main + tests + standalone + package)
+./build.sh -a
+
+# Debug build with verbose output
+./build.sh -d -v
+
+# Show all options
+./build.sh --help
+```
+
+**Key features:**
+- `-c, --clean`: Cleans all `build-*` and `install-*` directories (including custom directories specified via `--build-dir`/`--install-dir`) before building
+- `-r, --release`: Build in Release mode (default)
+- `-d, --debug`: Build in Debug mode
+- `-t, --tests`: Build and run tests
+- `-s, --standalone`: Build standalone application
+- `-p, --package`: Create Conan package
+- `-a, --all`: Build everything
+- `-v, --verbose`: Enable verbose output
+
+#### Option 2: Platform-Specific Scripts
+
 Unified wrapper (auto-detects OS):
 
 ```bash
@@ -83,6 +121,8 @@ scripts/build_ubuntu.sh --type Debug --enable-logging OFF
 # Windows (PowerShell)
 scripts/build_windows.ps1 -Configuration Release -EnableLogging ON -WithTests
 ```
+
+**Note:** The root `build.sh` is more feature-rich and recommended for development, while `scripts/build.sh` is a lightweight wrapper for CI/CD pipelines.
 
 ### Makefile builds
 - Use scripts via Make: `make script-build` (honors BUILD_TYPE, ENABLE_LOGGING, ENABLE_TESTS)

@@ -10,7 +10,7 @@ SeparateDefinitionBlocks: Always
 # 基础缩进配置
 IndentWidth: 2
 ContinuationIndentWidth: 4
-ColumnLimit: 100
+ColumnLimit: 200
 
 # 函数参数和初始化列表格式
 BinPackArguments: false

@@ -1,0 +1,11 @@
+# Pre-commit hooks metadata for NovaLLM
+# This allows the hooks to be used as pre-commit hooks
+
+- id: check-branch-name
+  name: Check branch name format
+  description: Validates that branch names follow <type>-<description> format
+  entry: python .githooks/check_branch_name.py
+  language: system
+  pass_filenames: false
+  always_run: true
+  stages: [post-checkout]

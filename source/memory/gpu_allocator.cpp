@@ -16,9 +16,7 @@ void* CUDAAllocator::do_allocate(size_t size) {
   return ptr;
 }
 
-void CUDAAllocator::do_deallocate(void* ptr) {
-  cudaFree(ptr);
-}
+void CUDAAllocator::do_deallocate(void* ptr) { cudaFree(ptr); }
 
-}
+}  // namespace nova_llm
 #endif

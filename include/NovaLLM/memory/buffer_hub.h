@@ -1,93 +1,47 @@
 #pragma once
+
+// Disable C4251 warning on Windows (DLL interface for STL containers)
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
+#include <cmath>
 #include <list>
+#include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
-#include <cmath>
+
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
-#include "NovaLLM/utils/template.h"
 #include "NovaLLM/utils/macros.h"
+#include "NovaLLM/utils/template.h"
 
 namespace nova_llm {
 
-struct Size {
+// Forward declaration
+class BufferHub;
+
+struct NOVA_LLM_API Size {
  private:
-  uint64_t b_ = 0;
-  uint64_t kb_ = 0;
-  uint64_t mb_ = 0;
-  uint64_t gb_ = 0;
-  uint64_t total_bytes_ = 0;
-  const uint64_t ratio_ = 1024;
-
-  void convert_in_units(uint64_t bytes) {
-    auto down_ratio = std::pow(ratio_, 3);
-
-    gb_ = bytes / down_ratio;
-    bytes -= gb_ * down_ratio;
-    down_ratio /= ratio_;
-
-    mb_ = bytes / down_ratio;
-    bytes -= mb_ * down_ratio;
-    down_ratio /= ratio_;
-
-    kb_ = bytes / down_ratio;
-    bytes -= kb_ * down_ratio;
-
-    b_ = bytes;
-  }
+  uint64_t bytes_ = 0;
 
  public:
   Size() = default;
 
-  explicit Size(uint64_t sz) {
-    total_bytes_ = sz;
-    convert_in_units(total_bytes_);
-  }
+  explicit Size(uint64_t bytes) : bytes_(bytes) {}
 
-  Size(uint64_t b, uint64_t kb, uint64_t mb, uint64_t gb) {
-    b_ = b;
-    kb_ = kb;
-    mb_ = mb;
-    gb_ = gb;
+  Size(const Size& rhs) = default;
 
-    if (ratio_ < b_) {
-      auto kb_cnt = b_ / ratio_;
-      b_ -= kb_cnt * ratio_;
-      kb_ += kb_cnt;
-    }
+  Size& operator=(const Size& rhs) = default;
 
-    if (ratio_ < kb_) {
-      auto mb_cnt = kb_ / ratio_;
-      kb_ -= mb_cnt * ratio_;
-      mb_ += mb_cnt;
-    }
+  [[nodiscard]] uint64_t totalBytes() const { return bytes_; }
 
-    if (ratio_ < mb_) {
-      auto gb_cnt = mb_ / ratio_;
-      mb_ -= gb_cnt * ratio_;
-      gb_ += gb_cnt;
-    }
+  bool operator==(const Size& rhs) const { return bytes_ == rhs.bytes_; }
 
-    total_bytes_ = b_ + kb_ * ratio_ + mb_ * ratio_ * ratio_ + gb_ * ratio_ * ratio_ * ratio_;
-  }
-
-  Size(const Size& rhs) {
-    total_bytes_ = rhs.totalBytes();
-    convert_in_units(total_bytes_);
-  }
-
-  Size& operator=(const Size& rhs) {
-    total_bytes_ = rhs.totalBytes();
-    convert_in_units(total_bytes_);
-    return *this;
-  }
-
-  [[nodiscard]] uint64_t totalBytes() const { return total_bytes_; }
-
-  bool operator==(const Size& rhs) const { return totalBytes() == rhs.totalBytes(); }
-
-  [[nodiscard]] bool isValid() const { return totalBytes() != 0; }
+  [[nodiscard]] bool isValid() const { return bytes_ != 0; }
 };
 
 struct SizeHash {
@@ -95,35 +49,111 @@ struct SizeHash {
 };
 
 struct SizeEqual {
-  bool operator()(const Size& lhs, const Size& rhs) const {
-    return lhs.totalBytes() == rhs.totalBytes();
-  }
+  bool operator()(const Size& lhs, const Size& rhs) const { return lhs.totalBytes() == rhs.totalBytes(); }
 };
 
 struct Block {
   using DataPtr = uint8_t*;
-  //using BlockPtr = Block*;
   DataPtr data = nullptr;
   uint64_t size = 0;
   int32_t ref_cnt = 0;
 
-  bool isValid() const {
-    // return data != nullptr && (prev != nullptr || next != nullptr) && 0 != size;
-    return data != nullptr && 0 != size;
-  }
+  bool isValid() const { return data != nullptr && 0 != size; }
 };
 
-using BlockPtr = Block*;
+// BlockPtr for owning pointers (used in collections)
+using BlockPtr = std::unique_ptr<Block>;
+// Raw non-owning pointer for temporary access
+using BlockRawPtr = Block*;
 
-class DefaultSizeLevelStrategy {
+class NOVA_LLM_API LevelAssignStrategy {
  public:
-  NOVA_LLM_API static std::vector<Size> byteSizes() ;
+  virtual std::vector<Size> assignLevels();
+};
 
-  NOVA_LLM_API static std::vector<Size> kiloByteSizes() ;
+class NOVA_LLM_API BufferHubConfig {
+ public:
+  BufferHubConfig(DeviceType device_type, IAllocatorSharedPtr allocator, Size size_limit=Size(4UL*1024*1024*1024), LevelAssignStrategy strategy = LevelAssignStrategy(), float warning_level = 0.95f)
+      : device_type_(device_type),
+        size_limit_(size_limit),
+        warning_level_(warning_level),
+        allocator_(allocator),
+        level_assign_strategy_(strategy) {
+    size_levels_ = strategy.assignLevels();
+  };
 
-  NOVA_LLM_API static std::vector<Size> megaByteSizes() ;
+  void setLevelAssignStrategy(LevelAssignStrategy strategy) { size_levels_ = strategy.assignLevels(); }
 
-  NOVA_LLM_API static std::vector<Size> gigaByteSizes() ;
+  void setWarningLevel(float warning_level) { warning_level_ = warning_level; }
+
+  DeviceType deviceType() const { return device_type_; }
+
+  const std::vector<Size>& sizeLevels() const { return size_levels_; }
+
+  Size sizeLimit() const { return size_limit_; }
+
+  float warningLevel() const { return warning_level_; }
+
+  IAllocatorSharedPtr allocator() const { return allocator_; }
+
+ private:
+  DeviceType device_type_;
+  std::vector<Size> size_levels_;  // ensure that levels are in ascending order
+  Size size_limit_;                // Memory in buffer hub cannot exceed this limit
+  float warning_level_;            // Be cautious when memory in buffer hub exceeds size_limit*warning_level
+  IAllocatorSharedPtr allocator_;
+  LevelAssignStrategy level_assign_strategy_;
+};
+
+class BufferHub;
+/**
+ * @brief Buffers at the specified size level
+ *
+ */
+class NOVA_LLM_API BufferHubLevel {
+ public:
+  // Default constructor required for unordered_map
+  BufferHubLevel() = default;
+
+  // Move constructor and assignment for unique_ptr compatibility
+  BufferHubLevel(BufferHubLevel&&) = default;
+  BufferHubLevel& operator=(BufferHubLevel&&) = default;
+
+  // Copy operations deleted to prevent unique_ptr copying
+  BufferHubLevel(const BufferHubLevel&) = delete;
+  BufferHubLevel& operator=(const BufferHubLevel&) = delete;
+
+  void initialize(uint32_t index, const Size& block_size, BufferHub* hub);
+
+  // Returns non-owning pointer since pool retains ownership
+  BlockRawPtr fetchOneFreeBlock();
+
+  // Accepts non-owning pointer for blocks already in the pool
+  void putOneBlock(BlockRawPtr block_ptr);
+  
+  // Attempts to put a block back by its data pointer. Returns true if successful.
+  bool tryPutBlock(Block::DataPtr data);
+
+  size_t busyBlockCount() const;
+
+  size_t totalBlocks() const;
+  
+  ~BufferHubLevel();
+
+ private:
+  void refill(const Size& sz);
+
+  uint32_t index_ = static_cast<uint32_t>(-1); // level index in buffer hub
+  Size block_size_ {static_cast<uint64_t>(0)}; // each block size at this level
+  uint32_t expand_factor_ = 2;
+  
+  std::list<BlockPtr> block_list_; // Owns the blocks
+  using BlockIterator = std::list<BlockPtr>::iterator;
+  
+  std::unordered_map<Block::DataPtr, BlockIterator> free_map_;
+  std::unordered_map<Block::DataPtr, BlockIterator> busy_map_;
+  
+  BufferHub* hub_ = nullptr;
 };
 
 /*
@@ -138,79 +168,70 @@ class DefaultSizeLevelStrategy {
  * */
 class NOVA_LLM_API BufferHub {
  public:
-  struct Config {
-    DeviceType device_type;
-    std::vector<Size> size_levels;  // ensure that levels are in ascending order
-    Size size_limit {0, 0, 0, 8};   // Memory in buffer hub cannot exceed this limit
-    float warning_level =
-        0.95;  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
-    IAllocatorSharedPtr allocator;
-  };
-
-  struct Level {
-   public:
-    BlockPtr fetchOneFreeBlock();
-
-    void putOneBlock(const BlockPtr& block_ptr);
-
-    void refill(const Size& sz);
-
-    ~Level();
-
-    uint32_t index = -1;
-    Size level_size {static_cast<uint64_t>(0)};  // each block size at this level
-
-    //using BlockPtr = Block*;
-    std::list<BlockPtr> block_list;
-    using BlockIterator = std::list<BlockPtr>::iterator;
-    std::unordered_map<Block::DataPtr, BlockIterator> free_map;
-    std::unordered_map<Block::DataPtr, BlockIterator> busy_map;
-    BufferHub* hub;
-  };
+  friend class BufferHubConfig;
+  friend class BufferHubLevel;
 
   class Builder {
    public:
-    NOVA_LLM_API static BufferHub* build(const Config& config);
+    NOVA_LLM_API static BufferHub* build(const BufferHubConfig& config);
 
     NOVA_LLM_API static void destroy(BufferHub** hub);
   };
 
-  void initConfig(const Config& config);
+  void initConfig(const BufferHubConfig& config);
 
-  BlockPtr getBlock(const Size& sz);
+  // Returns non-owning pointer to block managed by pool
+  BlockRawPtr getBlock(const Size& sz);
 
-  void putBlock(const BlockPtr& block);
+  // Accepts non-owning pointer to block managed by pool
+  void putBlock(BlockRawPtr block);
 
-  void putBlockFromBuffer(const Buffer& buffer);
-
- private:
-  Block::DataPtr allocData(uint64_t sz);
-  void deallocData(Block::DataPtr& data_ptr);
-
-  BlockPtr allocBlock();
-  void deallocateBlock(BlockPtr& block_ptr);
-
-  BlockPtr setUpBlock(const Size& sz);  // alloc and init block
-
-  void tearDownBlock(BlockPtr& block);
+  // Return a buffer to the pool and clear the Buffer to avoid dangling pointers.
+  void putBlockFromBuffer(Buffer& buffer);
 
   void addSizeLevel(uint32_t index, const Size& level_sz);
 
   void eraseSizeLevel(const Size& level_sz);
 
+ private:
+  Block::DataPtr allocData(uint64_t sz);
+  void deallocData(Block::DataPtr& data_ptr);
+
+  // Creates a new block with ownership
+  BlockPtr allocBlock();
+  void deallocateBlock(BlockPtr block);
+
+  // Creates and initializes a new block
+  BlockPtr setUpBlock(const Size& sz);
+
+  // Cleans up and destroys a block
+  void tearDownBlock(BlockPtr block);
+
   [[nodiscard]] Size gradeLevel(const Size& sz) const;
 
-  BufferHub() = default;
+  BufferHub();
 
-  std::unordered_map<Size, Level, SizeHash, SizeEqual> buffers_;
+  ~BufferHub();
+
+  // Thread safety: protects all mutable state
+  mutable std::mutex mutex_;
+
+  std::unordered_map<Size, std::unique_ptr<BufferHubLevel>, SizeHash, SizeEqual> buffers_;
+
   DeviceType device_type_;
-  std::vector<Size> size_levels_;  // ensure that levels are in ascending order
-  Size size_limit_ {0, 0, 0, 4};   // Memory in buffer hub cannot exceed this limit
 
-  // Be cautious when memory in buffer hub exceeds size_limit*warning_level
-  float warning_level_ = 0.95;
+  std::vector<Size> size_levels_;  // ensure that levels are in ascending order
+
+  Size size_limit_;  // Memory in buffer hub cannot exceed this limit
+
+  float warning_level_ = 0.95f; // Be cautious when memory in buffer hub exceeds size_limit*warning_level
 
   IAllocatorSharedPtr allocator_;
+
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

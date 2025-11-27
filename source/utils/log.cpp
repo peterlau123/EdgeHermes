@@ -10,9 +10,7 @@
 
 namespace nova_llm {
 
-void Logger::init(const std::string& name,
-                  const std::string& logFile,
-                  spdlog::level::level_enum level) {
+void Logger::init(const std::string& name, const std::string& logFile, spdlog::level::level_enum level) {
   try {
     // Refer to
     // https://github.com/gabime/spdlog?tab=readme-ov-file#logger-with-multi-sinks---each-with-a-different-format-and-log-level
@@ -25,8 +23,7 @@ void Logger::init(const std::string& name,
     console_sink->set_pattern(pattern_str);  // Use set_pattern
 
     // Create file sink
-    auto file_sink =
-        std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logFile, 1024 * 1024 * 5, 3);
+    auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logFile, 1024 * 1024 * 5, 3);
     file_sink->set_level(level);
     file_sink->set_pattern(pattern_str);  // Use set_pattern
 

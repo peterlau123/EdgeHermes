@@ -1,12 +1,17 @@
 #pragma once
 #include <cstddef>
 #include <functional>
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
+
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/memory/buffer_hub.h"
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 namespace nova_llm {
 /*
@@ -54,18 +59,18 @@ class NOVA_LLM_API BufferManager {
 
   BufferManager& operator=(BufferManager&&) = delete;  // Disable move assignment
 
-  [[nodiscard("Do not drop isInit return value")]] bool isInited() const { return is_init_; }
+  [[nodiscard]] bool isInited() const { return is_init_; }
 
   Buffer fetch(size_t size, DeviceType device_type);
 
-  void put(const Buffer& buffer);
+  // Return a buffer obtained from fetch back to the pool and clear it.
+  void put(Buffer& buffer);
 
   ~BufferManager();
 
- private:
-
   void destroy();
 
+ private:
   BufferManager() = default;
 
   bool init(const Config& config);
@@ -76,3 +81,7 @@ class NOVA_LLM_API BufferManager {
 };
 
 }  // namespace nova_llm
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

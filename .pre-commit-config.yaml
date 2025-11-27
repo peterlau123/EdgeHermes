@@ -1,0 +1,102 @@
+# Pre-commit hooks for NovaLLM
+# Install: pip install pre-commit
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # Branch name validation - local hook (works out of the box)
+  - repo: local
+    hooks:
+      - id: check-branch-name
+        name: Check branch name format
+        entry: python3 .githooks/check_branch_name.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [post-checkout, manual]
+
+  # Conventional Commits - enforce commit message format
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args:
+          - feat        # New feature
+          - fix         # Bug fix
+          - docs        # Documentation only changes
+          - style       # Code style changes (formatting, no logic change)
+          - refactor    # Code refactoring (no feature/fix)
+          - perf        # Performance improvements
+          - test        # Adding/updating tests
+          - build       # Build system or dependencies
+          - ci          # CI/CD changes
+          - chore       # Other changes (tooling, maintenance)
+          - revert      # Revert previous commit
+
+  # Basic file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-toml
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: detect-private-key
+
+  # C++ formatting with clang-format
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.8
+    hooks:
+      - id: clang-format
+        types_or: [c++, c]
+        args: ['-i']  # In-place formatting
+
+  # CMake formatting
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
+      - id: cmake-lint
+        args: [--disabled-codes=C0103]
+
+  # YAML/JSON formatting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        types_or: [yaml, json, markdown]
+        args: [--write, --prose-wrap=always]
+
+  # Shell script checks
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+
+  # Python formatting (for scripts)
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+      build.*|
+      install.*|
+      \.git|
+      \.github/workflows|
+      documentation/.*|
+      docs/.*
+  )$
