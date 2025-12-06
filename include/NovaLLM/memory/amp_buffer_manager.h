@@ -28,7 +28,7 @@ class NOVA_LLM_API AMPBufferManager {
     DeviceTypeFlags device_flags;
 
     // Allocator options for each device type
-    std::unordered_map<DeviceType, nova_llm::amp::IMemoryAllocatorPtr> allocators;
+    std::unordered_map<DeviceType, nova_llm::amp::IMemoryAllocatorSharedPtr> allocators;
   };
 
   /**
@@ -54,7 +54,7 @@ class NOVA_LLM_API AMPBufferManager {
    * @brief Constructor
    * @param config Configuration for the AMP system
    */
-  explicit AMPBufferManager(const Config& config);
+  explicit AMPBufferManager(Config config);
 
   // Disable copy and move
   AMPBufferManager(const AMPBufferManager&) = delete;
