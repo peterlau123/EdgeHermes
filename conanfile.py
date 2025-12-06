@@ -14,6 +14,7 @@ class NovallmConan(ConanFile):
         "fPIC": [True, False],
         "enable_logging": [True, False], # Corresponds to NOVA_LLM_ENABLE_LOGGING
         "build_tests": [True, False], # Corresponds to NOVA_LLM_BUILD_TESTS
+        "enable_tcmalloc": [True, False], # Enable TCMalloc for AMP memory system
     }
 
     default_options = {
@@ -21,6 +22,7 @@ class NovallmConan(ConanFile):
         "fPIC": True,
         "enable_logging": True,
         "build_tests": False,
+        "enable_tcmalloc": False,
     }
 
     # Requirements - these are the dependencies your project uses
@@ -30,6 +32,10 @@ class NovallmConan(ConanFile):
             self.requires("spdlog/1.12.0")
         if self.options.build_tests:
             self.requires("gtest/1.12.1")
+
+        # TCMalloc support for AMP memory system
+        if hasattr(self.options, 'enable_tcmalloc') and self.options.enable_tcmalloc:
+            self.requires("gperftools/2.10")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -48,6 +54,7 @@ class NovallmConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["NOVA_LLM_ENABLE_LOGGING"] = self.options.enable_logging
         tc.variables["NOVA_LLM_BUILD_TESTS"] = self.options.build_tests
+        tc.variables["NOVA_LLM_ENABLE_TCMALLOC"] = self.options.enable_tcmalloc
         tc.generate()
 
     def build(self):
@@ -66,4 +73,4 @@ class NovallmConan(ConanFile):
         self.cpp_info.libs = ["NovaLLM"]
 
     # Note: For a project conanfile.py, you typically don't implement build(), package(), etc.
-    # Those are for creating packages of YOUR project. This conanfile is just for managing requirements. 
+    # Those are for creating packages of YOUR project. This conanfile is just for managing requirements.
