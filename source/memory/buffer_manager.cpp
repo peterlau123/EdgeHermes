@@ -58,9 +58,10 @@ bool nova_llm::BufferManager::init(const Config& config) {
     }
 
     if (config.device_flags.has(DeviceType::CUDA)) {
-      // For GPU, use standard allocator (GPU support is stubbed)
+      // For GPU, use CUDA allocator (even though it's currently stubbed)
+      // This ensures proper interface even if CUDA isn't available yet
       amp_config.allocators[DeviceType::CUDA] =
-          std::make_shared<nova_llm::amp::StandardAllocator>();
+          std::make_shared<nova_llm::amp::CUDAAllocator>(false);  // false = regular CUDA memory
     }
 
     // Create AMP buffer manager
