@@ -49,22 +49,16 @@ bool nova_llm::BufferManager::init(const Config& config) {
     amp_config.device_flags = config.device_flags;
 
     // Set up allocators based on legacy config
-    if (config.device_flags.has(DeviceType::CPU) && config.cpu.alloc) {
-      // Convert IAllocator to IMemoryAllocator using wrapper
-      amp_config.allocators[DeviceType::CPU] =
-          std::make_shared<nova_llm::amp::StandardAllocator>();
-    } else {
-      // Use standard allocator as fallback
+    // Note: For now, we always use StandardAllocator since legacy IAllocator
+    // interface is not directly compatible with IMemoryAllocator.
+    // TODO: Create an adapter wrapper if custom allocators need to be supported
+    if (config.device_flags.has(DeviceType::CPU)) {
       amp_config.allocators[DeviceType::CPU] =
           std::make_shared<nova_llm::amp::StandardAllocator>();
     }
 
-    if (config.device_flags.has(DeviceType::CUDA) && config.gpu.alloc) {
+    if (config.device_flags.has(DeviceType::CUDA)) {
       // For GPU, use standard allocator (GPU support is stubbed)
-      amp_config.allocators[DeviceType::CUDA] =
-          std::make_shared<nova_llm::amp::StandardAllocator>();
-    } else if (config.device_flags.has(DeviceType::CUDA)) {
-      // Use standard allocator as fallback for GPU
       amp_config.allocators[DeviceType::CUDA] =
           std::make_shared<nova_llm::amp::StandardAllocator>();
     }
