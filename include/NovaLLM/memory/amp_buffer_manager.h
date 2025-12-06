@@ -6,7 +6,7 @@
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/memory/amp_system.h"
 #include "NovaLLM/memory/arena.h"
-#include "NovaLLM/memory/allocator_wrapper.h"
+#include "NovaLLM/memory/allocator.h"
 
 namespace nova_llm {
 

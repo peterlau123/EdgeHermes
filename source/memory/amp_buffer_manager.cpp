@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "NovaLLM/memory/allocator_wrapper.h"
+#include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/thread_cache.h"
 #include "NovaLLM/utils/log.h"
 

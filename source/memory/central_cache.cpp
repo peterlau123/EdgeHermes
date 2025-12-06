@@ -1,6 +1,6 @@
 #include "NovaLLM/memory/central_cache.h"
 #include "NovaLLM/memory/amp_system.h"
-#include "NovaLLM/memory/allocator_wrapper.h"
+#include "NovaLLM/memory/allocator.h"
 
 #include <algorithm>
 #include <memory>

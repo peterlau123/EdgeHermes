@@ -1,4 +1,4 @@
-#include "NovaLLM/memory/allocator_wrapper.h"
+#include "NovaLLM/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <thread>

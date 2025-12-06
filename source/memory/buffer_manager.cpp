@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "NovaLLM/memory/amp_buffer_manager.h"
-#include "NovaLLM/memory/allocator_wrapper.h"
+#include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/utils/log.h"
 
 // Global instance for singleton pattern
