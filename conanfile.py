@@ -17,6 +17,7 @@ class NovallmConan(ConanFile):
         "enable_tcmalloc": [True, False], # Enable TCMalloc for AMP memory system
         "enable_jemalloc": [True, False], # Enable jemalloc for AMP memory system
         "enable_mimalloc": [True, False], # Enable mimalloc for AMP memory system
+        "enable_cuda": [True, False], # Enable CUDA support
     }
 
     default_options = {
@@ -27,6 +28,7 @@ class NovallmConan(ConanFile):
         "enable_tcmalloc": False,
         "enable_jemalloc": False,
         "enable_mimalloc": False,
+        "enable_cuda": False,
     }
 
     # Requirements - these are the dependencies your project uses
@@ -65,6 +67,7 @@ class NovallmConan(ConanFile):
         tc.variables["NOVA_LLM_ENABLE_TCMALLOC"] = self.options.enable_tcmalloc
         tc.variables["NOVA_LLM_ENABLE_JEMALLOC"] = getattr(self.options, 'enable_jemalloc', False)
         tc.variables["NOVA_LLM_ENABLE_MIMALLOC"] = getattr(self.options, 'enable_mimalloc', False)
+        tc.variables["NOVA_LLM_ENABLE_CUDA"] = getattr(self.options, 'enable_cuda', False)
         tc.generate()
 
     def build(self):

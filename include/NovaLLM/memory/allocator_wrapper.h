@@ -119,7 +119,15 @@ class NOVA_LLM_API CUDAAllocator : public IMemoryAllocator {
   const char* Name() const override { return "CUDA"; }
 
  private:
+  /**
+   * @brief Check if CUDA is available on this system
+   * @return true if CUDA is available and functional
+   */
+  bool CheckCudaAvailability();
+
   bool use_managed_memory_;
+  bool cuda_available_;
+  int device_count_;
 };
 
 /**
