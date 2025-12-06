@@ -15,6 +15,8 @@ class NovallmConan(ConanFile):
         "enable_logging": [True, False], # Corresponds to NOVA_LLM_ENABLE_LOGGING
         "build_tests": [True, False], # Corresponds to NOVA_LLM_BUILD_TESTS
         "enable_tcmalloc": [True, False], # Enable TCMalloc for AMP memory system
+        "enable_jemalloc": [True, False], # Enable jemalloc for AMP memory system
+        "enable_mimalloc": [True, False], # Enable mimalloc for AMP memory system
     }
 
     default_options = {
@@ -23,6 +25,8 @@ class NovallmConan(ConanFile):
         "enable_logging": True,
         "build_tests": False,
         "enable_tcmalloc": False,
+        "enable_jemalloc": False,
+        "enable_mimalloc": False,
     }
 
     # Requirements - these are the dependencies your project uses
@@ -33,9 +37,13 @@ class NovallmConan(ConanFile):
         if self.options.build_tests:
             self.requires("gtest/1.12.1")
 
-        # TCMalloc support for AMP memory system
+        # Third-party allocator support for AMP memory system
         if hasattr(self.options, 'enable_tcmalloc') and self.options.enable_tcmalloc:
             self.requires("gperftools/2.10")
+        if hasattr(self.options, 'enable_jemalloc') and self.options.enable_jemalloc:
+            self.requires("jemalloc/5.3.0")
+        if hasattr(self.options, 'enable_mimalloc') and self.options.enable_mimalloc:
+            self.requires("mimalloc/2.1.2")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -55,6 +63,8 @@ class NovallmConan(ConanFile):
         tc.variables["NOVA_LLM_ENABLE_LOGGING"] = self.options.enable_logging
         tc.variables["NOVA_LLM_BUILD_TESTS"] = self.options.build_tests
         tc.variables["NOVA_LLM_ENABLE_TCMALLOC"] = self.options.enable_tcmalloc
+        tc.variables["NOVA_LLM_ENABLE_JEMALLOC"] = getattr(self.options, 'enable_jemalloc', False)
+        tc.variables["NOVA_LLM_ENABLE_MIMALLOC"] = getattr(self.options, 'enable_mimalloc', False)
         tc.generate()
 
     def build(self):
