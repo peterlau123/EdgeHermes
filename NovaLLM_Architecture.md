@@ -1,147 +1,102 @@
 # NovaLLM Architecture Overview
 
-## Architecture Diagram
+## Architecture Diagram (积木式分层结构)
 
 ```mermaid
-graph TB
-    %% Application Layer
-    subgraph "Application Layer"
-        APP[Applications<br/>Built on Runtime]
-        API[API Interface]
+flowchart TD
+    %% Application Layer - Top Block
+    subgraph APP_BLOCK["📱 Application Layer<br/>应用层"]
+        A1[Applications<br/>应用]
+        A2[API Interface<br/>API接口]
     end
 
-    %% Engine Layer
-    subgraph "Engine Layer"
-        ENGINE[Engine<br/>LLM Processing Logic]
-
-        subgraph "Engine Components"
-            INPUT[input_processor<br/>Text/Token Processing]
-            INFERENCE[inference<br/>Model Execution]
-            OUTPUT[output_processor<br/>Result Formatting]
-        end
+    %% Engine Layer - Second Block
+    subgraph ENGINE_BLOCK["⚙️ Engine Layer<br/>引擎层"]
+        E1[input_processor<br/>输入处理器]
+        E2[inference<br/>推理引擎]
+        E3[output_processor<br/>输出处理器]
     end
 
-    %% LLM Inference Layer
-    subgraph "LLM Inference Layer"
-        INFERENCE_CORE[LLM Inference Core]
-
-        subgraph "Model Layer"
-            MODEL[Model<br/>Neural Network Architecture]
-            LAYERS[Layers<br/>Attention, FeedForward, etc.]
-            WEIGHTS[Weights & Biases<br/>Model Parameters]
-        end
+    %% LLM Inference Layer - Third Block
+    subgraph INFERENCE_BLOCK["🧠 LLM Inference Layer<br/>LLM推理层"]
+        I1[Model<br/>模型架构]
+        I2[Layers<br/>网络层]
+        I3[Weights<br/>权重参数]
     end
 
-    %% Base Abstraction Layer
-    subgraph "Base Abstraction Layer"
-        DATA_STRUCTS[Data Structures]
-
-        subgraph "Core Data Types"
-            TENSOR[Tensor<br/>Multi-dimensional Arrays]
-            BUFFER[Buffer<br/>Memory Management]
-            DEVICE[Device<br/>CPU/GPU/NPU Abstraction]
-            DTYPE[DataType<br/>INT8, FLOAT32, etc.]
-        end
+    %% Base Abstraction Layer - Fourth Block
+    subgraph ABSTRACTION_BLOCK["🏗️ Base Abstraction Layer<br/>基础抽象层"]
+        B1[Tensor<br/>张量]
+        B2[Buffer<br/>缓冲区]
+        B3[Device<br/>设备]
+        B4[DataType<br/>数据类型]
     end
 
-    %% Memory Layer
-    subgraph "Memory Layer"
-        MEMORY_MGR[Memory Management System]
-
-        subgraph "CPU Memory"
-            CPU_ALLOC[CPU Allocators]
-            CPU_STANDARD[StandardAllocator<br/>malloc/free]
-            CPU_TCMALLOC[TCMallocAllocator<br/>High-performance]
-            CPU_JEMALLOC[JemallocAllocator<br/>Scalable]
-            CPU_MIMALLOC[MimallocAllocator<br/>Modern]
+    %% Memory Layer - Bottom Block
+    subgraph MEMORY_BLOCK["💾 Memory Layer<br/>内存层"]
+        subgraph CPU_MEM["🖥️ CPU Memory<br/>CPU内存"]
+            C1[StandardAllocator]
+            C2[TCMallocAllocator]
+            C3[JemallocAllocator]
+            C4[MimallocAllocator]
         end
 
-        subgraph "GPU Memory"
-            GPU_ALLOC[GPU Allocators]
-            GPU_CUDA[CUDAAllocator<br/>cudaMalloc/cudaFree]
-            GPU_MANAGED[Managed Memory<br/>Unified Addressing]
-            GPU_DEVICE[Device Memory<br/>GPU Exclusive]
+        subgraph GPU_MEM["🎮 GPU Memory<br/>GPU内存"]
+            G1[CUDAAllocator]
+            G2[Managed Memory]
+            G3[Device Memory]
         end
 
-        subgraph "NPU Memory"
-            NPU_ALLOC[NPU Allocators]
-            NPU_SPECIFIC[NPU-specific<br/>Memory Management]
+        subgraph NPU_MEM["🔧 NPU Memory<br/>NPU内存"]
+            N1[NPU Allocators]
         end
 
-        subgraph "Memory Infrastructure"
-            AMP[AMP System<br/>Adaptive Memory Pool]
-            ARENA_ROUTER[Arena Router<br/>Device Selection]
-            THREAD_CACHE[Thread Cache<br/>Per-thread Pools]
-            CENTRAL_CACHE[Central Cache<br/>Shared Free Lists]
-            PAGE_HEAP[Page Heap<br/>Large Allocations]
+        subgraph INFRA["🏛️ Memory Infrastructure<br/>内存基础设施"]
+            M1[AMP System]
+            M2[Arena Router]
+            M3[Thread Cache]
+            M4[Central Cache]
+            M5[Page Heap]
         end
     end
 
-    %% Data Flow Connections
-    APP --> API
-    API --> ENGINE
+    %% Layer Connections (积木堆叠)
+    APP_BLOCK --> ENGINE_BLOCK
+    ENGINE_BLOCK --> INFERENCE_BLOCK
+    INFERENCE_BLOCK --> ABSTRACTION_BLOCK
+    ABSTRACTION_BLOCK --> MEMORY_BLOCK
 
-    ENGINE --> INPUT
-    INPUT --> INFERENCE
-    INFERENCE --> OUTPUT
+    %% Internal Connections
+    E1 --> E2 --> E3
+    I1 --> I2 --> I3
+    B1 --> B2 --> B3 --> B4
 
-    ENGINE --> INFERENCE_CORE
-    INFERENCE_CORE --> MODEL
-    MODEL --> LAYERS
-    LAYERS --> WEIGHTS
+    C1 --> C2 --> C3 --> C4
+    G1 --> G2 --> G3
+    M1 --> M2 --> M3 --> M4 --> M5
 
-    INFERENCE_CORE --> DATA_STRUCTS
-    DATA_STRUCTS --> TENSOR
-    DATA_STRUCTS --> BUFFER
-    DATA_STRUCTS --> DEVICE
-    DATA_STRUCTS --> DTYPE
+    %% Data Flow Arrows
+    A1 -.->|API调用| A2
+    A2 -.->|请求处理| E1
+    E2 -.->|模型推理| I1
+    I2 -.->|张量运算| B1
+    B2 -.->|内存分配| C1
+    B2 -.->|GPU内存| G1
 
-    DATA_STRUCTS --> MEMORY_MGR
+    %% Styling - 积木风格
+    classDef appBlock fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#000
+    classDef engineBlock fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#000
+    classDef inferenceBlock fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#000
+    classDef abstractionBlock fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#000
+    classDef memoryBlock fill:#fce4ec,stroke:#c2185b,stroke-width:3px,color:#000
+    classDef component fill:#ffffff,stroke:#666,stroke-width:1px,color:#000
 
-    %% Memory Layer Internal Connections
-    MEMORY_MGR --> CPU_ALLOC
-    MEMORY_MGR --> GPU_ALLOC
-    MEMORY_MGR --> NPU_ALLOC
-
-    CPU_ALLOC --> CPU_STANDARD
-    CPU_ALLOC --> CPU_TCMALLOC
-    CPU_ALLOC --> CPU_JEMALLOC
-    CPU_ALLOC --> CPU_MIMALLOC
-
-    GPU_ALLOC --> GPU_CUDA
-    GPU_CUDA --> GPU_MANAGED
-    GPU_CUDA --> GPU_DEVICE
-
-    NPU_ALLOC --> NPU_SPECIFIC
-
-    %% Infrastructure Connections
-    MEMORY_MGR --> AMP
-    AMP --> ARENA_ROUTER
-    ARENA_ROUTER --> THREAD_CACHE
-    THREAD_CACHE --> CENTRAL_CACHE
-    CENTRAL_CACHE --> PAGE_HEAP
-
-    %% Cross-layer Dependencies
-    TENSOR -.->|uses| CPU_ALLOC
-    TENSOR -.->|uses| GPU_ALLOC
-    BUFFER -.->|uses| AMP
-    MODEL -.->|uses| TENSOR
-    LAYERS -.->|uses| BUFFER
-
-    %% Styling
-    classDef applicationLayer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef engineLayer fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef inferenceLayer fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef abstractionLayer fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef memoryLayer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef infrastructure fill:#f5f5f5,stroke:#424242,stroke-width:1px
-
-    class APP,API applicationLayer
-    class ENGINE,INPUT,INFERENCE,OUTPUT engineLayer
-    class INFERENCE_CORE,MODEL,LAYERS,WEIGHTS inferenceLayer
-    class DATA_STRUCTS,TENSOR,BUFFER,DEVICE,DTYPE abstractionLayer
-    class MEMORY_MGR,CPU_ALLOC,GPU_ALLOC,NPU_ALLOC memoryLayer
-    class AMP,ARENA_ROUTER,THREAD_CACHE,CENTRAL_CACHE,PAGE_HEAP infrastructure
+    class APP_BLOCK appBlock
+    class ENGINE_BLOCK engineBlock
+    class INFERENCE_BLOCK inferenceBlock
+    class ABSTRACTION_BLOCK abstractionBlock
+    class MEMORY_BLOCK memoryBlock
+    class A1,A2,E1,E2,E3,I1,I2,I3,B1,B2,B3,B4,C1,C2,C3,C4,G1,G2,G3,N1,M1,M2,M3,M4,M5 component
 ```
 
 ## Layer Descriptions
