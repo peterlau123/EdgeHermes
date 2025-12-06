@@ -6,7 +6,6 @@
 #include <unordered_map>
 
 #include "NovaLLM/common/device.h"
-#include "NovaLLM/memory/allocator.h"
 #include "NovaLLM/memory/buffer_define.h"
 #include "NovaLLM/memory/amp_buffer_manager.h"
 #ifdef _MSC_VER
@@ -30,23 +29,8 @@ class NOVA_LLM_API BufferManager {
   struct Config {
     DeviceTypeFlags device_flags;
 
-    struct CPU {
-      IAllocatorSharedPtr alloc{nullptr};
-    };
-
-    CPU cpu;
-
-    struct GPU {
-      IAllocatorSharedPtr alloc{nullptr};
-    };
-
-    GPU gpu;
-
-    struct METAL {
-      IAllocatorSharedPtr alloc{nullptr};
-    };
-
-    METAL metal;
+    // Note: Legacy allocator fields removed as AMP system now handles allocation internally
+    // Custom allocators can be configured through AMP system if needed in the future
   };
 
   class Builder {
