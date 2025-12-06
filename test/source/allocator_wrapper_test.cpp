@@ -74,10 +74,7 @@ TEST_F(AllocatorWrapperTest, FactoryCreateMimalloc) {
   EXPECT_STREQ(allocator->Name(), "Mimalloc");
 }
 
-TEST_F(AllocatorWrapperTest, FactoryCreateCUDA) {
-  auto allocator = AllocatorFactory::Create(AllocatorType::STANDARD);  // CUDA falls back to standard
-  EXPECT_NE(allocator, nullptr);
-}
+// CUDA allocator tests have been moved to cuda_allocator_test.cpp
 
 TEST_F(AllocatorWrapperTest, FactoryGetAllocatorName) {
   EXPECT_STREQ(AllocatorFactory::GetAllocatorName(AllocatorType::STANDARD), "Standard");
@@ -151,28 +148,7 @@ TEST_F(AllocatorWrapperTest, MimallocWithOptions) {
   allocator->Deallocate(ptr);
 }
 
-// Test CUDAAllocator interface
-TEST_F(AllocatorWrapperTest, CUDAAllocatorInterface) {
-  CUDAAllocator allocator(false);  // Regular CUDA memory
 
-  EXPECT_STREQ(allocator.Name(), "CUDA");
-
-  // Test basic functionality (currently falls back to standard malloc)
-  void* ptr = allocator.Allocate(1024);
-  EXPECT_NE(ptr, nullptr);
-  allocator.Deallocate(ptr);
-}
-
-TEST_F(AllocatorWrapperTest, CUDAAllocatorManaged) {
-  CUDAAllocator allocator(true);  // CUDA managed memory
-
-  EXPECT_STREQ(allocator.Name(), "CUDA");
-
-  // Test basic functionality (currently falls back to standard malloc)
-  void* ptr = allocator.Allocate(1024);
-  EXPECT_NE(ptr, nullptr);
-  allocator.Deallocate(ptr);
-}
 
 // Test memory allocation patterns
 TEST_F(AllocatorWrapperTest, AllocationPatterns) {
