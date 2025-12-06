@@ -27,14 +27,23 @@ bool AllocatorFactory::IsAvailable(AllocatorType type) {
     case AllocatorType::STANDARD:
       return true;
     case AllocatorType::TCMALLOC:
-      // TODO: Check if TCMalloc library is available
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+      return true;
+#else
       return false;
+#endif
     case AllocatorType::JEMALLOC:
-      // TODO: Check if jemalloc library is available
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+      return true;
+#else
       return false;
+#endif
     case AllocatorType::MIMALLOC:
-      // TODO: Check if mimalloc library is available
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+      return true;
+#else
       return false;
+#endif
     default:
       return false;
   }
@@ -43,7 +52,19 @@ bool AllocatorFactory::IsAvailable(AllocatorType type) {
 std::vector<AllocatorType> AllocatorFactory::GetAvailableAllocators() {
   std::vector<AllocatorType> available;
   available.push_back(AllocatorType::STANDARD);
-  // TODO: Check and add other allocators if available
+
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+  available.push_back(AllocatorType::TCMALLOC);
+#endif
+
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+  available.push_back(AllocatorType::JEMALLOC);
+#endif
+
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+  available.push_back(AllocatorType::MIMALLOC);
+#endif
+
   return available;
 }
 

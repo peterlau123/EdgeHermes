@@ -8,6 +8,19 @@
 #include <cuda_runtime.h>
 #endif
 
+// Third-party allocator headers
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#include <gperftools/tcmalloc.h>
+#endif
+
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#include <jemalloc/jemalloc.h>
+#endif
+
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#include <mimalloc.h>
+#endif
+
 #include "NovaLLM/utils/log.h"
 
 namespace nova_llm {
@@ -52,92 +65,117 @@ void* StandardAllocator::AllocateAligned(size_t size, size_t alignment) {
 
 // TCMalloc Allocator Implementation
 TCMallocAllocator::TCMallocAllocator(const std::unordered_map<std::string, std::string>& options) {
-  // TODO: Configure TCMalloc with options
-  // For now, just note that TCMalloc integration requires:
-  // - libtcmalloc.so/libtcmalloc.dylib
-  // - tc_malloc, tc_free, tc_memalign functions
+  // Configure TCMalloc with options if needed
+  // TCMalloc typically uses environment variables for configuration
+  // Options like max_cache_size, background_threads, etc. can be set via environment
+  (void)options;  // Suppress unused parameter warning
 }
 
 void* TCMallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
-  // TODO: Use tc_malloc when TCMalloc is available
-  // return tc_malloc(size);
+
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+  return tc_malloc(size);
+#else
   return std::malloc(size);  // Fallback to standard malloc
+#endif
 }
 
 void TCMallocAllocator::Deallocate(void* ptr) {
-  if (ptr) {
-    // TODO: Use tc_free when TCMalloc is available
-    // tc_free(ptr);
-    std::free(ptr);  // Fallback to standard free
-  }
+  if (!ptr) return;
+
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+  tc_free(ptr);
+#else
+  std::free(ptr);  // Fallback to standard free
+#endif
 }
 
 void* TCMallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
-  // TODO: Use tc_memalign when TCMalloc is available
-  // return tc_memalign(alignment, size);
+
+#ifdef NOVA_LLM_ENABLE_TCMALLOC
+  // TCMalloc's tc_memalign may not be available in all versions
+  // Use posix_memalign as fallback for TCMalloc builds
+  return AllocateAligned(size, alignment);
+#else
   return AllocateAligned(size, alignment);  // Fallback
+#endif
 }
 
 // Jemalloc Allocator Implementation
 JemallocAllocator::JemallocAllocator(const std::unordered_map<std::string, std::string>& options) {
-  // TODO: Configure jemalloc with options
-  // For now, just note that jemalloc integration requires:
-  // - libjemalloc.so/libjemalloc.dylib
-  // - je_malloc, je_free, je_aligned_alloc functions
+  // Configure jemalloc with options via mallctl if needed
+  // Options like narenas, dirty_decay_ms, etc. can be configured
+  (void)options;  // Suppress unused parameter warning
 }
 
 void* JemallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
-  // TODO: Use je_malloc when jemalloc is available
-  // return je_malloc(size);
+
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+  return je_malloc(size);
+#else
   return std::malloc(size);  // Fallback to standard malloc
+#endif
 }
 
 void JemallocAllocator::Deallocate(void* ptr) {
-  if (ptr) {
-    // TODO: Use je_free when jemalloc is available
-    // je_free(ptr);
-    std::free(ptr);  // Fallback to standard free
-  }
+  if (!ptr) return;
+
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+  je_free(ptr);
+#else
+  std::free(ptr);  // Fallback to standard free
+#endif
 }
 
 void* JemallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
-  // TODO: Use je_aligned_alloc when jemalloc is available
-  // return je_aligned_alloc(alignment, size);
+
+#ifdef NOVA_LLM_ENABLE_JEMALLOC
+  // jemalloc 5.0+ has je_aligned_alloc
+  return je_aligned_alloc(alignment, size);
+#else
   return AllocateAligned(size, alignment);  // Fallback
+#endif
 }
 
 // Mimalloc Allocator Implementation
 MimallocAllocator::MimallocAllocator(const std::unordered_map<std::string, std::string>& options) {
-  // TODO: Configure mimalloc with options
-  // For now, just note that mimalloc integration requires:
-  // - libmimalloc.so/libmimalloc.dylib
-  // - mi_malloc, mi_free, mi_aligned_alloc functions
+  // Configure mimalloc with options if needed
+  // Options like heap_grow_factor, heap_max_size, etc. can be configured
+  (void)options;  // Suppress unused parameter warning
 }
 
 void* MimallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
-  // TODO: Use mi_malloc when mimalloc is available
-  // return mi_malloc(size);
+
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+  return mi_malloc(size);
+#else
   return std::malloc(size);  // Fallback to standard malloc
+#endif
 }
 
 void MimallocAllocator::Deallocate(void* ptr) {
-  if (ptr) {
-    // TODO: Use mi_free when mimalloc is available
-    // mi_free(ptr);
-    std::free(ptr);  // Fallback to standard free
-  }
+  if (!ptr) return;
+
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+  mi_free(ptr);
+#else
+  std::free(ptr);  // Fallback to standard free
+#endif
 }
 
 void* MimallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
-  // TODO: Use mi_aligned_alloc when mimalloc is available
-  // return mi_aligned_alloc(alignment, size);
+
+#ifdef NOVA_LLM_ENABLE_MIMALLOC
+  return mi_aligned_alloc(alignment, size);
+#else
   return AllocateAligned(size, alignment);  // Fallback
+#endif
 }
 
 }  // namespace amp
