@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "NovaLLM/memory/allocator_wrapper.h"
+
 #include "NovaLLM/utils/macros.h"
 #include "NovaLLM/memory/size_class.h"
 

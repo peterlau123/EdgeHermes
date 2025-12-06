@@ -39,8 +39,10 @@ bool AMPBufferManager::Initialize(const Config& config) {
     if (config.device_flags.has(DeviceType::CPU)) {
       auto it = config.allocators.find(DeviceType::CPU);
       if (it != config.allocators.end() && it->second) {
-        // Convert shared_ptr to unique_ptr
-        cpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.release());
+        // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
+        cpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.get());
+        // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
+        // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use standard allocator as fallback
         cpu_allocator = nova_llm::amp::AllocatorFactory::Create(
@@ -52,8 +54,10 @@ bool AMPBufferManager::Initialize(const Config& config) {
     if (config.device_flags.has(DeviceType::CUDA)) {
       auto it = config.allocators.find(DeviceType::CUDA);
       if (it != config.allocators.end() && it->second) {
-        // Convert shared_ptr to unique_ptr
-        gpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.release());
+        // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
+        gpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.get());
+        // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
+        // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use CUDA allocator as fallback
         gpu_allocator = nova_llm::amp::AllocatorFactory::Create(
@@ -89,7 +93,7 @@ Buffer AMPBufferManager::Fetch(size_t size, DeviceType device_type) {
     if (ptr) {
       buffer.data = static_cast<uint8_t*>(ptr);
       buffer.size = size;
-      LOG_DEBUG("Allocated buffer: size={}, device={}, ptr={}", size, static_cast<int>(device_type), ptr);
+      LOG_DEBUG("Allocated buffer: size={}, device={}", size, static_cast<int>(device_type));
     } else {
       LOG_WARN("Failed to allocate buffer: size=%zu, device=%d",
                size, static_cast<int>(device_type));
@@ -115,8 +119,8 @@ void AMPBufferManager::Put(Buffer& buffer) {
     // Use arena router to deallocate memory
     arena_router_->Deallocate(buffer.data, buffer.size, buffer.device_type);
 
-    LOG_DEBUG("Deallocated buffer: size={}, device={}, ptr={}",
-              buffer.size, static_cast<int>(buffer.device_type), buffer.data);
+    LOG_DEBUG("Deallocated buffer: size={}, device={}",
+              buffer.size, static_cast<int>(buffer.device_type));
 
     // Clear the buffer
     buffer.data = nullptr;

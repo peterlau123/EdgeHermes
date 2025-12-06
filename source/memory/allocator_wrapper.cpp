@@ -44,10 +44,6 @@ void* StandardAllocator::AllocateAligned(size_t size, size_t alignment) {
   return ptr;
 }
 
-const char* StandardAllocator::Name() const {
-  return "Standard";
-}
-
 // TCMalloc Allocator Implementation
 TCMallocAllocator::TCMallocAllocator(const std::unordered_map<std::string, std::string>& options) {
   // TODO: Configure TCMalloc with options
@@ -78,9 +74,7 @@ void* TCMallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   return AllocateAligned(size, alignment);  // Fallback
 }
 
-const char* TCMallocAllocator::Name() const {
-  return "TCMalloc";
-}
+
 
 // Jemalloc Allocator Implementation
 JemallocAllocator::JemallocAllocator(const std::unordered_map<std::string, std::string>& options) {
@@ -112,9 +106,7 @@ void* JemallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   return AllocateAligned(size, alignment);  // Fallback
 }
 
-const char* JemallocAllocator::Name() const {
-  return "Jemalloc";
-}
+
 
 // Mimalloc Allocator Implementation
 MimallocAllocator::MimallocAllocator(const std::unordered_map<std::string, std::string>& options) {
@@ -146,9 +138,7 @@ void* MimallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   return AllocateAligned(size, alignment);  // Fallback
 }
 
-const char* MimallocAllocator::Name() const {
-  return "Mimalloc";
-}
+
 
 // CUDA Allocator Implementation
 CUDAAllocator::CUDAAllocator(bool use_managed_memory)
@@ -182,9 +172,7 @@ void* CUDAAllocator::AllocateAligned(size_t size, size_t alignment) {
   return AllocateAligned(size, alignment);  // Fallback
 }
 
-const char* CUDAAllocator::Name() const {
-  return "CUDA";
-}
+
 
 // AllocatorFactory Implementation
 IMemoryAllocatorPtr AllocatorFactory::Create(AllocatorType type,

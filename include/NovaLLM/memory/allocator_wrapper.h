@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "NovaLLM/utils/macros.h"
 #include "NovaLLM/memory/amp_system.h"
