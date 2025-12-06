@@ -8,6 +8,7 @@
 
 #include "NovaLLM/utils/macros.h"
 #include "NovaLLM/memory/size_class.h"
+#include "NovaLLM/memory/amp_system.h"
 
 namespace nova_llm {
 namespace amp {

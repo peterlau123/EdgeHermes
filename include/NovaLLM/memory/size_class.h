@@ -26,7 +26,7 @@ class NOVA_LLM_API SizeClassSystem {
   /**
    * @brief Default constructor
    */
-  SizeClassSystem() = default;
+  SizeClassSystem();
 
   /**
    * @brief Get the size class for a given allocation size

@@ -208,9 +208,7 @@ GPUArena::~GPUArena() {
   // Smart pointers handle cleanup
 }
 
-DeviceType GPUArena::GetDeviceType() const {
-  return DeviceType::CUDA;
-}
+
 
 void* GPUArena::Allocate(size_t size) {
   // TODO: Implement GPU memory allocation
