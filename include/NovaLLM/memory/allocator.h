@@ -1,57 +1,172 @@
 #pragma once
 
-#include "NovaLLM/common/device.h"
-#include "NovaLLM/utils/template.h"
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "NovaLLM/utils/macros.h"
+#include "NovaLLM/memory/amp_system.h"
 
 namespace nova_llm {
+namespace amp {
 
-class NOVA_LLM_API IAllocator {
+/**
+ * @brief Standard allocator wrapper using std::malloc/free
+ *
+ * Provides the baseline allocator implementation using standard C library functions.
+ */
+class NOVA_LLM_API StandardAllocator : public IMemoryAllocator {
  public:
-  virtual ~IAllocator() = default;
-  virtual void* allocate(size_t size) = 0;
-  virtual void deallocate(void* ptr) = 0;
+  StandardAllocator() = default;
+
+  void* Allocate(size_t size) override;
+  void Deallocate(void* ptr) override;
+  void* AllocateAligned(size_t size, size_t alignment) override;
+
+  const char* Name() const override { return "Standard"; }
 };
 
-DEFINE_SHARED_PTR(IAllocator);
-
-template <typename Derived>
-class NOVA_LLM_API Allocator : public IAllocator {
+/**
+ * @brief TCMalloc wrapper
+ *
+ * Integrates Google TCMalloc for high-performance CPU memory allocation.
+ * TCMalloc provides excellent performance for multi-threaded applications.
+ */
+class NOVA_LLM_API TCMallocAllocator : public IMemoryAllocator {
  public:
-  Allocator() = default;
-  virtual ~Allocator() = default;
+  /**
+   * @brief Constructor
+   * @param options Configuration options for TCMalloc
+   */
+  explicit TCMallocAllocator(const std::unordered_map<std::string, std::string>& options = {});
 
-  void* allocate(size_t size) override {
-    // 使用派生类的实现
-    return static_cast<Derived*>(this)->do_allocate(size);
-  }
+  void* Allocate(size_t size) override;
+  void Deallocate(void* ptr) override;
+  void* AllocateAligned(size_t size, size_t alignment) override;
 
-  void deallocate(void* ptr) override {
-    // 使用派生类的实现
-    static_cast<Derived*>(this)->do_deallocate(ptr);
-  }
+  const char* Name() const override { return "TCMalloc"; }
+
+ private:
+  // TCMalloc-specific configuration would be stored here
 };
 
-// CPUAllocator 现在只需要实现 do_allocate 和 do_deallocate
-class NOVA_LLM_API CPUAllocator : public Allocator<CPUAllocator> {
+/**
+ * @brief Jemalloc wrapper
+ *
+ * Integrates Facebook jemalloc for high-performance memory allocation.
+ * Jemalloc is known for its excellent fragmentation control and performance.
+ */
+class NOVA_LLM_API JemallocAllocator : public IMemoryAllocator {
  public:
-  CPUAllocator();
-  ~CPUAllocator();
+  /**
+   * @brief Constructor
+   * @param options Configuration options for jemalloc
+   */
+  explicit JemallocAllocator(const std::unordered_map<std::string, std::string>& options = {});
 
-  void* do_allocate(size_t size);
+  void* Allocate(size_t size) override;
+  void Deallocate(void* ptr) override;
+  void* AllocateAligned(size_t size, size_t alignment) override;
 
-  void do_deallocate(void* ptr);
+  const char* Name() const override { return "Jemalloc"; }
+
+ private:
+  // Jemalloc-specific configuration would be stored here
 };
 
-#if defined(NOVA_LLM_CUDA_ON) && NOVA_LLM_CUDA_ON
-class NOVA_LLM_API CUDAAllocator : public Allocator<CUDAAllocator> {
+/**
+ * @brief Mimalloc wrapper
+ *
+ * Integrates Microsoft mimalloc for modern, high-performance memory allocation.
+ * Mimalloc is designed for modern systems and provides excellent performance.
+ */
+class NOVA_LLM_API MimallocAllocator : public IMemoryAllocator {
  public:
-  CUDAAllocator();
-  ~CUDAAllocator();
+  /**
+   * @brief Constructor
+   * @param options Configuration options for mimalloc
+   */
+  explicit MimallocAllocator(const std::unordered_map<std::string, std::string>& options = {});
 
-  void* do_allocate(size_t size);
+  void* Allocate(size_t size) override;
+  void Deallocate(void* ptr) override;
+  void* AllocateAligned(size_t size, size_t alignment) override;
 
-  void do_deallocate(void* ptr);
+  const char* Name() const override { return "Mimalloc"; }
+
+ private:
+  // Mimalloc-specific configuration would be stored here
 };
-#endif
 
+/**
+ * @brief GPU allocator wrapper (CUDA)
+ *
+ * Handles CUDA memory allocation with support for managed memory.
+ */
+class NOVA_LLM_API CUDAAllocator : public IMemoryAllocator {
+ public:
+  /**
+   * @brief Constructor
+   * @param use_managed_memory Whether to use CUDA managed memory
+   */
+  explicit CUDAAllocator(bool use_managed_memory = false);
+
+  void* Allocate(size_t size) override;
+  void Deallocate(void* ptr) override;
+  void* AllocateAligned(size_t size, size_t alignment) override;
+
+  const char* Name() const override { return "CUDA"; }
+
+ private:
+  /**
+   * @brief Check if CUDA is available on this system
+   * @return true if CUDA is available and functional
+   */
+  bool CheckCudaAvailability();
+
+  bool use_managed_memory_;
+  bool cuda_available_;
+  int device_count_;
+};
+
+/**
+ * @brief Factory for creating allocator instances
+ *
+ * Provides a centralized way to create and configure memory allocators
+ * based on type and options.
+ */
+class NOVA_LLM_API AllocatorFactory {
+ public:
+  /**
+   * @brief Create an allocator instance
+   * @param type Allocator type to create
+   * @param options Configuration options for the allocator
+   * @return Unique pointer to the created allocator
+   */
+  static IMemoryAllocatorPtr Create(AllocatorType type,
+                                   const std::unordered_map<std::string, std::string>& options = {});
+
+  /**
+   * @brief Check if an allocator type is available
+   * @param type Allocator type to check
+   * @return true if the allocator is available on this system
+   */
+  static bool IsAvailable(AllocatorType type);
+
+  /**
+   * @brief Get available allocator types on this system
+   * @return List of available allocator types
+   */
+  static std::vector<AllocatorType> GetAvailableAllocators();
+
+  /**
+   * @brief Get allocator name as string
+   * @param type Allocator type
+   * @return String representation of the allocator type
+   */
+  static const char* GetAllocatorName(AllocatorType type);
+};
+
+}  // namespace amp
 }  // namespace nova_llm

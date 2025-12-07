@@ -1,72 +1,101 @@
 #include "NovaLLM/memory/buffer_manager.h"
 
+#include <stdexcept>
+
+#include "NovaLLM/memory/amp_buffer_manager.h"
 #include "NovaLLM/memory/allocator.h"
-#include "NovaLLM/memory/buffer_hub.h"
 #include "NovaLLM/utils/log.h"
-#include "NovaLLM/utils/macros.h"
-// Disable C4251 warning on Windows (DLL interface for STL containers)
 
-namespace nova_llm {
+// Global instance for singleton pattern
+static std::unique_ptr<nova_llm::BufferManager> global_buffer_manager_;
 
+nova_llm::BufferManager::BufferManager() = default;
 
-BufferManager BufferManager::Builder::buffer_manager;
-
-BufferManager &BufferManager::Builder::build(const nova_llm::BufferManager::Config &config) {
-  if (!buffer_manager.isInited()) {
-    auto ret = buffer_manager.init(config);
-    if (!ret) {
-      LOG_ERROR("Failed to init buffer manager");
+nova_llm::BufferManager& nova_llm::BufferManager::Builder::build(const Config& config) {
+  if (!global_buffer_manager_) {
+    global_buffer_manager_ = std::make_unique<BufferManager>();
+    if (!global_buffer_manager_->init(config)) {
+      throw std::runtime_error("Failed to initialize BufferManager");
     }
   }
-  return buffer_manager;
+  return *global_buffer_manager_;
 }
 
-BufferManager &BufferManager::Builder::getInstance() { return buffer_manager; }
+nova_llm::BufferManager& nova_llm::BufferManager::Builder::getInstance() {
+  if (!global_buffer_manager_) {
+    // Create with default configuration
+    Config default_config;
+    default_config.device_flags.set(DeviceType::CPU);
 
-bool BufferManager::init(const nova_llm::BufferManager::Config &config) {
-  if (is_init_) {
+    global_buffer_manager_ = std::make_unique<BufferManager>();
+    if (!global_buffer_manager_->init(default_config)) {
+      throw std::runtime_error("Failed to initialize BufferManager with default config");
+    }
+  }
+  return *global_buffer_manager_;
+}
+
+nova_llm::BufferManager::~BufferManager() = default;
+
+bool nova_llm::BufferManager::init(const Config& config) {
+  if (amp_manager_) {
+    return true; // Already initialized
+  }
+
+  try {
+    // Convert legacy config to AMP config
+    AMPBufferManager::Config amp_config;
+    amp_config.amp_config = nova_llm::amp::AMPConfig{};
+    amp_config.device_flags = config.device_flags;
+
+    // Set up allocators based on legacy config
+    // Note: For now, we always use StandardAllocator since legacy IAllocator
+    // interface is not directly compatible with IMemoryAllocator.
+    // TODO: Create an adapter wrapper if custom allocators need to be supported
+    if (config.device_flags.has(DeviceType::CPU)) {
+      amp_config.allocators[DeviceType::CPU] =
+          std::make_shared<nova_llm::amp::StandardAllocator>();
+    }
+
+    if (config.device_flags.has(DeviceType::CUDA)) {
+      // For GPU, use CUDA allocator (even though it's currently stubbed)
+      // This ensures proper interface even if CUDA isn't available yet
+      amp_config.allocators[DeviceType::CUDA] =
+          std::make_shared<nova_llm::amp::CUDAAllocator>(false);  // false = regular CUDA memory
+    }
+
+    // Create AMP buffer manager
+    amp_manager_ = std::make_unique<AMPBufferManager>(std::move(amp_config));
+
+    LOG_INFO("BufferManager initialized with AMP system");
     return true;
+
+  } catch (const std::exception& e) {
+    LOG_ERROR("Failed to initialize BufferManager with AMP system: %s", e.what());
+    return false;
   }
-  bool ret = false;
-  if (config.device_flags.has(DeviceType::CPU)) {
-    BufferHubConfig cfg(DeviceType::CPU, config.cpu.alloc, Size(4UL*1024*1024*1024));
-    buffer_hubs_[DeviceType::CPU] = BufferHub::Builder::build(cfg);
-    ret |= true;
-  }
-  // TODO: other devices
-  is_init_ = true;
-  return ret;
 }
 
-void BufferManager::put(Buffer &buffer) {
-  if (nullptr == buffer.data || 0 == buffer.size) {
+bool nova_llm::BufferManager::isInited() const {
+  return amp_manager_ && amp_manager_->IsInitialized();
+}
+
+nova_llm::Buffer nova_llm::BufferManager::fetch(size_t size, DeviceType device_type) {
+  if (!amp_manager_) {
+    LOG_ERROR("BufferManager not initialized");
+    return Buffer{};
+  }
+  return amp_manager_->Fetch(size, device_type);
+}
+
+void nova_llm::BufferManager::put(Buffer& buffer) {
+  if (!amp_manager_) {
+    LOG_ERROR("BufferManager not initialized");
     return;
   }
-  auto device_type = buffer.device_type;
-  auto &device_mem_hub = buffer_hubs_[device_type];
-  device_mem_hub->putBlockFromBuffer(buffer);
+  amp_manager_->Put(buffer);
 }
 
-Buffer BufferManager::fetch(size_t size, DeviceType device_type) {
-  Buffer buffer;
-  Size sz(size);
-  auto block_ptr = buffer_hubs_[device_type]->getBlock(sz);
-  if (nullptr != block_ptr) {
-    buffer.data = block_ptr->data;
-    buffer.size = block_ptr->size;
-  }
-  return buffer;
+void nova_llm::BufferManager::destroy() {
+  global_buffer_manager_.reset();
 }
-
-BufferManager::~BufferManager() { destroy(); }
-
-void BufferManager::destroy() {
-  for (auto& p : buffer_hubs_) {
-    BufferHub::Builder::destroy(&(p.second));
-  }
-  buffer_hubs_.clear();
-  is_init_ = false;
-}
-
-
-}  // namespace nova_llm

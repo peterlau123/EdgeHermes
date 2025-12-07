@@ -13,6 +13,7 @@
 
 #include "../common/device.h"
 #include "../common/dtype.h"
+#include "../memory/buffer_manager.h"
 #include "NovaLLM/utils/macros.h"
 
 namespace nova_llm {
