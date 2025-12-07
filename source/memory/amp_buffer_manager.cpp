@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "NovaLLM/memory/allocator.h"
-#include "NovaLLM/memory/thread_cache.h"
+#include "thread_cache_storage.h"
 #include "NovaLLM/utils/log.h"
 
 namespace nova_llm {

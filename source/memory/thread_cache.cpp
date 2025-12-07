@@ -1,4 +1,5 @@
 #include "NovaLLM/memory/thread_cache.h"
+#include "thread_cache_storage.h"
 #include "NovaLLM/memory/amp_system.h"
 
 #include <algorithm>

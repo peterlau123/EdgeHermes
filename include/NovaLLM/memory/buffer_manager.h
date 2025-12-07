@@ -41,22 +41,22 @@ class NOVA_LLM_API BufferManager {
 
   // Legacy API - now delegates to AMP system
   // Note: Constructor is public for Builder access, but class is still non-copyable
-  NOVA_LLM_API BufferManager();
-  NOVA_LLM_API BufferManager(const BufferManager&) = delete;
-  NOVA_LLM_API BufferManager& operator=(const BufferManager&) = delete;
-  NOVA_LLM_API BufferManager(BufferManager&&) = delete;
-  NOVA_LLM_API BufferManager& operator=(BufferManager&&) = delete;
+  BufferManager();
+  BufferManager(const BufferManager&) = delete;
+  BufferManager& operator=(const BufferManager&) = delete;
+  BufferManager(BufferManager&&) = delete;
+  BufferManager& operator=(BufferManager&&) = delete;
 
-  NOVA_LLM_API bool isInited() const;
+  bool isInited() const;
 
-  NOVA_LLM_API Buffer fetch(size_t size, DeviceType device_type);
+  Buffer fetch(size_t size, DeviceType device_type);
 
   // Return a buffer obtained from fetch back to the pool and clear it.
-  NOVA_LLM_API void put(Buffer& buffer);
+  void put(Buffer& buffer);
 
-  NOVA_LLM_API ~BufferManager();
+  ~BufferManager();
 
-  NOVA_LLM_API void destroy();
+  void destroy();
 
  private:
   bool init(const Config& config);

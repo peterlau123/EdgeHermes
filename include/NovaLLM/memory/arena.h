@@ -7,7 +7,6 @@
 #include "NovaLLM/common/device.h"
 #include "NovaLLM/memory/amp_system.h"
 #include "NovaLLM/memory/size_class.h"
-#include "NovaLLM/memory/thread_cache.h"
 #include "NovaLLM/memory/central_cache.h"
 
 namespace nova_llm {
