@@ -19,7 +19,7 @@ namespace amp {
  * Provides fast, per-thread allocation for small objects using atomic operations
  * to avoid synchronization overhead. Falls back to central cache for misses.
  */
-class edgehermes_API ThreadCache {
+class EDGEHERMES_API ThreadCache {
  public:
   // Constants
   static constexpr size_t MAX_SIZE_CLASSES = SizeClassSystem::NUM_SIZE_CLASSES;
@@ -143,6 +143,7 @@ class edgehermes_API ThreadCache {
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

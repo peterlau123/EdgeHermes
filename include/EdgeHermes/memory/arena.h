@@ -19,7 +19,7 @@ namespace amp {
  * and provide device-aware optimizations like NUMA for CPU and CUDA-aware
  * for GPU allocations.
  */
-class edgehermes_API IArena {
+class EDGEHERMES_API IArena {
  public:
   virtual ~IArena() = default;
 
@@ -69,7 +69,7 @@ class edgehermes_API IArena {
  * Uses the AMP system optimized for CPU memory management
  * with thread-local caches and NUMA awareness.
  */
-class edgehermes_API CPUArena : public IArena {
+class EDGEHERMES_API CPUArena : public IArena {
  public:
   /**
    * @brief Constructor
@@ -112,7 +112,7 @@ class edgehermes_API CPUArena : public IArena {
  * Handles GPU memory allocation with CUDA-aware optimizations
  * and managed memory support.
  */
-class edgehermes_API GPUArena : public IArena {
+class EDGEHERMES_API GPUArena : public IArena {
  public:
   /**
    * @brief Constructor
@@ -153,7 +153,7 @@ class edgehermes_API GPUArena : public IArena {
  * Routes allocation requests to the appropriate device arena
  * and manages arena lifecycle.
  */
-class edgehermes_API ArenaRouter {
+class EDGEHERMES_API ArenaRouter {
  public:
   /**
    * @brief Constructor
@@ -211,6 +211,7 @@ class edgehermes_API ArenaRouter {
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

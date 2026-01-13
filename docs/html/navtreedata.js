@@ -63,3 +63,4 @@ var SYNCONMSG = 'click to disable panel synchronization';
 var SYNCOFFMSG = 'click to enable panel synchronization';
 
 
+

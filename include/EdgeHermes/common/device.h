@@ -8,19 +8,20 @@ enum class DeviceType : uint32_t { UNKNOWN = 0, CPU = 0x01, CUDA = 0x02, METAL =
 
 struct DeviceTypeFlags {
  public:
-   [[nodiscard]] edgehermes_API bool has(DeviceType type) const;
+   [[nodiscard]] EDGEHERMES_API bool has(DeviceType type) const;
 
-  edgehermes_API void set(DeviceType type);
+  EDGEHERMES_API void set(DeviceType type);
 
-  edgehermes_API void clear(DeviceType type);
+  EDGEHERMES_API void clear(DeviceType type);
 
-  [[nodiscard]] edgehermes_API constexpr DeviceType get() const;
+  [[nodiscard]] EDGEHERMES_API constexpr DeviceType get() const;
 
  private:
   uint32_t flags_ = 0;
 };
 
 }  // namespace edgehermes
+
 
 
 

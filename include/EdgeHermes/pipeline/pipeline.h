@@ -7,7 +7,7 @@
 
 namespace edgehermes {
 
-class edgehermes_API Pipeline {
+class EDGEHERMES_API Pipeline {
  public:
   Pipeline();
 
@@ -36,6 +36,7 @@ class Qwenpipeline : public Pipeline {
 };
 
 }  // namespace edgehermes
+
 
 
 

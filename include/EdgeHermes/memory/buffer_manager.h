@@ -24,7 +24,7 @@ namespace edgehermes {
  * Legacy BufferManager API - now implemented using AMP (Adaptive Memory Pool) system
  * This provides backwards compatibility while using the new high-performance memory management.
  */
-class edgehermes_API BufferManager {
+class EDGEHERMES_API BufferManager {
  public:
   struct Config {
     DeviceTypeFlags device_flags;
@@ -35,8 +35,8 @@ class edgehermes_API BufferManager {
 
   class Builder {
    public:
-    edgehermes_API static BufferManager& build(const Config& config);
-    edgehermes_API static BufferManager& getInstance();
+    EDGEHERMES_API static BufferManager& build(const Config& config);
+    EDGEHERMES_API static BufferManager& getInstance();
   };
 
   // Legacy API - now delegates to AMP system
@@ -70,6 +70,7 @@ class edgehermes_API BufferManager {
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
 
 
 

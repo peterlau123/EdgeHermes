@@ -21,7 +21,7 @@ namespace amp {
  * Manages free lists for each size class with low-contention locking.
  * Acts as an intermediary between thread caches and the page heap.
  */
-class edgehermes_API CentralCache {
+class EDGEHERMES_API CentralCache {
  public:
   /**
    * @brief Constructor
@@ -111,7 +111,7 @@ class edgehermes_API CentralCache {
  * Handles allocations that are too large for the central cache
  * or when the central cache needs to be refilled.
  */
-class edgehermes_API PageHeap {
+class EDGEHERMES_API PageHeap {
  public:
   /**
    * @brief Constructor
@@ -170,6 +170,7 @@ class edgehermes_API PageHeap {
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

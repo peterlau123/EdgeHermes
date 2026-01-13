@@ -16,7 +16,7 @@ namespace amp {
  *
  * Provides the baseline allocator implementation using standard C library functions.
  */
-class edgehermes_API StandardAllocator : public IMemoryAllocator {
+class EDGEHERMES_API StandardAllocator : public IMemoryAllocator {
  public:
   StandardAllocator() = default;
 
@@ -33,7 +33,7 @@ class edgehermes_API StandardAllocator : public IMemoryAllocator {
  * Integrates Google TCMalloc for high-performance CPU memory allocation.
  * TCMalloc provides excellent performance for multi-threaded applications.
  */
-class edgehermes_API TCMallocAllocator : public IMemoryAllocator {
+class EDGEHERMES_API TCMallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -57,7 +57,7 @@ class edgehermes_API TCMallocAllocator : public IMemoryAllocator {
  * Integrates Facebook jemalloc for high-performance memory allocation.
  * Jemalloc is known for its excellent fragmentation control and performance.
  */
-class edgehermes_API JemallocAllocator : public IMemoryAllocator {
+class EDGEHERMES_API JemallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -81,7 +81,7 @@ class edgehermes_API JemallocAllocator : public IMemoryAllocator {
  * Integrates Microsoft mimalloc for modern, high-performance memory allocation.
  * Mimalloc is designed for modern systems and provides excellent performance.
  */
-class edgehermes_API MimallocAllocator : public IMemoryAllocator {
+class EDGEHERMES_API MimallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -104,7 +104,7 @@ class edgehermes_API MimallocAllocator : public IMemoryAllocator {
  *
  * Handles CUDA memory allocation with support for managed memory.
  */
-class edgehermes_API CUDAAllocator : public IMemoryAllocator {
+class EDGEHERMES_API CUDAAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -136,7 +136,7 @@ class edgehermes_API CUDAAllocator : public IMemoryAllocator {
  * Provides a centralized way to create and configure memory allocators
  * based on type and options.
  */
-class edgehermes_API AllocatorFactory {
+class EDGEHERMES_API AllocatorFactory {
  public:
   /**
    * @brief Create an allocator instance
@@ -170,6 +170,7 @@ class edgehermes_API AllocatorFactory {
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

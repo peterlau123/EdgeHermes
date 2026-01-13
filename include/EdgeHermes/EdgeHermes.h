@@ -4,9 +4,10 @@
 
 typedef void* EngineHandle;
 
-bool edgehermes_API init_engine();
+bool EDGEHERMES_API init_engine();
 
-bool edgehermes_API load_model(EngineHandle hdl, const char* model_path);
+bool EDGEHERMES_API load_model(EngineHandle hdl, const char* model_path);
+
 
 
 

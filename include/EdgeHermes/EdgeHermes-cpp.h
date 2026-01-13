@@ -10,7 +10,7 @@ namespace edgehermes {
 
 class Impl;
 
-class edgehermes_API Engine {
+class EDGEHERMES_API Engine {
  public:
   Engine() = default;
 
@@ -25,6 +25,7 @@ class edgehermes_API Engine {
 
 
 }  // namespace edgehermes
+
 
 
 

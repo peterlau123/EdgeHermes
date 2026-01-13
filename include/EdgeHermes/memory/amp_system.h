@@ -17,7 +17,7 @@ namespace amp {
  * This interface allows pluggable third-party allocators like tcmalloc,
  * jemalloc, and mimalloc to be integrated into the system.
  */
-class edgehermes_API IMemoryAllocator {
+class EDGEHERMES_API IMemoryAllocator {
  public:
   virtual ~IMemoryAllocator() = default;
 
@@ -62,7 +62,7 @@ enum class AllocatorType : uint8_t {
 /**
  * @brief Configuration options for the AMP system
  */
-struct edgehermes_API AMPConfig {
+struct EDGEHERMES_API AMPConfig {
   AllocatorType allocator_type = AllocatorType::STANDARD;
   
   // Thread cache settings
@@ -84,7 +84,7 @@ struct edgehermes_API AMPConfig {
 /**
  * @brief Memory statistics structure
  */
-struct edgehermes_API MemoryStats {
+struct EDGEHERMES_API MemoryStats {
   size_t total_allocated = 0;
   size_t active_allocations = 0;
   double fragmentation_ratio = 0.0;
@@ -101,6 +101,7 @@ using IMemoryAllocatorSharedPtr = std::shared_ptr<IMemoryAllocator>;
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

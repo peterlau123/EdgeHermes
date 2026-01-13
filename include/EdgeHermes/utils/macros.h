@@ -4,22 +4,22 @@
 #include <stdexcept>
 #include <string>
 
-#define edgehermes_VERSION_MAJOR 0
-#define edgehermes_VERSION_MINOR 1
-#define edgehermes_VERSION_PATCH 0
-#define edgehermes_VERSION_STRING "0.1.0"
-#define edgehermes_VERSION (edgehermes_VERSION_MAJOR * 10000 + edgehermes_VERSION_MINOR * 100 + edgehermes_VERSION_PATCH)
+#define EDGEHERMES_VERSION_MAJOR 0
+#define EDGEHERMES_VERSION_MINOR 1
+#define EDGEHERMES_VERSION_PATCH 0
+#define EDGEHERMES_VERSION_STRING "0.1.0"
+#define EDGEHERMES_VERSION (EDGEHERMES_VERSION_MAJOR * 10000 + EDGEHERMES_VERSION_MINOR * 100 + EDGEHERMES_VERSION_PATCH)
 
 // For API export and import
 #if defined(_WIN32)
-// When building the library define edgehermes_EXPORTS (set by CMake)
-#if defined(edgehermes_EXPORTS)
-#define edgehermes_API __declspec(dllexport)
+// When building the library define EDGEHERMES_EXPORTS (set by CMake)
+#if defined(EDGEHERMES_EXPORTS)
+#define EDGEHERMES_API __declspec(dllexport)
 #else
-#define edgehermes_API __declspec(dllimport)
+#define EDGEHERMES_API __declspec(dllimport)
 #endif
 #else
-#define edgehermes_API __attribute__((visibility("default")))
+#define EDGEHERMES_API __attribute__((visibility("default")))
 #endif
 
 // For debugging and runtime check
@@ -46,6 +46,3 @@ template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
 }  // namespace edgehermes
-
-
-

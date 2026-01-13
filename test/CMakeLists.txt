@@ -48,7 +48,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # Define import macro for Windows (tests consume the DLL, library exports)
 if(WIN32)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE edgehermes_IMPORTS)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE EDGEHERMES_IMPORTS)
 endif()
 
 # enable compiler warnings

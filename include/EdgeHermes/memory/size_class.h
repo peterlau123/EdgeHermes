@@ -17,7 +17,7 @@ namespace amp {
  * Uses a hybrid approach with fixed classes for small sizes and dynamic
  * optimization for larger sizes.
  */
-class edgehermes_API SizeClassSystem {
+class EDGEHERMES_API SizeClassSystem {
  public:
   // Constants
   static constexpr size_t NUM_SIZE_CLASSES = 128;
@@ -104,10 +104,11 @@ class edgehermes_API SizeClassSystem {
 };
 
 // Global size class system instance
-extern edgehermes_API const SizeClassSystem& GetSizeClassSystem();
+extern EDGEHERMES_API const SizeClassSystem& GetSizeClassSystem();
 
 }  // namespace amp
 }  // namespace edgehermes
+
 
 
 

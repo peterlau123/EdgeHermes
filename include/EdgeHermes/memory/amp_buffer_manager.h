@@ -16,7 +16,7 @@ namespace edgehermes {
  * Modern replacement for the legacy BufferManager using the AMP system.
  * Provides the same API but with superior performance and scalability.
  */
-class edgehermes_API AMPBufferManager {
+class EDGEHERMES_API AMPBufferManager {
  public:
   /**
    * @brief Configuration for AMP Buffer Manager
@@ -123,6 +123,7 @@ class edgehermes_API AMPBufferManager {
 };
 
 }  // namespace edgehermes
+
 
 
 

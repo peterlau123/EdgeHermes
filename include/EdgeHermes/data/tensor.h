@@ -24,7 +24,7 @@ namespace edgehermes {
  * @details 支持多种数据类型(如INT8、FLOAT32�?和设备类�?CPU/GPU)�?
  *          提供基本的张量运算操作，包括乘法和加法�?
  */
-class edgehermes_API Tensor {
+class EDGEHERMES_API Tensor {
  public:
   /**
    * @brief 数据来源枚举
@@ -165,6 +165,7 @@ class edgehermes_API Tensor {
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
 
 
 

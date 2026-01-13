@@ -4,7 +4,7 @@
 
 namespace edgehermes {
 
-class edgehermes_API Model {
+class EDGEHERMES_API Model {
  public:
   Model() = default;
   virtual ~Model() = default;
@@ -17,6 +17,7 @@ class edgehermes_API Model {
 using ModelPtr = std::shared_ptr<Model>;
 
 }  // namespace edgehermes
+
 
 
 
