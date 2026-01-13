@@ -1,9 +1,9 @@
-#include "NovaLLM/memory/size_class.h"
+#include "EdgeHermes/memory/size_class.h"
 
 #include <gtest/gtest.h>
 #include <unordered_set>
 
-using namespace nova_llm::amp;
+using namespace edgehermes::amp;
 
 class SizeClassTest : public ::testing::Test {
  protected:
@@ -203,3 +203,6 @@ TEST_F(SizeClassTest, LargeSizeHandling) {
   // Should be one of the larger classes
   EXPECT_GE(class_id, SizeClassSystem::NUM_SIZE_CLASSES / 2);
 }
+
+
+

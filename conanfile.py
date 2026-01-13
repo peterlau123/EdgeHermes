@@ -3,8 +3,8 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout, CMakeDeps, CMakeToolchain
 from conan.tools.files import copy
 
-class NovallmConan(ConanFile):
-    name = "novallm"
+class EdgeHermesConan(ConanFile):
+    name = "edgehermes"
     version = "0.1.0" # Match your project version
     exports_sources = "CMakeLists.txt", "source/*", "include/*", "cmake/*"
     settings = "os", "compiler", "build_type", "arch"
@@ -12,8 +12,8 @@ class NovallmConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "enable_logging": [True, False], # Corresponds to NOVA_LLM_ENABLE_LOGGING
-        "build_tests": [True, False], # Corresponds to NOVA_LLM_BUILD_TESTS
+        "enable_logging": [True, False], # Corresponds to edgehermes_ENABLE_LOGGING
+        "build_tests": [True, False], # Corresponds to edgehermes_BUILD_TESTS
         "enable_tcmalloc": [True, False], # Enable TCMalloc for AMP memory system
         "enable_jemalloc": [True, False], # Enable jemalloc for AMP memory system
         "enable_mimalloc": [True, False], # Enable mimalloc for AMP memory system
@@ -62,12 +62,12 @@ class NovallmConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
-        tc.variables["NOVA_LLM_ENABLE_LOGGING"] = self.options.enable_logging
-        tc.variables["NOVA_LLM_BUILD_TESTS"] = self.options.build_tests
-        tc.variables["NOVA_LLM_ENABLE_TCMALLOC"] = self.options.enable_tcmalloc
-        tc.variables["NOVA_LLM_ENABLE_JEMALLOC"] = getattr(self.options, 'enable_jemalloc', False)
-        tc.variables["NOVA_LLM_ENABLE_MIMALLOC"] = getattr(self.options, 'enable_mimalloc', False)
-        tc.variables["NOVA_LLM_ENABLE_CUDA"] = getattr(self.options, 'enable_cuda', False)
+        tc.variables["edgehermes_ENABLE_LOGGING"] = self.options.enable_logging
+        tc.variables["edgehermes_BUILD_TESTS"] = self.options.build_tests
+        tc.variables["edgehermes_ENABLE_TCMALLOC"] = self.options.enable_tcmalloc
+        tc.variables["edgehermes_ENABLE_JEMALLOC"] = getattr(self.options, 'enable_jemalloc', False)
+        tc.variables["edgehermes_ENABLE_MIMALLOC"] = getattr(self.options, 'enable_mimalloc', False)
+        tc.variables["edgehermes_ENABLE_CUDA"] = getattr(self.options, 'enable_cuda', False)
         tc.generate()
 
     def build(self):
@@ -81,9 +81,9 @@ class NovallmConan(ConanFile):
         copy(self, "LICENSE", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
 
     def package_info(self):
-        self.cpp_info.set_property("cmake_file_name", "NovaLLM")
-        self.cpp_info.set_property("cmake_target_name", "NovaLLM::NovaLLM")
-        self.cpp_info.libs = ["NovaLLM"]
+        self.cpp_info.set_property("cmake_file_name", "edgehermes")
+        self.cpp_info.set_property("cmake_target_name", "edgehermes::edgehermes")
+        self.cpp_info.libs = ["edgehermes"]
 
     # Note: For a project conanfile.py, you typically don't implement build(), package(), etc.
     # Those are for creating packages of YOUR project. This conanfile is just for managing requirements.

@@ -1,11 +1,11 @@
-#include "NovaLLM/data/tensor.h"
+#include "EdgeHermes/data/tensor.h"
 
 #include <utility>
 
-#include "NovaLLM/memory/buffer_manager.h"
-#include "NovaLLM/utils/macros.h"
+#include "EdgeHermes/memory/buffer_manager.h"
+#include "EdgeHermes/utils/macros.h"
 
-namespace nova_llm {
+namespace edgehermes {
 
 uint64_t getByteSize(DataType dtype) {
   switch (dtype) {
@@ -142,4 +142,7 @@ Tensor& Tensor::operator+(const Tensor& rhs) {
   return *this;
 }
 
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

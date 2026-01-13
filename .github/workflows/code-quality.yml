@@ -60,7 +60,7 @@ jobs:
           cmake .. -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DNOVA_LLM_ENABLE_LOGGING=ON \
+            -Dedgehermes_ENABLE_LOGGING=ON \
             -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           ninja -v || cmake --build . --config Release
 
@@ -93,3 +93,5 @@ jobs:
           path: |
             cppcheck-report.txt
             clang-tidy-report.txt
+
+

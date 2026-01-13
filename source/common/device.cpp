@@ -1,3 +1,6 @@
-#include "NovaLLM/common/device.h"
+#include "EdgeHermes/common/device.h"
 
-namespace nova_llm {}  // namespace nova_llm
+namespace edgehermes {}  // namespace edgehermes
+
+
+

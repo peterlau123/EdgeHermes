@@ -1,8 +1,8 @@
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <memory>
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 // AllocatorFactory Implementation
@@ -27,19 +27,19 @@ bool AllocatorFactory::IsAvailable(AllocatorType type) {
     case AllocatorType::STANDARD:
       return true;
     case AllocatorType::TCMALLOC:
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
       return true;
 #else
       return false;
 #endif
     case AllocatorType::JEMALLOC:
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
       return true;
 #else
       return false;
 #endif
     case AllocatorType::MIMALLOC:
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
       return true;
 #else
       return false;
@@ -53,15 +53,15 @@ std::vector<AllocatorType> AllocatorFactory::GetAvailableAllocators() {
   std::vector<AllocatorType> available;
   available.push_back(AllocatorType::STANDARD);
 
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
   available.push_back(AllocatorType::TCMALLOC);
 #endif
 
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
   available.push_back(AllocatorType::JEMALLOC);
 #endif
 
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
   available.push_back(AllocatorType::MIMALLOC);
 #endif
 
@@ -84,4 +84,7 @@ const char* AllocatorFactory::GetAllocatorName(AllocatorType type) {
 }
 
 }  // namespace amp
-}  // namespace nova_llm</content>
+}  // namespace edgehermes</content>
+
+
+

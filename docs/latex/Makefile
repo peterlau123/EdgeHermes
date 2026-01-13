@@ -40,3 +40,6 @@ $(MANUAL_FILE).pdf: clean $(MANUAL_FILE).tex
 
 clean:
 	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out *.brf *.blg *.bbl $(MANUAL_FILE).pdf
+
+
+

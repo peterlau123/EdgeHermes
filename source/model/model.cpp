@@ -1,5 +1,8 @@
-#include "NovaLLM/model/model.h"
+#include "EdgeHermes/model/model.h"
 
-namespace nova_llm {
+namespace edgehermes {
 // Implementation
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

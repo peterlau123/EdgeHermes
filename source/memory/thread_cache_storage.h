@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "NovaLLM/memory/size_class.h"
-#include "NovaLLM/memory/amp_system.h"
+#include "EdgeHermes/memory/size_class.h"
+#include "EdgeHermes/memory/amp_system.h"
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 class ThreadCache;
@@ -41,4 +41,7 @@ class ThreadCacheStorage {
 };
 
 }  // namespace amp
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

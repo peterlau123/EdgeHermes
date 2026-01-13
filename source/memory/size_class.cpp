@@ -1,10 +1,10 @@
-#include "NovaLLM/memory/size_class.h"
+#include "EdgeHermes/memory/size_class.h"
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 SizeClassSystem::SizeClassSystem() {
@@ -127,4 +127,7 @@ const SizeClassSystem& GetSizeClassSystem() {
 }
 
 }  // namespace amp
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

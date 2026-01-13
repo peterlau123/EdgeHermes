@@ -1,10 +1,10 @@
-#include "NovaLLM/memory/buffer_manager.h"
+#include "EdgeHermes/memory/buffer_manager.h"
 
 #include <gtest/gtest.h>
 #include <thread>
 #include <vector>
 
-using namespace nova_llm;
+using namespace edgehermes;
 
 class BufferManagerTest : public ::testing::Test {
  protected:
@@ -220,3 +220,6 @@ TEST_F(BufferManagerTest, RapidAllocDealloc) {
     }
   }
 }
+
+
+

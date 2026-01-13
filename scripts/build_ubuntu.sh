@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# build_ubuntu.sh â€” Build NovaLLM on Ubuntu using Conan + CMake
+# build_ubuntu.sh â€?Build EdgeHermes on Ubuntu using Conan + CMake
 # Mirrors the CI steps in .github/workflows/ubuntu.yml
 #
 # Usage:
@@ -44,7 +44,7 @@ TOOLCHAIN_FILE=$(find "$(pwd)" -name "conan_toolchain.cmake" -type f | head -1 |
 
 cmake -S .. -B . \
   -DCMAKE_BUILD_TYPE="$TYPE" \
-  -DNOVA_LLM_ENABLE_LOGGING="$ENABLE_LOGGING" \
+  -Dedgehermes_ENABLE_LOGGING="$ENABLE_LOGGING" \
   -DCMAKE_INSTALL_PREFIX="$(cd .. && realpath "$INSTALL_DIR")" \
   -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
 
@@ -72,3 +72,6 @@ if [[ "$WITH_TESTS" == "ON" ]]; then
   fi
   popd >/dev/null
 fi
+
+
+

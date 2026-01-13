@@ -11,3 +11,6 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "[standalone/build.sh] Deprecated. Redirecting to scripts/build.sh ..."
 exec "$REPO_ROOT/scripts/build.sh" "$@"
+
+
+

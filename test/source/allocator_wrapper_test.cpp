@@ -1,11 +1,11 @@
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <thread>
 #include <unordered_map>
 #include <vector>
 
-using namespace nova_llm::amp;
+using namespace edgehermes::amp;
 
 class AllocatorWrapperTest : public ::testing::Test {
  protected:
@@ -211,3 +211,6 @@ TEST_F(AllocatorWrapperTest, ConcurrentAllocations) {
     thread.join();
   }
 }
+
+
+

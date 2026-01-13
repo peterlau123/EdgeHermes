@@ -1,4 +1,4 @@
-# NovaLLM System Architecture (系统架构图)
+# EdgeHermes System Architecture (系统架构�?
 
 ## Complete System Overview
 
@@ -12,14 +12,14 @@ graph TB
     end
 
     %% Applications and APIs
-    subgraph "📱 Application Layer<br/>应用层"
+    subgraph "📱 Application Layer<br/>应用�?
         APP[User Applications<br/>用户应用<br/>Chatbots, Tools, APIs]
         HTTP_API[HTTP API<br/>REST/gRPC]
         SDK[SDK & Libraries<br/>开发工具包]
     end
 
-    %% Core NovaLLM System
-    subgraph "🧠 NovaLLM Core<br/>NovaLLM核心"
+    %% Core EdgeHermes System
+    subgraph "🧠 EdgeHermes Core<br/>EdgeHermes核心"
         ENGINE[LLM Engine<br/>LLM引擎<br/>Inference Pipeline]
 
         subgraph "⚙️ Engine Components<br/>引擎组件"
@@ -29,7 +29,7 @@ graph TB
             SAMPLER[Sampler<br/>采样器]
         end
 
-        subgraph "🏗️ Core Abstractions<br/>核心抽象"
+        subgraph "🏗�?Core Abstractions<br/>核心抽象"
             TENSOR_SYSTEM[Tensor System<br/>张量系统]
             BUFFER_MGR[Buffer Manager<br/>缓冲区管理器]
             DEVICE_ABS[Device Abstraction<br/>设备抽象]
@@ -37,20 +37,20 @@ graph TB
     end
 
     %% Memory Management System
-    subgraph "💾 Advanced Memory Pool (AMP)<br/>高级内存池"
+    subgraph "💾 Advanced Memory Pool (AMP)<br/>高级内存�?
         AMP_CORE[AMP Core<br/>AMP核心]
 
-        subgraph "🏛️ Memory Infrastructure<br/>内存基础设施"
+        subgraph "🏛�?Memory Infrastructure<br/>内存基础设施"
             ARENA_ROUTER[Arena Router<br/>竞技场路由器<br/>CPU/GPU/NPU]
             THREAD_CACHE[Thread Cache<br/>线程缓存<br/>Per-thread Pools]
             CENTRAL_CACHE[Central Cache<br/>中央缓存<br/>Shared Free Lists]
-            PAGE_HEAP[Page Heap<br/>页面堆<br/>Large Allocations]
+            PAGE_HEAP[Page Heap<br/>页面�?br/>Large Allocations]
         end
 
-        subgraph "🔧 Memory Allocators<br/>内存分配器"
-            CPU_ALLOC[CPU Allocators<br/>CPU分配器<br/>TCMalloc, Jemalloc, Mimalloc]
-            GPU_ALLOC[GPU Allocators<br/>GPU分配器<br/>CUDA, Managed Memory]
-            NPU_ALLOC[NPU Allocators<br/>NPU分配器<br/>Future Support]
+        subgraph "🔧 Memory Allocators<br/>内存分配�?
+            CPU_ALLOC[CPU Allocators<br/>CPU分配�?br/>TCMalloc, Jemalloc, Mimalloc]
+            GPU_ALLOC[GPU Allocators<br/>GPU分配�?br/>CUDA, Managed Memory]
+            NPU_ALLOC[NPU Allocators<br/>NPU分配�?br/>Future Support]
         end
     end
 
@@ -59,7 +59,7 @@ graph TB
         CMAKE[CMake<br/>构建配置]
         CONAN[Conan<br/>依赖管理<br/>Third-party Libraries]
 
-        subgraph "📦 Dependencies<br/>依赖包"
+        subgraph "📦 Dependencies<br/>依赖�?
             FMT[fmt<br/>格式化库]
             SPDLOG[spdlog<br/>日志库]
             GTEST[gtest<br/>测试框架]
@@ -69,7 +69,7 @@ graph TB
     end
 
     %% Testing and Quality Assurance
-    subgraph "🧪 Testing & QA<br/>测试与质量保证"
+    subgraph "🧪 Testing & QA<br/>测试与质量保�?
         UNIT_TESTS[Unit Tests<br/>单元测试<br/>Allocator, Buffer, Tensor]
         INTEGRATION[Integration Tests<br/>集成测试<br/>End-to-end Pipelines]
         PERF_TESTS[Performance Tests<br/>性能测试<br/>Benchmarking]
@@ -77,15 +77,15 @@ graph TB
     end
 
     %% CI/CD and Deployment
-    subgraph "🚀 CI/CD & Deployment<br/>持续集成与部署"
+    subgraph "🚀 CI/CD & Deployment<br/>持续集成与部�?
         GITHUB_ACTIONS[GitHub Actions<br/>自动化流水线]
         BUILD_MATRIX[Build Matrix<br/>构建矩阵<br/>Multi-platform]
         RELEASE[Release Management<br/>版本管理<br/>Binaries, Packages]
     end
 
     %% Documentation and Community
-    subgraph "📚 Documentation & Community<br/>文档与社区"
-        DOCS[Technical Docs<br/>技术文档<br/>API, Architecture]
+    subgraph "📚 Documentation & Community<br/>文档与社�?
+        DOCS[Technical Docs<br/>技术文�?br/>API, Architecture]
         EXAMPLES[Code Examples<br/>代码示例<br/>Tutorials, Demos]
         COMMUNITY[Community<br/>社区<br/>Issues, Discussions]
     end
@@ -161,17 +161,17 @@ graph TB
 
 ## System Components Overview
 
-### 1. External Ecosystem (外部生态)
-- **End Users**: Applications using NovaLLM (chatbots, analysis tools)
+### 1. External Ecosystem (外部生�?
+- **End Users**: Applications using EdgeHermes (chatbots, analysis tools)
 - **Developers**: SDK users building applications
 - **Systems**: Enterprise integrations via APIs
 
-### 2. Application Layer (应用层)
-- **User Applications**: Client applications built on NovaLLM
+### 2. Application Layer (应用�?
+- **User Applications**: Client applications built on EdgeHermes
 - **HTTP API**: REST/gRPC interfaces for system integration
 - **SDK & Libraries**: Development tools and language bindings
 
-### 3. NovaLLM Core (NovaLLM核心)
+### 3. EdgeHermes Core (EdgeHermes核心)
 - **LLM Engine**: Main inference pipeline orchestration
 - **Engine Components**:
   - Tokenizer: Text processing and tokenization
@@ -183,7 +183,7 @@ graph TB
   - Buffer Manager: Memory buffer lifecycle
   - Device Abstraction: CPU/GPU/NPU unified interface
 
-### 4. Advanced Memory Pool (AMP) (高级内存池)
+### 4. Advanced Memory Pool (AMP) (高级内存�?
 - **AMP Core**: Memory management orchestration
 - **Memory Infrastructure**:
   - Arena Router: Device-specific memory routing
@@ -200,18 +200,18 @@ graph TB
 - **Conan**: Dependency management and package resolution
 - **Dependencies**: All third-party libraries (fmt, spdlog, gtest, CUDA, etc.)
 
-### 6. Testing & QA (测试与质量保证)
+### 6. Testing & QA (测试与质量保�?
 - **Unit Tests**: Component-level testing (allocators, buffers, tensors)
 - **Integration Tests**: End-to-end pipeline testing
 - **Performance Tests**: Benchmarking and optimization validation
 - **Memory Tests**: Leak detection and memory correctness
 
-### 7. CI/CD & Deployment (持续集成与部署)
+### 7. CI/CD & Deployment (持续集成与部�?
 - **GitHub Actions**: Automated build and test pipelines
 - **Build Matrix**: Multi-platform compilation (Linux, macOS, Windows)
 - **Release Management**: Binary distribution and packaging
 
-### 8. Documentation & Community (文档与社区)
+### 8. Documentation & Community (文档与社�?
 - **Technical Docs**: API documentation and architecture guides
 - **Code Examples**: Tutorials and demonstration code
 - **Community**: Issue tracking, discussions, and collaboration
@@ -220,17 +220,17 @@ graph TB
 
 ### Inference Request Flow (推理请求流程)
 ```
-User Request → HTTP API → LLM Engine → Tokenizer → Model Executor → KV Cache → Sampler → Response
+User Request �?HTTP API �?LLM Engine �?Tokenizer �?Model Executor �?KV Cache �?Sampler �?Response
 ```
 
 ### Memory Allocation Flow (内存分配流程)
 ```
-Tensor Creation → Buffer Manager → AMP Core → Arena Router → Thread Cache → Central Cache → Page Heap → Hardware Allocator
+Tensor Creation �?Buffer Manager �?AMP Core �?Arena Router �?Thread Cache �?Central Cache �?Page Heap �?Hardware Allocator
 ```
 
-### Development Flow (开发流程)
+### Development Flow (开发流�?
 ```
-Code Changes → GitHub Actions → Build Matrix → Unit Tests → Integration Tests → Performance Tests → Release
+Code Changes �?GitHub Actions �?Build Matrix �?Unit Tests �?Integration Tests �?Performance Tests �?Release
 ```
 
 ## Design Principles (设计原则)
@@ -251,3 +251,6 @@ Code Changes → GitHub Actions → Build Matrix → Unit Tests → Integration 
 - **Documentation**: Markdown with Mermaid diagrams
 - **CI/CD**: GitHub Actions with multi-platform support
 - **GPU Support**: CUDA with fallback mechanisms
+
+
+

@@ -1,5 +1,5 @@
 [requires]
-novallm/0.1.0@local/testing
+EdgeHermes/0.1.0@local/testing
 cxxopts/3.0.0
 spdlog/1.12.0
 fmt/10.2.1
@@ -10,3 +10,5 @@ CMakeToolchain
 
 [options]
 spdlog/1.12.0:shared=True
+
+

@@ -1,9 +1,9 @@
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <unordered_map>
 
-using namespace nova_llm::amp;
+using namespace edgehermes::amp;
 
 class CUDAAllocatorTest : public ::testing::Test {
  protected:
@@ -170,3 +170,6 @@ TEST_F(CUDAAllocatorTest, CUDAAllocatorPerformanceSmokeTest) {
     allocator.Deallocate(ptr);
   }
 }
+
+
+

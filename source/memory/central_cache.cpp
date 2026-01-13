@@ -1,11 +1,11 @@
-#include "NovaLLM/memory/central_cache.h"
-#include "NovaLLM/memory/amp_system.h"
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/central_cache.h"
+#include "EdgeHermes/memory/amp_system.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <algorithm>
 #include <memory>
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 CentralCache::CentralCache(const SizeClassSystem& size_class_system, size_t max_cache_size_mb)
@@ -195,4 +195,7 @@ PageHeap::HeapStats PageHeap::GetStats() const {
 }
 
 }  // namespace amp
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

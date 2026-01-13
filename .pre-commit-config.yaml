@@ -1,4 +1,4 @@
-# Pre-commit hooks for NovaLLM
+# Pre-commit hooks for EdgeHermes
 # Install: pip install pre-commit
 # Setup: pre-commit install
 # Run manually: pre-commit run --all-files
@@ -100,3 +100,6 @@ exclude: |
       documentation/.*|
       docs/.*
   )$
+
+
+

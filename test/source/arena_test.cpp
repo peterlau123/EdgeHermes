@@ -1,11 +1,11 @@
-#include "NovaLLM/memory/arena.h"
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/arena.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
 
-using namespace nova_llm::amp;
+using namespace edgehermes::amp;
 
 class ArenaTest : public ::testing::Test {
  protected:
@@ -350,3 +350,6 @@ TEST_F(ArenaTest, ArenaDestructorWithAllocations) {
   }
   SUCCEED();
 }
+
+
+

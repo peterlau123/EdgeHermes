@@ -1,12 +1,12 @@
-#include "NovaLLM/memory/thread_cache.h"
+#include "EdgeHermes/memory/thread_cache.h"
 #include "thread_cache_storage.h"
-#include "NovaLLM/memory/amp_system.h"
+#include "EdgeHermes/memory/amp_system.h"
 
 #include <algorithm>
 #include <memory>
 #include <new>
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 // Thread-local storage implementation
@@ -183,4 +183,7 @@ void ThreadCacheStorage::Cleanup() {
 }
 
 }  // namespace amp
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

@@ -1,4 +1,4 @@
-#include "NovaLLM/memory/thread_cache.h"
+#include "EdgeHermes/memory/thread_cache.h"
 #include "memory/thread_cache_storage.h"
 
 #include <gtest/gtest.h>
@@ -6,7 +6,7 @@
 #include <vector>
 #include <atomic>
 
-using namespace nova_llm::amp;
+using namespace edgehermes::amp;
 
 class ThreadCacheTest : public ::testing::Test {
  protected:
@@ -334,3 +334,6 @@ TEST_F(ThreadCacheTest, ThreadCacheStorageErrorHandling) {
   ThreadCacheStorage::Cleanup();
   EXPECT_NO_THROW(ThreadCacheStorage::Cleanup());
 }
+
+
+

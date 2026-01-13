@@ -7,7 +7,7 @@ Param(
   [string]$InstallPrefix
 )
 
-# build_windows.ps1 â€” Build NovaLLM on Windows using Conan + CMake (MSVC)
+# build_windows.ps1 â€?Build EdgeHermes on Windows using Conan + CMake (MSVC)
 # Mirrors .github/workflows/windows.yml
 
 function Need($cmd) {
@@ -41,7 +41,7 @@ Write-Host "Using toolchain: $($toolchain.FullName)"
 $generator = 'Visual Studio 17 2022'
 cmake -S .. -B . -G "$generator" -A x64 `
   -DCMAKE_BUILD_TYPE=$Configuration `
-  -DNOVA_LLM_ENABLE_LOGGING=$EnableLogging `
+  -Dedgehermes_ENABLE_LOGGING=$EnableLogging `
   -DCMAKE_INSTALL_PREFIX="$(Resolve-Path ..\$INSTALL_DIR)" `
   -DCMAKE_TOOLCHAIN_FILE="$($toolchain.FullName)"
 
@@ -65,3 +65,6 @@ if ($WithTests) {
   # Note: ctest optional
   Pop-Location
 }
+
+
+

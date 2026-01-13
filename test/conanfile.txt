@@ -1,5 +1,5 @@
 [requires]
-novallm/0.1.0@local/testing
+EdgeHermes/0.1.0@local/testing
 gtest/1.12.1
 fmt/10.2.1
 spdlog/1.12.0
@@ -11,3 +11,5 @@ CMakeToolchain
 [options]
 gtest/1.12.1:shared=False
 gtest/1.12.1:build_gmock=True
+
+

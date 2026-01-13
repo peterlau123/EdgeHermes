@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "NovaLLM/parser/parser.h"
-#include "NovaLLM/pipeline/pipeline.h"
+#include "EdgeHermes/parser/parser.h"
+#include "EdgeHermes/pipeline/pipeline.h"
 
-namespace nova_llm {
+namespace edgehermes {
 
 class EngineImpl {
  public:
@@ -30,4 +30,7 @@ class EngineImpl {
 
 using EngineImplPtr = EngineImpl::EngineImplPtr;
 
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

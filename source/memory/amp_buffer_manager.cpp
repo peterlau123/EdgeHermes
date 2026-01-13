@@ -1,12 +1,12 @@
-#include "NovaLLM/memory/amp_buffer_manager.h"
+#include "EdgeHermes/memory/amp_buffer_manager.h"
 
 #include <stdexcept>
 
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/allocator.h"
 #include "thread_cache_storage.h"
-#include "NovaLLM/utils/log.h"
+#include "EdgeHermes/utils/log.h"
 
-namespace nova_llm {
+namespace edgehermes {
 
 // Global instance for singleton
 std::unique_ptr<AMPBufferManager> AMPBufferManager::global_instance_;
@@ -25,28 +25,28 @@ AMPBufferManager::~AMPBufferManager() {
 bool AMPBufferManager::Initialize(const Config& config) {
   try {
     // Initialize thread cache storage
-    nova_llm::amp::ThreadCacheStorage::Initialize(
-        nova_llm::amp::GetSizeClassSystem(), config.amp_config);
+    edgehermes::amp::ThreadCacheStorage::Initialize(
+        edgehermes::amp::GetSizeClassSystem(), config.amp_config);
 
     // Create arena router
-    arena_router_ = std::make_unique<nova_llm::amp::ArenaRouter>(config.amp_config);
+    arena_router_ = std::make_unique<edgehermes::amp::ArenaRouter>(config.amp_config);
 
     // Initialize arenas for configured devices
-    nova_llm::amp::IMemoryAllocatorPtr cpu_allocator;
-    nova_llm::amp::IMemoryAllocatorPtr gpu_allocator;
+    edgehermes::amp::IMemoryAllocatorPtr cpu_allocator;
+    edgehermes::amp::IMemoryAllocatorPtr gpu_allocator;
 
     // Get CPU allocator
     if (config.device_flags.has(DeviceType::CPU)) {
       auto it = config.allocators.find(DeviceType::CPU);
       if (it != config.allocators.end() && it->second) {
         // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
-        cpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.get());
+        cpu_allocator = std::unique_ptr<edgehermes::amp::IMemoryAllocator>(it->second.get());
         // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
         // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use standard allocator as fallback
-        cpu_allocator = nova_llm::amp::AllocatorFactory::Create(
-            nova_llm::amp::AllocatorType::STANDARD);
+        cpu_allocator = edgehermes::amp::AllocatorFactory::Create(
+            edgehermes::amp::AllocatorType::STANDARD);
       }
     }
 
@@ -55,13 +55,13 @@ bool AMPBufferManager::Initialize(const Config& config) {
       auto it = config.allocators.find(DeviceType::CUDA);
       if (it != config.allocators.end() && it->second) {
         // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
-        gpu_allocator = std::unique_ptr<nova_llm::amp::IMemoryAllocator>(it->second.get());
+        gpu_allocator = std::unique_ptr<edgehermes::amp::IMemoryAllocator>(it->second.get());
         // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
         // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use CUDA allocator as fallback
-        gpu_allocator = nova_llm::amp::AllocatorFactory::Create(
-            nova_llm::amp::AllocatorType::STANDARD);  // CUDA allocator would be better
+        gpu_allocator = edgehermes::amp::AllocatorFactory::Create(
+            edgehermes::amp::AllocatorType::STANDARD);  // CUDA allocator would be better
       }
     }
 
@@ -131,7 +131,7 @@ void AMPBufferManager::Put(Buffer& buffer) {
   }
 }
 
-nova_llm::amp::MemoryStats AMPBufferManager::GetStats() const {
+edgehermes::amp::MemoryStats AMPBufferManager::GetStats() const {
   if (!initialized_ || !arena_router_) {
     return {};
   }
@@ -154,16 +154,19 @@ AMPBufferManager& AMPBufferManager::Builder::GetInstance() {
   if (!global_instance_) {
     // Create default configuration
     Config default_config;
-    default_config.amp_config = nova_llm::amp::AMPConfig{};
+    default_config.amp_config = edgehermes::amp::AMPConfig{};
     default_config.device_flags.set(DeviceType::CPU);
 
     // Add standard CPU allocator
     default_config.allocators[DeviceType::CPU] =
-        nova_llm::amp::AllocatorFactory::Create(nova_llm::amp::AllocatorType::STANDARD);
+        edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
 
     global_instance_ = std::make_unique<AMPBufferManager>(default_config);
   }
   return *global_instance_;
 }
 
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

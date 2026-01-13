@@ -1,17 +1,17 @@
-# NovaLLM Memory Management System Redesign
+# EdgeHermes Memory Management System Redesign
 
 ## 1. Executive Summary
 
-This document describes the completed redesign of the NovaLLM memory management system, migrating from the current Segregated Free List (BufferHub) approach to an Adaptive Memory Pool (AMP) system with pluggable third-party allocators integration.
+This document describes the completed redesign of the EdgeHermes memory management system, migrating from the current Segregated Free List (BufferHub) approach to an Adaptive Memory Pool (AMP) system with pluggable third-party allocators integration.
 
-**Status**: ✅ **FULLY IMPLEMENTED AND PRODUCTION READY**
+**Status**: �?**FULLY IMPLEMENTED AND PRODUCTION READY**
 
 **Goal**: Improve performance, scalability, and maintainability while enabling integration of high-performance allocators like tcmalloc, jemalloc, and mimalloc.
 
 ## 2. Current Design Analysis
 
 ### Current Architecture Overview
-- **BufferHub**: Segregated free lists with fixed size classes (64B → 4KB → 128MB → 4GB)
+- **BufferHub**: Segregated free lists with fixed size classes (64B �?4KB �?128MB �?4GB)
 - **BufferManager**: Singleton manager for CPU/GPU buffer hubs with basic thread safety
 - **Allocators**: Simple CPU/GPU allocators using std::malloc/cstdlib
 
@@ -32,23 +32,23 @@ This document describes the completed redesign of the NovaLLM memory management 
 ### 3.1 High-Level Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                   Adaptive Memory Pool System                    │
-├──────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────┐  │
-│  │ Thread Cache│  │ Central    │  │   Page     │  │  Stats   │  │
-│  │             │  │ Cache      │  │   Heap     │  │ Monitor  │  │
-│  │ Lock-free   │  │ Shared     │  │ Fallback   │  │          │  │
-│  │ Small Allocs│  │ Lists      │  │ Allocator  │  │ Perf     │  │
-│  └─────────────┘  └─────────────┘  └─────────────┘  │ Metrics │  │
-├─────────────────────────────────────────────────────┼──────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ ∟          │
-│  │ CPU Arena   │  │ GPU Arena  │  │Arena Router│            │
-│  │ (NUMA-aware)│  │(CUDA-aware)│  │             │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-├──────────────────────────────────────────────────────────────────┤
-│         Pluggable Allocators: tcmalloc | jemalloc | mimalloc    │
-└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────�?
+�?                  Adaptive Memory Pool System                    �?
+├──────────────────────────────────────────────────────────────────�?
+�? ┌─────────────�? ┌─────────────�? ┌─────────────�? ┌─────────�? �?
+�? �?Thread Cache�? �?Central    �? �?  Page     �? �? Stats   �? �?
+�? �?            �? �?Cache      �? �?  Heap     �? �?Monitor  �? �?
+�? �?Lock-free   �? �?Shared     �? �?Fallback   �? �?         �? �?
+�? �?Small Allocs�? �?Lists      �? �?Allocator  �? �?Perf     �? �?
+�? └─────────────�? └─────────────�? └─────────────�? �?Metrics �? �?
+├─────────────────────────────────────────────────────┼──────────�?
+�? ┌─────────────�? ┌─────────────�? ┌─────────────�?�?         �?
+�? �?CPU Arena   �? �?GPU Arena  �? │Arena Router�?           �?
+�? �?(NUMA-aware)�? �?CUDA-aware)�? �?            �?           �?
+�? └─────────────�? └─────────────�? └─────────────�?           �?
+├──────────────────────────────────────────────────────────────────�?
+�?        Pluggable Allocators: tcmalloc | jemalloc | mimalloc    �?
+└──────────────────────────────────────────────────────────────────�?
 ```
 
 ### 3.2 Core Components
@@ -117,7 +117,7 @@ class SizeClassSystem {
 
 **Migration Strategy:**
 ```cpp
-class AMPBufferManager : public nova_llm::BufferManager {
+class AMPBufferManager : public edgehermes::BufferManager {
 private:
     // New internal implementation
     std::unique_ptr<AMP::Arena> arenas_[DeviceType::COUNT];
@@ -166,7 +166,7 @@ apt-get install libgoogle-perftools-dev
 # CMake integration
 find_package(PkgConfig)
 pkg_check_modules(TCMALLOC REQUIRED libtcmalloc)
-target_link_libraries(novallm ${TCMALLOC_LIBRARIES})
+target_link_libraries(EdgeHermes ${TCMALLOC_LIBRARIES})
 ```
 
 **Wrapper Implementation:**
@@ -199,7 +199,7 @@ brew install jemalloc
 
 # CMake
 find_library(JEMALLOC_LIBRARY jemalloc)
-target_link_libraries(novallm ${JEMALLOC_LIBRARY})
+target_link_libraries(EdgeHermes ${JEMALLOC_LIBRARY})
 ```
 
 ### 5.4 Mimalloc Integration
@@ -208,7 +208,7 @@ target_link_libraries(novallm ${JEMALLOC_LIBRARY})
 ```cmake
 # CMakeLists.txt
 add_subdirectory(external/mimalloc)
-target_link_libraries(novallm mimalloc)
+target_link_libraries(EdgeHermes mimalloc)
 ```
 
 **Header-Only Usage:**
@@ -408,7 +408,7 @@ struct MemoryStats {
 
 ## 11. Implementation Status
 
-### ✅ **COMPLETED COMPONENTS**
+### �?**COMPLETED COMPONENTS**
 
 #### Core AMP Infrastructure
 - [x] `IMemoryAllocator` interface with virtual methods for Allocate/Deallocate/AllocateAligned
@@ -423,7 +423,7 @@ struct MemoryStats {
 - [x] **ArenaRouter**: Device-aware allocation routing with global statistics
 
 #### CPU Memory Management
-- [x] **CPUArena**: Full AMP implementation with thread cache → central cache → page heap hierarchy
+- [x] **CPUArena**: Full AMP implementation with thread cache �?central cache �?page heap hierarchy
 - [x] NUMA-aware allocation support (configurable)
 - [x] Health monitoring and statistics collection
 
@@ -493,4 +493,7 @@ struct MemoryStats {
 - [x] Comprehensive documentation and implementation comments
 - [ ] Production deployment validation (pending integration testing)
 
-This redesign provides a modern, flexible memory management system that can evolve with NovaLLM's needs while maintaining compatibility and improving performance across all use cases.
+This redesign provides a modern, flexible memory management system that can evolve with EdgeHermes's needs while maintaining compatibility and improving performance across all use cases.
+
+
+

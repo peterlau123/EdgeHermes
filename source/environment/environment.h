@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nova_llm {
+namespace edgehermes {
 
 namespace Env {
 
@@ -13,4 +13,7 @@ class Environment {
 
 }  // namespace Env
 
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace nova_llm {
+namespace edgehermes {
 
 EngineImpl::EngineImplPtr EngineImpl::build() {
 
@@ -30,4 +30,7 @@ std::string EngineImpl::chat(const std::string& prompt) {
   return ret;
 }
 
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

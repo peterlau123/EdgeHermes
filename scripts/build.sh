@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# scripts/build.sh â€” Cross-platform build wrapper
+# scripts/build.sh â€?Cross-platform build wrapper
 # Unified flags:
 #   --type Release|Debug
 #   --enable-logging ON|OFF
@@ -59,3 +59,6 @@ case "$uname_s" in
   *)
     echo "Unsupported OS: $uname_s"; exit 1 ;;
  esac
+
+
+

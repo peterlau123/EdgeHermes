@@ -1,29 +1,29 @@
-#include "NovaLLM/memory/allocator.h"
+#include "EdgeHermes/memory/allocator.h"
 
 #include <cstdlib>
 #include <new>
 #include <vector>
 
-#ifdef NOVA_LLM_ENABLE_CUDA
+#ifdef edgehermes_ENABLE_CUDA
 #include <cuda_runtime.h>
 #endif
 
 // Third-party allocator headers
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
 #include <gperftools/tcmalloc.h>
 #endif
 
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
 #include <jemalloc/jemalloc.h>
 #endif
 
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
 #include <mimalloc.h>
 #endif
 
-#include "NovaLLM/utils/log.h"
+#include "EdgeHermes/utils/log.h"
 
-namespace nova_llm {
+namespace edgehermes {
 namespace amp {
 
 // Helper function for aligned allocation
@@ -74,7 +74,7 @@ TCMallocAllocator::TCMallocAllocator(const std::unordered_map<std::string, std::
 void* TCMallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
   return tc_malloc(size);
 #else
   return std::malloc(size);  // Fallback to standard malloc
@@ -84,7 +84,7 @@ void* TCMallocAllocator::Allocate(size_t size) {
 void TCMallocAllocator::Deallocate(void* ptr) {
   if (!ptr) return;
 
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
   tc_free(ptr);
 #else
   std::free(ptr);  // Fallback to standard free
@@ -94,7 +94,7 @@ void TCMallocAllocator::Deallocate(void* ptr) {
 void* TCMallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_TCMALLOC
+#ifdef edgehermes_ENABLE_TCMALLOC
   // TCMalloc's tc_memalign may not be available in all versions
   // Use posix_memalign as fallback for TCMalloc builds
   return AllocateAligned(size, alignment);
@@ -113,7 +113,7 @@ JemallocAllocator::JemallocAllocator(const std::unordered_map<std::string, std::
 void* JemallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
   return je_malloc(size);
 #else
   return std::malloc(size);  // Fallback to standard malloc
@@ -123,7 +123,7 @@ void* JemallocAllocator::Allocate(size_t size) {
 void JemallocAllocator::Deallocate(void* ptr) {
   if (!ptr) return;
 
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
   je_free(ptr);
 #else
   std::free(ptr);  // Fallback to standard free
@@ -133,7 +133,7 @@ void JemallocAllocator::Deallocate(void* ptr) {
 void* JemallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_JEMALLOC
+#ifdef edgehermes_ENABLE_JEMALLOC
   // jemalloc 5.0+ has je_aligned_alloc
   return je_aligned_alloc(alignment, size);
 #else
@@ -151,7 +151,7 @@ MimallocAllocator::MimallocAllocator(const std::unordered_map<std::string, std::
 void* MimallocAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
   return mi_malloc(size);
 #else
   return std::malloc(size);  // Fallback to standard malloc
@@ -161,7 +161,7 @@ void* MimallocAllocator::Allocate(size_t size) {
 void MimallocAllocator::Deallocate(void* ptr) {
   if (!ptr) return;
 
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
   mi_free(ptr);
 #else
   std::free(ptr);  // Fallback to standard free
@@ -171,7 +171,7 @@ void MimallocAllocator::Deallocate(void* ptr) {
 void* MimallocAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
 
-#ifdef NOVA_LLM_ENABLE_MIMALLOC
+#ifdef edgehermes_ENABLE_MIMALLOC
   return mi_aligned_alloc(alignment, size);
 #else
   return AllocateAligned(size, alignment);  // Fallback
@@ -179,4 +179,7 @@ void* MimallocAllocator::AllocateAligned(size_t size, size_t alignment) {
 }
 
 }  // namespace amp
-}  // namespace nova_llm
+}  // namespace edgehermes
+
+
+

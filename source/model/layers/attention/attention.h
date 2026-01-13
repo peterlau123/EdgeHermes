@@ -1,3 +1,6 @@
 #pragma once
 
-namespace nova_llm {}  // namespace nova_llm
+namespace edgehermes {}  // namespace edgehermes
+
+
+

@@ -1,9 +1,9 @@
-#include "NovaLLM/data/tensor.h"
-#include "NovaLLM/memory/buffer_manager.h"
+#include "EdgeHermes/data/tensor.h"
+#include "EdgeHermes/memory/buffer_manager.h"
 
 #include <gtest/gtest.h>
 
-using namespace nova_llm;
+using namespace edgehermes;
 
 class TensorTest : public ::testing::Test {
  protected:
@@ -22,7 +22,7 @@ class TensorTest : public ::testing::Test {
   }
 };
 
-// 测试默认构造函数
+// 测试默认构造函�?
 TEST_F(TensorTest, DefaultConstructor) {
   Tensor tensor;
   EXPECT_EQ(tensor.totalElements(), 0);
@@ -31,7 +31,7 @@ TEST_F(TensorTest, DefaultConstructor) {
   EXPECT_EQ(tensor.device(), DeviceType::UNKNOWN);
 }
 
-// 测试带维度的构造函数
+// 测试带维度的构造函�?
 TEST_F(TensorTest, ConstructWithDims) {
   std::vector<uint32_t> dims = {2, 3, 4};
   Tensor tensor(dims, DataType::FLOAT32, DeviceType::CPU);
@@ -53,7 +53,7 @@ TEST_F(TensorTest, InvalidDimensions) {
   EXPECT_THROW(Tensor tensor(zero_dims, DataType::FLOAT32, DeviceType::CPU), std::runtime_error);
 }
 
-// 测试拷贝构造
+// 测试拷贝构�?
 TEST_F(TensorTest, CopyConstruction) {
   std::vector<uint32_t> dims = {2, 3};
   Tensor original(dims, DataType::FLOAT32, DeviceType::CPU);
@@ -86,3 +86,6 @@ TEST_F(TensorTest, MemoryAllocation) {
   EXPECT_NE(tensor.data(), nullptr);
   EXPECT_EQ(tensor.totalElements(), 6);
 }
+
+
+

@@ -5,17 +5,17 @@ include(cmake/options.cmake)
 
 # ===================== Project Info ========================
 project(
-  NovaLLM
+  EdgeHermes
   VERSION 0.1.0
   DESCRIPTION "A lightweight and efficient C/C++ library for Large Language Model (LLM) inference"
   LANGUAGES CXX C
-  HOMEPAGE_URL  "https://github.com/peterlau123/NovaLLM"
+  HOMEPAGE_URL  "https://github.com/peterlau123/EdgeHermes"
 )
 
 # ===================== Conan Dependencies ==================
 # Find packages managed by Conan
 find_package(fmt REQUIRED)
-if(NOVA_LLM_ENABLE_LOGGING)
+if(edgehermes_ENABLE_LOGGING)
   find_package(spdlog REQUIRED)
 endif()
 # ===================== Build Guards ========================
@@ -49,12 +49,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 if(WIN32)
 # Define export macro when building the library so Windows builds use __declspec(dllexport)
-target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_EXPORTS)
+target_compile_definitions(${PROJECT_NAME} PRIVATE edgehermes_EXPORTS)
 endif()
 
 # ===================== Link Dependencies ===================
 set(DEPENDENCY_LIST fmt::fmt)
-if(NOVA_LLM_ENABLE_LOGGING)
+if(edgehermes_ENABLE_LOGGING)
   list(APPEND DEPENDENCY_LIST spdlog::spdlog)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE ${DEPENDENCY_LIST})
@@ -67,7 +67,7 @@ target_include_directories(
 # ===================== Install Targets =====================
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "默认安装路径" FORCE)
-  message(STATUS "设置安装路径为: ${CMAKE_INSTALL_PREFIX}")
+  message(STATUS "设置安装路径�? ${CMAKE_INSTALL_PREFIX}")
 endif()
 
 # Install library and headers
@@ -114,10 +114,13 @@ install(EXPORT ${PROJECT_NAME}Targets
 
 
 # ===================== Summary =============================
-message(STATUS "\n==== NovaLLM Configuration Summary ====")
-message(STATUS "  Logging:         ${NOVA_LLM_ENABLE_LOGGING}")
-message(STATUS "  Build tests:     ${NOVA_LLM_BUILD_TESTS}")
+message(STATUS "\n==== EdgeHermes Configuration Summary ====")
+message(STATUS "  Logging:         ${edgehermes_ENABLE_LOGGING}")
+message(STATUS "  Build tests:     ${edgehermes_BUILD_TESTS}")
 message(STATUS "  Install prefix:  ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "  C++ Standard:    17")
 message(STATUS "  Dependencies:     fmt, spdlog")
 message(STATUS "====================================\n")
+
+
+

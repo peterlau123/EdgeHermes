@@ -1,4 +1,4 @@
-# Codecov configuration for NovaLLM
+# Codecov configuration for EdgeHermes
 # See: https://docs.codecov.com/docs/codecov-yaml
 
 coverage:
@@ -34,3 +34,6 @@ comment:
 
 fixes:
   - "before/:/after/"  # Path fixes if needed
+
+
+
