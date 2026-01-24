@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#ifdef edgehermes_ENABLE_CUDA
+#ifdef peregrine_ENABLE_CUDA
 #include <cuda_runtime.h>
 #endif
 
@@ -22,7 +22,7 @@ CUDAAllocator::CUDAAllocator(bool use_managed_memory)
 }
 
 bool CUDAAllocator::CheckCudaAvailability() {
-#ifdef edgehermes_ENABLE_CUDA
+#ifdef peregrine_ENABLE_CUDA
   // Check if CUDA runtime is available
   cudaError_t err = cudaGetDeviceCount(&device_count_);
   if (err != cudaSuccess) {
@@ -45,7 +45,7 @@ bool CUDAAllocator::CheckCudaAvailability() {
 void* CUDAAllocator::Allocate(size_t size) {
   if (size == 0) return nullptr;
 
-#ifdef edgehermes_ENABLE_CUDA
+#ifdef peregrine_ENABLE_CUDA
   if (cuda_available_) {
     void* ptr = nullptr;
     cudaError_t err;
@@ -80,7 +80,7 @@ void* CUDAAllocator::Allocate(size_t size) {
 void CUDAAllocator::Deallocate(void* ptr) {
   if (!ptr) return;
 
-#ifdef edgehermes_ENABLE_CUDA
+#ifdef peregrine_ENABLE_CUDA
   if (cuda_available_) {
     // Try to determine if this is CUDA memory
     // For managed memory, cudaFree will work
@@ -102,7 +102,7 @@ void CUDAAllocator::Deallocate(void* ptr) {
 void* CUDAAllocator::AllocateAligned(size_t size, size_t alignment) {
   if (size == 0) return nullptr;
 
-#ifdef edgehermes_ENABLE_CUDA
+#ifdef peregrine_ENABLE_CUDA
   if (cuda_available_) {
     // CUDA has specific alignment requirements
     // For CUDA managed memory, alignment should be at least 256 bytes

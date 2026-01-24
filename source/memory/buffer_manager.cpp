@@ -7,11 +7,11 @@
 #include "Peregrine/utils/log.h"
 
 // Global instance for singleton pattern
-static std::unique_ptr<edgehermes::BufferManager> global_buffer_manager_;
+static std::unique_ptr<peregrine::BufferManager> global_buffer_manager_;
 
-edgehermes::BufferManager::BufferManager() = default;
+peregrine::BufferManager::BufferManager() = default;
 
-edgehermes::BufferManager& edgehermes::BufferManager::Builder::build(const Config& config) {
+peregrine::BufferManager& peregrine::BufferManager::Builder::build(const Config& config) {
   if (!global_buffer_manager_) {
     global_buffer_manager_ = std::make_unique<BufferManager>();
     if (!global_buffer_manager_->init(config)) {
@@ -21,7 +21,7 @@ edgehermes::BufferManager& edgehermes::BufferManager::Builder::build(const Confi
   return *global_buffer_manager_;
 }
 
-edgehermes::BufferManager& edgehermes::BufferManager::Builder::getInstance() {
+peregrine::BufferManager& peregrine::BufferManager::Builder::getInstance() {
   if (!global_buffer_manager_) {
     // Create with default configuration
     Config default_config;
@@ -35,9 +35,9 @@ edgehermes::BufferManager& edgehermes::BufferManager::Builder::getInstance() {
   return *global_buffer_manager_;
 }
 
-edgehermes::BufferManager::~BufferManager() = default;
+peregrine::BufferManager::~BufferManager() = default;
 
-bool edgehermes::BufferManager::init(const Config& config) {
+bool peregrine::BufferManager::init(const Config& config) {
   if (amp_manager_) {
     return true; // Already initialized
   }
@@ -45,7 +45,7 @@ bool edgehermes::BufferManager::init(const Config& config) {
   try {
     // Convert legacy config to AMP config
     AMPBufferManager::Config amp_config;
-    amp_config.amp_config = edgehermes::amp::AMPConfig{};
+    amp_config.amp_config = peregrine::amp::AMPConfig{};
     amp_config.device_flags = config.device_flags;
 
     // Set up allocators based on legacy config
@@ -54,14 +54,14 @@ bool edgehermes::BufferManager::init(const Config& config) {
     // TODO: Create an adapter wrapper if custom allocators need to be supported
     if (config.device_flags.has(DeviceType::CPU)) {
       amp_config.allocators[DeviceType::CPU] =
-          std::make_shared<edgehermes::amp::StandardAllocator>();
+          std::make_shared<peregrine::amp::StandardAllocator>();
     }
 
     if (config.device_flags.has(DeviceType::CUDA)) {
       // For GPU, use CUDA allocator (even though it's currently stubbed)
       // This ensures proper interface even if CUDA isn't available yet
       amp_config.allocators[DeviceType::CUDA] =
-          std::make_shared<edgehermes::amp::CUDAAllocator>(false);  // false = regular CUDA memory
+          std::make_shared<peregrine::amp::CUDAAllocator>(false);  // false = regular CUDA memory
     }
 
     // Create AMP buffer manager
@@ -76,11 +76,11 @@ bool edgehermes::BufferManager::init(const Config& config) {
   }
 }
 
-bool edgehermes::BufferManager::isInited() const {
+bool peregrine::BufferManager::isInited() const {
   return amp_manager_ && amp_manager_->IsInitialized();
 }
 
-edgehermes::Buffer edgehermes::BufferManager::fetch(size_t size, DeviceType device_type) {
+peregrine::Buffer peregrine::BufferManager::fetch(size_t size, DeviceType device_type) {
   if (!amp_manager_) {
     LOG_ERROR("BufferManager not initialized");
     return Buffer{};
@@ -88,7 +88,7 @@ edgehermes::Buffer edgehermes::BufferManager::fetch(size_t size, DeviceType devi
   return amp_manager_->Fetch(size, device_type);
 }
 
-void edgehermes::BufferManager::put(Buffer& buffer) {
+void peregrine::BufferManager::put(Buffer& buffer) {
   if (!amp_manager_) {
     LOG_ERROR("BufferManager not initialized");
     return;
@@ -96,7 +96,7 @@ void edgehermes::BufferManager::put(Buffer& buffer) {
   amp_manager_->Put(buffer);
 }
 
-void edgehermes::BufferManager::destroy() {
+void peregrine::BufferManager::destroy() {
   global_buffer_manager_.reset();
 }
 

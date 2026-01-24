@@ -25,28 +25,28 @@ AMPBufferManager::~AMPBufferManager() {
 bool AMPBufferManager::Initialize(const Config& config) {
   try {
     // Initialize thread cache storage
-    edgehermes::amp::ThreadCacheStorage::Initialize(
-        edgehermes::amp::GetSizeClassSystem(), config.amp_config);
+    peregrine::amp::ThreadCacheStorage::Initialize(
+        peregrine::amp::GetSizeClassSystem(), config.amp_config);
 
     // Create arena router
-    arena_router_ = std::make_unique<edgehermes::amp::ArenaRouter>(config.amp_config);
+    arena_router_ = std::make_unique<peregrine::amp::ArenaRouter>(config.amp_config);
 
     // Initialize arenas for configured devices
-    edgehermes::amp::IMemoryAllocatorPtr cpu_allocator;
-    edgehermes::amp::IMemoryAllocatorPtr gpu_allocator;
+    peregrine::amp::IMemoryAllocatorPtr cpu_allocator;
+    peregrine::amp::IMemoryAllocatorPtr gpu_allocator;
 
     // Get CPU allocator
     if (config.device_flags.has(DeviceType::CPU)) {
       auto it = config.allocators.find(DeviceType::CPU);
       if (it != config.allocators.end() && it->second) {
         // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
-        cpu_allocator = std::unique_ptr<edgehermes::amp::IMemoryAllocator>(it->second.get());
+        cpu_allocator = std::unique_ptr<peregrine::amp::IMemoryAllocator>(it->second.get());
         // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
         // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use standard allocator as fallback
-        cpu_allocator = edgehermes::amp::AllocatorFactory::Create(
-            edgehermes::amp::AllocatorType::STANDARD);
+        cpu_allocator = peregrine::amp::AllocatorFactory::Create(
+            peregrine::amp::AllocatorType::STANDARD);
       }
     }
 
@@ -55,13 +55,13 @@ bool AMPBufferManager::Initialize(const Config& config) {
       auto it = config.allocators.find(DeviceType::CUDA);
       if (it != config.allocators.end() && it->second) {
         // Convert shared_ptr to unique_ptr by creating a new unique_ptr from raw pointer
-        gpu_allocator = std::unique_ptr<edgehermes::amp::IMemoryAllocator>(it->second.get());
+        gpu_allocator = std::unique_ptr<peregrine::amp::IMemoryAllocator>(it->second.get());
         // Note: This creates a new unique_ptr that shares ownership, but doesn't transfer it
         // For proper ownership transfer, we'd need to modify the interface
       } else {
         // Use CUDA allocator as fallback
-        gpu_allocator = edgehermes::amp::AllocatorFactory::Create(
-            edgehermes::amp::AllocatorType::STANDARD);  // CUDA allocator would be better
+        gpu_allocator = peregrine::amp::AllocatorFactory::Create(
+            peregrine::amp::AllocatorType::STANDARD);  // CUDA allocator would be better
       }
     }
 
@@ -131,7 +131,7 @@ void AMPBufferManager::Put(Buffer& buffer) {
   }
 }
 
-edgehermes::amp::MemoryStats AMPBufferManager::GetStats() const {
+peregrine::amp::MemoryStats AMPBufferManager::GetStats() const {
   if (!initialized_ || !arena_router_) {
     return {};
   }
@@ -154,12 +154,12 @@ AMPBufferManager& AMPBufferManager::Builder::GetInstance() {
   if (!global_instance_) {
     // Create default configuration
     Config default_config;
-    default_config.amp_config = edgehermes::amp::AMPConfig{};
+    default_config.amp_config = peregrine::amp::AMPConfig{};
     default_config.device_flags.set(DeviceType::CPU);
 
     // Add standard CPU allocator
     default_config.allocators[DeviceType::CPU] =
-        edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+        peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
     global_instance_ = std::make_unique<AMPBufferManager>(default_config);
   }

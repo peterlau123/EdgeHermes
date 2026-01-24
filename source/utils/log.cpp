@@ -1,6 +1,6 @@
 #include "Peregrine/utils/log.h"
 
-#if defined(edgehermes_ENABLE_LOGGING) && edgehermes_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
+#if defined(peregrine_ENABLE_LOGGING) && peregrine_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
 #include <fmt/format.h>
 #include <spdlog/formatter.h>

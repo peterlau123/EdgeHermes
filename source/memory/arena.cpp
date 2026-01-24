@@ -77,13 +77,13 @@ bool ArenaRouter::AreAllArenasHealthy() const {
 // CPUArena Implementation
 CPUArena::CPUArena(const AMPConfig& config, IMemoryAllocatorPtr underlying_allocator, bool numa_aware)
     : config_(config),
-      size_class_system_(edgehermes::amp::GetSizeClassSystem()),
+      size_class_system_(peregrine::amp::GetSizeClassSystem()),
       total_allocations_(0),
       total_deallocations_(0),
       active_allocations_(0),
       total_bytes_allocated_(0) {
   // Initialize thread cache storage if not already done
-  edgehermes::amp::ThreadCacheStorage::Initialize(
+  peregrine::amp::ThreadCacheStorage::Initialize(
       size_class_system_, config);
 
   // Create central cache
@@ -105,7 +105,7 @@ void* CPUArena::Allocate(size_t size) {
 
   // Try thread-local cache first for small allocations
   if (size_class_system_.IsSmallClass(size_class_system_.GetSizeClass(size))) {
-    edgehermes::amp::ThreadCache& thread_cache = edgehermes::amp::ThreadCacheStorage::Get();
+    peregrine::amp::ThreadCache& thread_cache = peregrine::amp::ThreadCacheStorage::Get();
     void* ptr = thread_cache.Allocate(size_class_system_.GetSizeClass(size));
     if (ptr) {
       total_bytes_allocated_.fetch_add(size, std::memory_order_relaxed);
@@ -142,7 +142,7 @@ void CPUArena::Deallocate(void* ptr, size_t size) {
 
   // Try thread-local cache for small objects
   if (size_class_system_.IsSmallClass(size_class)) {
-    edgehermes::amp::ThreadCache& thread_cache = edgehermes::amp::ThreadCacheStorage::Get();
+    peregrine::amp::ThreadCache& thread_cache = peregrine::amp::ThreadCacheStorage::Get();
     if (thread_cache.Deallocate(ptr, size_class)) {
       return;  // Successfully cached
     }

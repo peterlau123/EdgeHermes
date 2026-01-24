@@ -27,19 +27,19 @@ bool AllocatorFactory::IsAvailable(AllocatorType type) {
     case AllocatorType::STANDARD:
       return true;
     case AllocatorType::TCMALLOC:
-#ifdef edgehermes_ENABLE_TCMALLOC
+#ifdef peregrine_ENABLE_TCMALLOC
       return true;
 #else
       return false;
 #endif
     case AllocatorType::JEMALLOC:
-#ifdef edgehermes_ENABLE_JEMALLOC
+#ifdef peregrine_ENABLE_JEMALLOC
       return true;
 #else
       return false;
 #endif
     case AllocatorType::MIMALLOC:
-#ifdef edgehermes_ENABLE_MIMALLOC
+#ifdef peregrine_ENABLE_MIMALLOC
       return true;
 #else
       return false;
@@ -53,15 +53,15 @@ std::vector<AllocatorType> AllocatorFactory::GetAvailableAllocators() {
   std::vector<AllocatorType> available;
   available.push_back(AllocatorType::STANDARD);
 
-#ifdef edgehermes_ENABLE_TCMALLOC
+#ifdef peregrine_ENABLE_TCMALLOC
   available.push_back(AllocatorType::TCMALLOC);
 #endif
 
-#ifdef edgehermes_ENABLE_JEMALLOC
+#ifdef peregrine_ENABLE_JEMALLOC
   available.push_back(AllocatorType::JEMALLOC);
 #endif
 
-#ifdef edgehermes_ENABLE_MIMALLOC
+#ifdef peregrine_ENABLE_MIMALLOC
   available.push_back(AllocatorType::MIMALLOC);
 #endif
 

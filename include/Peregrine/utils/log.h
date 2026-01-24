@@ -28,7 +28,7 @@ class Logger {
     return instance;
   }
 
-  void init(const std::string& name = "EdgeHermes", const std::string& logFile = "EdgeHermes.log", spdlog::level::level_enum level = spdlog::level::info);
+  void init(const std::string& name = "Peregrine", const std::string& logFile = "Peregrine.log", spdlog::level::level_enum level = spdlog::level::info);
 
   void setLevel(spdlog::level::level_enum level) {
     if (logger_) logger_->set_level(level);
@@ -99,7 +99,7 @@ class Logger {
     return instance;
   }
 
-  void init(const std::string& /*name*/ = "EdgeHermes", const std::string& /*logFile*/ = "EdgeHermes.log", spdlog::level::level_enum /*level*/ = spdlog::level::info);
+  void init(const std::string& /*name*/ = "Peregrine", const std::string& /*logFile*/ = "Peregrine.log", spdlog::level::level_enum /*level*/ = spdlog::level::info);
 
   void setLevel(spdlog::level::level_enum /*level*/) {}
 
