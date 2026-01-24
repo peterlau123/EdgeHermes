@@ -3,11 +3,11 @@
 #include "../encode/encoder.h"
 #include "../model/model.h"
 #include "../utils/macros.h"
-#include "EdgeHermes/tokenizer/tokenizer.h"
+#include "Peregrine/tokenizer/tokenizer.h"
 
-namespace edgehermes {
+namespace peregrine {
 
-class EDGEHERMES_API Pipeline {
+class PEREGRINE_API Pipeline {
  public:
   Pipeline();
 
@@ -35,7 +35,7 @@ class Qwenpipeline : public Pipeline {
   void process() override;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

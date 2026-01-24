@@ -1,6 +1,6 @@
 #pragma once
 
-namespace edgehermes {}  // namespace edgehermes
+namespace peregrine {}  // namespace peregrine
 
 
 

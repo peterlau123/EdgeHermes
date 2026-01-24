@@ -1,4 +1,4 @@
-#include <EdgeHermes/EdgeHermes-cpp.h>
+#include <Peregrine/EdgeHermes-cpp.h>
 
 #include <cxxopts.hpp>
 #include <iostream>

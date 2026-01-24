@@ -1,10 +1,10 @@
-#include "EdgeHermes/memory/size_class.h"
+#include "Peregrine/memory/size_class.h"
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 SizeClassSystem::SizeClassSystem() {
@@ -127,7 +127,7 @@ const SizeClassSystem& GetSizeClassSystem() {
 }
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

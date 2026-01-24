@@ -5,9 +5,9 @@
 #include <memory>
 #include <unordered_map>
 
-#include "EdgeHermes/common/device.h"
-#include "EdgeHermes/memory/buffer_define.h"
-#include "EdgeHermes/memory/amp_buffer_manager.h"
+#include "Peregrine/common/device.h"
+#include "Peregrine/memory/buffer_define.h"
+#include "Peregrine/memory/amp_buffer_manager.h"
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4251)
@@ -18,13 +18,13 @@
 #define USE_AMP_BUFFER_MANAGER 1
 #endif
 
-namespace edgehermes {
+namespace peregrine {
 
 /*
  * Legacy BufferManager API - now implemented using AMP (Adaptive Memory Pool) system
  * This provides backwards compatibility while using the new high-performance memory management.
  */
-class EDGEHERMES_API BufferManager {
+class PEREGRINE_API BufferManager {
  public:
   struct Config {
     DeviceTypeFlags device_flags;
@@ -35,8 +35,8 @@ class EDGEHERMES_API BufferManager {
 
   class Builder {
    public:
-    EDGEHERMES_API static BufferManager& build(const Config& config);
-    EDGEHERMES_API static BufferManager& getInstance();
+    PEREGRINE_API static BufferManager& build(const Config& config);
+    PEREGRINE_API static BufferManager& getInstance();
   };
 
   // Legacy API - now delegates to AMP system
@@ -65,7 +65,7 @@ class EDGEHERMES_API BufferManager {
   std::unique_ptr<AMPBufferManager> amp_manager_;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #ifdef _MSC_VER
 #pragma warning(pop)

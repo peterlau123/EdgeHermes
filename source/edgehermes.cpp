@@ -1,10 +1,10 @@
 #include <fmt/format.h>
 
-#include "EdgeHermes/EdgeHermes-cpp.h"
-#include "EdgeHermes/utils/log.h"
+#include "Peregrine/EdgeHermes-cpp.h"
+#include "Peregrine/utils/log.h"
 #include "engine/EngineImpl.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 class Impl {
  public:
@@ -32,7 +32,7 @@ void Engine::run() {}
 
 Engine::~Engine() { Impl::destroy(&impl_); }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

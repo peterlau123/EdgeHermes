@@ -1,12 +1,12 @@
-#include "EdgeHermes/memory/amp_buffer_manager.h"
+#include "Peregrine/memory/amp_buffer_manager.h"
 
 #include <stdexcept>
 
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 #include "thread_cache_storage.h"
-#include "EdgeHermes/utils/log.h"
+#include "Peregrine/utils/log.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 // Global instance for singleton
 std::unique_ptr<AMPBufferManager> AMPBufferManager::global_instance_;
@@ -166,7 +166,7 @@ AMPBufferManager& AMPBufferManager::Builder::GetInstance() {
   return *global_instance_;
 }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

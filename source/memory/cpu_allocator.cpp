@@ -1,4 +1,4 @@
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <cstdlib>
 #include <new>
@@ -21,9 +21,9 @@
 #include <mimalloc.h>
 #endif
 
-#include "EdgeHermes/utils/log.h"
+#include "Peregrine/utils/log.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 // Helper function for aligned allocation
@@ -179,7 +179,7 @@ void* MimallocAllocator::AllocateAligned(size_t size, size_t alignment) {
 }
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

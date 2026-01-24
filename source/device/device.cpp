@@ -1,6 +1,6 @@
-#include "EdgeHermes/common/device.h"
+#include "Peregrine/common/device.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 bool DeviceTypeFlags::has(DeviceType type) const { return (flags_ & static_cast<uint32_t>(type)) != 0; }
 
@@ -12,7 +12,7 @@ void DeviceTypeFlags::clear(DeviceType type) { flags_ &= ~static_cast<uint32_t>(
 
 // 获取所有设�?
 constexpr DeviceType DeviceTypeFlags::get() const { return static_cast<DeviceType>(flags_); }
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace edgehermes {
+namespace peregrine {
 
 namespace Env {
 
@@ -13,7 +13,7 @@ class Environment {
 
 }  // namespace Env
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

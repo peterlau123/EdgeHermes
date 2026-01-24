@@ -3,13 +3,13 @@
 
 #include "../utils/template.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 class Parser {};
 
 DEFINE_SHARED_PTR(Parser);
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

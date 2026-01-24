@@ -14,9 +14,9 @@
 #include "../common/device.h"
 #include "../common/dtype.h"
 #include "../memory/buffer_manager.h"
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 /**
  * @brief 张量类，用于表示和操作多维数组数�?
@@ -24,7 +24,7 @@ namespace edgehermes {
  * @details 支持多种数据类型(如INT8、FLOAT32�?和设备类�?CPU/GPU)�?
  *          提供基本的张量运算操作，包括乘法和加法�?
  */
-class EDGEHERMES_API Tensor {
+class PEREGRINE_API Tensor {
  public:
   /**
    * @brief 数据来源枚举
@@ -160,7 +160,7 @@ class EDGEHERMES_API Tensor {
   Deleter m_deleter_ = DefaultDeletor();       ///< 自定义删除器
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #ifdef _MSC_VER
 #pragma warning(pop)

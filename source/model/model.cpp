@@ -1,8 +1,8 @@
-#include "EdgeHermes/model/model.h"
+#include "Peregrine/model/model.h"
 
-namespace edgehermes {
+namespace peregrine {
 // Implementation
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

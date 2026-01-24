@@ -1,10 +1,10 @@
 #pragma once
 
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 
-class EDGEHERMES_API Model {
+class PEREGRINE_API Model {
  public:
   Model() = default;
   virtual ~Model() = default;
@@ -16,7 +16,7 @@ class EDGEHERMES_API Model {
 
 using ModelPtr = std::shared_ptr<Model>;
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

@@ -3,13 +3,13 @@
 #include <memory>
 #include <vector>
 
-#include "EdgeHermes/utils/macros.h"
-#include "EdgeHermes/common/device.h"
-#include "EdgeHermes/memory/amp_system.h"
-#include "EdgeHermes/memory/size_class.h"
-#include "EdgeHermes/memory/central_cache.h"
+#include "Peregrine/utils/macros.h"
+#include "Peregrine/common/device.h"
+#include "Peregrine/memory/amp_system.h"
+#include "Peregrine/memory/size_class.h"
+#include "Peregrine/memory/central_cache.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 /**
@@ -19,7 +19,7 @@ namespace amp {
  * and provide device-aware optimizations like NUMA for CPU and CUDA-aware
  * for GPU allocations.
  */
-class EDGEHERMES_API IArena {
+class PEREGRINE_API IArena {
  public:
   virtual ~IArena() = default;
 
@@ -69,7 +69,7 @@ class EDGEHERMES_API IArena {
  * Uses the AMP system optimized for CPU memory management
  * with thread-local caches and NUMA awareness.
  */
-class EDGEHERMES_API CPUArena : public IArena {
+class PEREGRINE_API CPUArena : public IArena {
  public:
   /**
    * @brief Constructor
@@ -112,7 +112,7 @@ class EDGEHERMES_API CPUArena : public IArena {
  * Handles GPU memory allocation with CUDA-aware optimizations
  * and managed memory support.
  */
-class EDGEHERMES_API GPUArena : public IArena {
+class PEREGRINE_API GPUArena : public IArena {
  public:
   /**
    * @brief Constructor
@@ -153,7 +153,7 @@ class EDGEHERMES_API GPUArena : public IArena {
  * Routes allocation requests to the appropriate device arena
  * and manages arena lifecycle.
  */
-class EDGEHERMES_API ArenaRouter {
+class PEREGRINE_API ArenaRouter {
  public:
   /**
    * @brief Constructor
@@ -210,7 +210,7 @@ class EDGEHERMES_API ArenaRouter {
 };
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

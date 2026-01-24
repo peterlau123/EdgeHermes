@@ -1,10 +1,10 @@
-#include "EdgeHermes/memory/arena.h"
+#include "Peregrine/memory/arena.h"
 #include "thread_cache_storage.h"
 
 #include <algorithm>
 #include <memory>
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 // ArenaRouter Implementation
@@ -246,7 +246,7 @@ bool GPUArena::IsHealthy() const {
 }
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

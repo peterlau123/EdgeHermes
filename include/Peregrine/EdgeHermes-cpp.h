@@ -1,16 +1,16 @@
 #pragma once
 
-#include "EdgeHermes/common/device.h"
-#include "EdgeHermes/data/tensor.h"
-#include "EdgeHermes/memory/allocator.h"
-#include "EdgeHermes/model/model.h"
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/common/device.h"
+#include "Peregrine/data/tensor.h"
+#include "Peregrine/memory/allocator.h"
+#include "Peregrine/model/model.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 class Impl;
 
-class EDGEHERMES_API Engine {
+class PEREGRINE_API Engine {
  public:
   Engine() = default;
 
@@ -24,7 +24,7 @@ class EDGEHERMES_API Engine {
 };
 
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

@@ -1,4 +1,4 @@
-#include "EdgeHermes/utils/log.h"
+#include "Peregrine/utils/log.h"
 
 #if defined(edgehermes_ENABLE_LOGGING) && edgehermes_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
@@ -8,7 +8,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace edgehermes {
+namespace peregrine {
 
 void Logger::init(const std::string& name, const std::string& logFile, spdlog::level::level_enum level) {
   try {
@@ -40,17 +40,17 @@ void Logger::init(const std::string& name, const std::string& logFile, spdlog::l
   }
 }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #else
 
-namespace edgehermes {
+namespace peregrine {
 
 void Logger::init(const std::string& /*name*/, const std::string& /*logFile*/, spdlog::level::level_enum /*level*/) {
   // No-op when spdlog is not available or logging is disabled
 }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #endif
 

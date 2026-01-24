@@ -1,10 +1,10 @@
-#include "EdgeHermes/memory/buffer_manager.h"
+#include "Peregrine/memory/buffer_manager.h"
 
 #include <stdexcept>
 
-#include "EdgeHermes/memory/amp_buffer_manager.h"
-#include "EdgeHermes/memory/allocator.h"
-#include "EdgeHermes/utils/log.h"
+#include "Peregrine/memory/amp_buffer_manager.h"
+#include "Peregrine/memory/allocator.h"
+#include "Peregrine/utils/log.h"
 
 // Global instance for singleton pattern
 static std::unique_ptr<edgehermes::BufferManager> global_buffer_manager_;

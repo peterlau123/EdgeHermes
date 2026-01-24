@@ -7,12 +7,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 
-#include "EdgeHermes/utils/macros.h"
-#include "EdgeHermes/memory/size_class.h"
+#include "Peregrine/utils/macros.h"
+#include "Peregrine/memory/size_class.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 /**
@@ -21,7 +21,7 @@ namespace amp {
  * Manages free lists for each size class with low-contention locking.
  * Acts as an intermediary between thread caches and the page heap.
  */
-class EDGEHERMES_API CentralCache {
+class PEREGRINE_API CentralCache {
  public:
   /**
    * @brief Constructor
@@ -111,7 +111,7 @@ class EDGEHERMES_API CentralCache {
  * Handles allocations that are too large for the central cache
  * or when the central cache needs to be refilled.
  */
-class EDGEHERMES_API PageHeap {
+class PEREGRINE_API PageHeap {
  public:
   /**
    * @brief Constructor
@@ -169,7 +169,7 @@ class EDGEHERMES_API PageHeap {
 };
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

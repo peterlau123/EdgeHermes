@@ -1,8 +1,8 @@
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <memory>
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 // AllocatorFactory Implementation
@@ -84,7 +84,7 @@ const char* AllocatorFactory::GetAllocatorName(AllocatorType type) {
 }
 
 }  // namespace amp
-}  // namespace edgehermes</content>
+}  // namespace peregrine</content>
 
 
 

@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "EdgeHermes/common/device.h"
-#include "EdgeHermes/memory/buffer_define.h"
-#include "EdgeHermes/memory/amp_system.h"
-#include "EdgeHermes/memory/arena.h"
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/common/device.h"
+#include "Peregrine/memory/buffer_define.h"
+#include "Peregrine/memory/amp_system.h"
+#include "Peregrine/memory/arena.h"
+#include "Peregrine/memory/allocator.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 /**
  * @brief Adaptive Memory Pool (AMP) Buffer Manager
@@ -16,7 +16,7 @@ namespace edgehermes {
  * Modern replacement for the legacy BufferManager using the AMP system.
  * Provides the same API but with superior performance and scalability.
  */
-class EDGEHERMES_API AMPBufferManager {
+class PEREGRINE_API AMPBufferManager {
  public:
   /**
    * @brief Configuration for AMP Buffer Manager
@@ -122,7 +122,7 @@ class EDGEHERMES_API AMPBufferManager {
   static std::unique_ptr<AMPBufferManager> global_instance_;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

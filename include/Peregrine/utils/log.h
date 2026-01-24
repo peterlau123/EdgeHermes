@@ -19,7 +19,7 @@
 
 #include <filesystem>
 
-namespace edgehermes {
+namespace peregrine {
 
 class Logger {
  public:
@@ -77,7 +77,7 @@ class Logger {
   std::shared_ptr<spdlog::logger> logger_;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #else
 
@@ -90,7 +90,7 @@ enum level_enum { trace = 0, debug = 1, info = 2, warn = 3, err = 4, critical = 
 }  // namespace level
 }  // namespace spdlog
 
-namespace edgehermes {
+namespace peregrine {
 
 class Logger {
  public:
@@ -130,7 +130,7 @@ class Logger {
   Logger& operator=(const Logger&) = delete;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 #endif
 

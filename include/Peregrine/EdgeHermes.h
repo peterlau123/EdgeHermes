@@ -4,9 +4,9 @@
 
 typedef void* EngineHandle;
 
-bool EDGEHERMES_API init_engine();
+bool PEREGRINE_API init_engine();
 
-bool EDGEHERMES_API load_model(EngineHandle hdl, const char* model_path);
+bool PEREGRINE_API load_model(EngineHandle hdl, const char* model_path);
 
 
 

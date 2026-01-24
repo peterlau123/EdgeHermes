@@ -5,10 +5,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "EdgeHermes/utils/macros.h"
-#include "EdgeHermes/memory/amp_system.h"
+#include "Peregrine/utils/macros.h"
+#include "Peregrine/memory/amp_system.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 /**
@@ -16,7 +16,7 @@ namespace amp {
  *
  * Provides the baseline allocator implementation using standard C library functions.
  */
-class EDGEHERMES_API StandardAllocator : public IMemoryAllocator {
+class PEREGRINE_API StandardAllocator : public IMemoryAllocator {
  public:
   StandardAllocator() = default;
 
@@ -33,7 +33,7 @@ class EDGEHERMES_API StandardAllocator : public IMemoryAllocator {
  * Integrates Google TCMalloc for high-performance CPU memory allocation.
  * TCMalloc provides excellent performance for multi-threaded applications.
  */
-class EDGEHERMES_API TCMallocAllocator : public IMemoryAllocator {
+class PEREGRINE_API TCMallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -57,7 +57,7 @@ class EDGEHERMES_API TCMallocAllocator : public IMemoryAllocator {
  * Integrates Facebook jemalloc for high-performance memory allocation.
  * Jemalloc is known for its excellent fragmentation control and performance.
  */
-class EDGEHERMES_API JemallocAllocator : public IMemoryAllocator {
+class PEREGRINE_API JemallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -81,7 +81,7 @@ class EDGEHERMES_API JemallocAllocator : public IMemoryAllocator {
  * Integrates Microsoft mimalloc for modern, high-performance memory allocation.
  * Mimalloc is designed for modern systems and provides excellent performance.
  */
-class EDGEHERMES_API MimallocAllocator : public IMemoryAllocator {
+class PEREGRINE_API MimallocAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -104,7 +104,7 @@ class EDGEHERMES_API MimallocAllocator : public IMemoryAllocator {
  *
  * Handles CUDA memory allocation with support for managed memory.
  */
-class EDGEHERMES_API CUDAAllocator : public IMemoryAllocator {
+class PEREGRINE_API CUDAAllocator : public IMemoryAllocator {
  public:
   /**
    * @brief Constructor
@@ -136,7 +136,7 @@ class EDGEHERMES_API CUDAAllocator : public IMemoryAllocator {
  * Provides a centralized way to create and configure memory allocators
  * based on type and options.
  */
-class EDGEHERMES_API AllocatorFactory {
+class PEREGRINE_API AllocatorFactory {
  public:
   /**
    * @brief Create an allocator instance
@@ -169,7 +169,7 @@ class EDGEHERMES_API AllocatorFactory {
 };
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

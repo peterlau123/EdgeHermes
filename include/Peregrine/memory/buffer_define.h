@@ -2,9 +2,9 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "EdgeHermes/common/device.h"
+#include "Peregrine/common/device.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 struct Buffer {
   uint8_t* data {nullptr};
@@ -13,7 +13,7 @@ struct Buffer {
 };
 
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

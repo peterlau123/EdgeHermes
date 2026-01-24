@@ -6,9 +6,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 /**
@@ -17,7 +17,7 @@ namespace amp {
  * This interface allows pluggable third-party allocators like tcmalloc,
  * jemalloc, and mimalloc to be integrated into the system.
  */
-class EDGEHERMES_API IMemoryAllocator {
+class PEREGRINE_API IMemoryAllocator {
  public:
   virtual ~IMemoryAllocator() = default;
 
@@ -62,7 +62,7 @@ enum class AllocatorType : uint8_t {
 /**
  * @brief Configuration options for the AMP system
  */
-struct EDGEHERMES_API AMPConfig {
+struct PEREGRINE_API AMPConfig {
   AllocatorType allocator_type = AllocatorType::STANDARD;
   
   // Thread cache settings
@@ -84,7 +84,7 @@ struct EDGEHERMES_API AMPConfig {
 /**
  * @brief Memory statistics structure
  */
-struct EDGEHERMES_API MemoryStats {
+struct PEREGRINE_API MemoryStats {
   size_t total_allocated = 0;
   size_t active_allocations = 0;
   double fragmentation_ratio = 0.0;
@@ -100,7 +100,7 @@ using IMemoryAllocatorPtr = std::unique_ptr<IMemoryAllocator>;
 using IMemoryAllocatorSharedPtr = std::shared_ptr<IMemoryAllocator>;
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

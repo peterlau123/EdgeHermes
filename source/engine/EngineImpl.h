@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "EdgeHermes/parser/parser.h"
-#include "EdgeHermes/pipeline/pipeline.h"
+#include "Peregrine/parser/parser.h"
+#include "Peregrine/pipeline/pipeline.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 class EngineImpl {
  public:
@@ -30,7 +30,7 @@ class EngineImpl {
 
 using EngineImplPtr = EngineImpl::EngineImplPtr;
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

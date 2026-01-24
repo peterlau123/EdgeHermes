@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace edgehermes {
+namespace peregrine {
 
 EngineImpl::EngineImplPtr EngineImpl::build() {
 
@@ -30,7 +30,7 @@ std::string EngineImpl::chat(const std::string& prompt) {
   return ret;
 }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

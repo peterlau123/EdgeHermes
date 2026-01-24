@@ -1,10 +1,10 @@
 #pragma once
 
-namespace edgehermes {
+namespace peregrine {
 
 class Tokenizer {};
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

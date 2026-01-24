@@ -1,11 +1,11 @@
 #pragma once
 
-namespace edgehermes {
+namespace peregrine {
 
 class Decoder {};
 
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

@@ -4,22 +4,22 @@
 #include <stdexcept>
 #include <string>
 
-#define EDGEHERMES_VERSION_MAJOR 0
-#define EDGEHERMES_VERSION_MINOR 1
-#define EDGEHERMES_VERSION_PATCH 0
-#define EDGEHERMES_VERSION_STRING "0.1.0"
-#define EDGEHERMES_VERSION (EDGEHERMES_VERSION_MAJOR * 10000 + EDGEHERMES_VERSION_MINOR * 100 + EDGEHERMES_VERSION_PATCH)
+#define PEREGRINE_VERSION_MAJOR 0
+#define PEREGRINE_VERSION_MINOR 1
+#define PEREGRINE_VERSION_PATCH 0
+#define PEREGRINE_VERSION_STRING "0.1.0"
+#define PEREGRINE_VERSION (PEREGRINE_VERSION_MAJOR * 10000 + PEREGRINE_VERSION_MINOR * 100 + PEREGRINE_VERSION_PATCH)
 
 // For API export and import
 #if defined(_WIN32)
-// When building the library define EDGEHERMES_EXPORTS (set by CMake)
-#if defined(EDGEHERMES_EXPORTS)
-#define EDGEHERMES_API __declspec(dllexport)
+// When building the library define PEREGRINE_EXPORTS (set by CMake)
+#if defined(PEREGRINE_EXPORTS)
+#define PEREGRINE_API __declspec(dllexport)
 #else
-#define EDGEHERMES_API __declspec(dllimport)
+#define PEREGRINE_API __declspec(dllimport)
 #endif
 #else
-#define EDGEHERMES_API __attribute__((visibility("default")))
+#define PEREGRINE_API __attribute__((visibility("default")))
 #endif
 
 // For debugging and runtime check
@@ -40,9 +40,9 @@
 #define _OUT
 #define _INOUT
 
-namespace edgehermes {
+namespace peregrine {
 
 template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
-}  // namespace edgehermes
+}  // namespace peregrine

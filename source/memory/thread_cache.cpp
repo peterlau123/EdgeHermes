@@ -1,12 +1,12 @@
-#include "EdgeHermes/memory/thread_cache.h"
+#include "Peregrine/memory/thread_cache.h"
 #include "thread_cache_storage.h"
-#include "EdgeHermes/memory/amp_system.h"
+#include "Peregrine/memory/amp_system.h"
 
 #include <algorithm>
 #include <memory>
 #include <new>
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 // Thread-local storage implementation
@@ -183,7 +183,7 @@ void ThreadCacheStorage::Cleanup() {
 }
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

@@ -1,11 +1,11 @@
-#include "EdgeHermes/data/tensor.h"
+#include "Peregrine/data/tensor.h"
 
 #include <utility>
 
-#include "EdgeHermes/memory/buffer_manager.h"
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/memory/buffer_manager.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 uint64_t getByteSize(DataType dtype) {
   switch (dtype) {
@@ -142,7 +142,7 @@ Tensor& Tensor::operator+(const Tensor& rhs) {
   return *this;
 }
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

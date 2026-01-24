@@ -1,26 +1,26 @@
 #pragma once
 
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 
 enum class DeviceType : uint32_t { UNKNOWN = 0, CPU = 0x01, CUDA = 0x02, METAL = 0x04 };
 
 struct DeviceTypeFlags {
  public:
-   [[nodiscard]] EDGEHERMES_API bool has(DeviceType type) const;
+   [[nodiscard]] PEREGRINE_API bool has(DeviceType type) const;
 
-  EDGEHERMES_API void set(DeviceType type);
+  PEREGRINE_API void set(DeviceType type);
 
-  EDGEHERMES_API void clear(DeviceType type);
+  PEREGRINE_API void clear(DeviceType type);
 
-  [[nodiscard]] EDGEHERMES_API constexpr DeviceType get() const;
+  [[nodiscard]] PEREGRINE_API constexpr DeviceType get() const;
 
  private:
   uint32_t flags_ = 0;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

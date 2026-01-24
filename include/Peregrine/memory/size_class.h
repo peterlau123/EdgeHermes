@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <array>
 
-#include "EdgeHermes/utils/macros.h"
+#include "Peregrine/utils/macros.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 /**
@@ -17,7 +17,7 @@ namespace amp {
  * Uses a hybrid approach with fixed classes for small sizes and dynamic
  * optimization for larger sizes.
  */
-class EDGEHERMES_API SizeClassSystem {
+class PEREGRINE_API SizeClassSystem {
  public:
   // Constants
   static constexpr size_t NUM_SIZE_CLASSES = 128;
@@ -104,10 +104,10 @@ class EDGEHERMES_API SizeClassSystem {
 };
 
 // Global size class system instance
-extern EDGEHERMES_API const SizeClassSystem& GetSizeClassSystem();
+extern PEREGRINE_API const SizeClassSystem& GetSizeClassSystem();
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

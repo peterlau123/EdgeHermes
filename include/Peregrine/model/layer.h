@@ -1,6 +1,6 @@
 #pragma once
 
-namespace edgehermes {
+namespace peregrine {
 
 class Layer {
  public:
@@ -8,7 +8,7 @@ class Layer {
   virtual ~Layer() = default;
 };
 
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 

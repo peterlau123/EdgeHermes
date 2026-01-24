@@ -1,6 +1,6 @@
-#include "EdgeHermes/common/device.h"
+#include "Peregrine/common/device.h"
 
-namespace edgehermes {}  // namespace edgehermes
+namespace peregrine {}  // namespace peregrine
 
 
 

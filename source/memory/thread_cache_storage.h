@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "EdgeHermes/memory/size_class.h"
-#include "EdgeHermes/memory/amp_system.h"
+#include "Peregrine/memory/size_class.h"
+#include "Peregrine/memory/amp_system.h"
 
-namespace edgehermes {
+namespace peregrine {
 namespace amp {
 
 class ThreadCache;
@@ -41,7 +41,7 @@ class ThreadCacheStorage {
 };
 
 }  // namespace amp
-}  // namespace edgehermes
+}  // namespace peregrine
 
 
 
