@@ -1,6 +1,6 @@
-#include "NovaLLM/utils/log.h"
+#include "Peregrine/utils/log.h"
 
-#if defined(NOVA_LLM_ENABLE_LOGGING) && NOVA_LLM_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
+#if defined(peregrine_ENABLE_LOGGING) && peregrine_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
 #include <fmt/format.h>
 #include <spdlog/formatter.h>
@@ -8,7 +8,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace nova_llm {
+namespace peregrine {
 
 void Logger::init(const std::string& name, const std::string& logFile, spdlog::level::level_enum level) {
   try {
@@ -40,16 +40,20 @@ void Logger::init(const std::string& name, const std::string& logFile, spdlog::l
   }
 }
 
-}  // namespace nova_llm
+}  // namespace peregrine
 
 #else
 
-namespace nova_llm {
+namespace peregrine {
 
 void Logger::init(const std::string& /*name*/, const std::string& /*logFile*/, spdlog::level::level_enum /*level*/) {
   // No-op when spdlog is not available or logging is disabled
 }
 
-}  // namespace nova_llm
+}  // namespace peregrine
 
 #endif
+
+
+
+

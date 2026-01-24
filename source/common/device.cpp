@@ -1,3 +1,7 @@
-#include "NovaLLM/common/device.h"
+#include "Peregrine/common/device.h"
 
-namespace nova_llm {}  // namespace nova_llm
+namespace peregrine {}  // namespace peregrine
+
+
+
+

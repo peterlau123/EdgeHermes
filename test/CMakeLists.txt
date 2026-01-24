@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-project(NovaLLMTests LANGUAGES CXX)
+project(PeregrineTests LANGUAGES CXX)
 
 # ---- Options ----
 
@@ -15,8 +15,8 @@ include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # ---- Dependencies ----
 
-# Find NovaLLM package
-find_package(NovaLLM REQUIRED)
+# Find peregrine package
+find_package(peregrine REQUIRED)
 find_package(GTest REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -35,7 +35,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-    NovaLLM::NovaLLM
+    peregrine::peregrine
     GTest::gtest
     GTest::gtest_main
     GTest::gmock
@@ -48,7 +48,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # Define import macro for Windows (tests consume the DLL, library exports)
 if(WIN32)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE NOVA_LLM_IMPORTS)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE PEREGRINE_IMPORTS)
 endif()
 
 # enable compiler warnings

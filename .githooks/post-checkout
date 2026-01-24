@@ -36,7 +36,7 @@ VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)([-/])[a-
 if [[ ! "$BRANCH_NAME" =~ $VALID_PATTERN ]]; then
   cat <<EOF
 ╔════════════════════════════════════════════════════════════════╗
-║                  ❌ INVALID BRANCH NAME                        ║
+�?                 �?INVALID BRANCH NAME                        �?
 ╚════════════════════════════════════════════════════════════════╝
 
 Branch: $BRANCH_NAME
@@ -45,25 +45,25 @@ Branch names must follow this format:
   <type>-<description>  or  <type>/<description>
 
 Valid types:
-  • feat      - New feature
-  • fix       - Bug fix
-  • docs      - Documentation changes
-  • style     - Code style changes
-  • refactor  - Code refactoring
-  • perf      - Performance improvements
-  • test      - Test changes
-  • build     - Build system changes
-  • ci        - CI/CD changes
-  • chore     - Other changes
+  �?feat      - New feature
+  �?fix       - Bug fix
+  �?docs      - Documentation changes
+  �?style     - Code style changes
+  �?refactor  - Code refactoring
+  �?perf      - Performance improvements
+  �?test      - Test changes
+  �?build     - Build system changes
+  �?ci        - CI/CD changes
+  �?chore     - Other changes
 
 Examples:
-  ✅ feat-buffer-pooling
-  ✅ fix-windows-dll-exports
-  ✅ docs-update-readme
-  ✅ refactor/simplify-tensor-allocation
-  ✅ ci-add-coverage-reporting
+  �?feat-buffer-pooling
+  �?fix-windows-dll-exports
+  �?docs-update-readme
+  �?refactor/simplify-tensor-allocation
+  �?ci-add-coverage-reporting
 
-Current branch: ❌ $BRANCH_NAME
+Current branch: �?$BRANCH_NAME
 
 To fix this, rename your branch:
   git branch -m $BRANCH_NAME <type>-<proper-description>
@@ -78,5 +78,9 @@ EOF
 fi
 
 # Branch name is valid
-echo "✅ Branch name '$BRANCH_NAME' is valid"
+echo "�?Branch name '$BRANCH_NAME' is valid"
 exit 0
+
+
+
+

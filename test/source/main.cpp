@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "NovaLLM/NovaLLM-cpp.h"
+#include "Peregrine/Peregrine-cpp.h"
 
-using namespace nova_llm;
+using namespace peregrine;
 
 // Test fixture for EngineImpl
 class EngineImplTest : public ::testing::Test {
@@ -27,3 +27,7 @@ int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+
+
+

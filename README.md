@@ -1,15 +1,15 @@
-[![Ubuntu](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/ubuntu.yml)
-[![Windows](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/windows.yml)
-[![MacOS](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/macos.yml)
-[![Code Quality](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/code-quality.yml)
-[![Documentation](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/NovaLLM/actions/workflows/documentation.yml)
-[![codecov](https://codecov.io/gh/peterlau123/NovaLLM/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/NovaLLM)
+[![Ubuntu](https://github.com/peterlau123/Peregrine/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/ubuntu.yml)
+[![Windows](https://github.com/peterlau123/Peregrine/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/windows.yml)
+[![MacOS](https://github.com/peterlau123/Peregrine/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/macos.yml)
+[![Code Quality](https://github.com/peterlau123/Peregrine/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/code-quality.yml)
+[![Documentation](https://github.com/peterlau123/Peregrine/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/documentation.yml)
+[![codecov](https://codecov.io/gh/peterlau123/Peregrine/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/Peregrine)
 
 <p align="center">
-  <img src="documentation/images/NovaLLM_logo.png" height="200" width="250" />
+  <img src="documentation/images/peregrine.png" height="300" width="200" />
 </p>
 
-# NovaLLM
+# Peregrine
 
 A lightweight and efficient C/C++ library for Large Language Model (LLM) inference. The name **Nova** reflects our goal to bring a new, powerful, and efficient approach to LLM deployment, making it accessible everywhere.
 
@@ -18,8 +18,8 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 - 🚀 **Lightweight**: Minimal dependencies, focusing on core functionality
 - 🔧 **Extensible**: Easy to extend with custom models and optimizations
 - 🎯 **Efficient**: Support for low-bit quantization and custom kernels
-- 🛠️ **Portable**: Support inference on MacOS/Linux/Windows platforms
-- 👨‍💻 **Developer-friendly**: Easy to use and integrate into other projects
+- 🛠�?**Portable**: Support inference on MacOS/Linux/Windows platforms
+- 👨‍�?**Developer-friendly**: Easy to use and integrate into other projects
 
 ## Supported Models
 
@@ -28,11 +28,11 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 | Model | Parameters | Status |
 |-------|------------|--------|
 | Qwen | 1.8B | 🟡 In Development |
-| | 7B | ⚪ Planned |
-| | 14B | ⚪ Planned |
-| DeepSeek | 7B | ⚪ Planned |
-| | 67B | ⚪ Planned |
-| Llama | 7B | ⚪ Planned |
+| | 7B | �?Planned |
+| | 14B | �?Planned |
+| DeepSeek | 7B | �?Planned |
+| | 67B | �?Planned |
+| Llama | 7B | �?Planned |
 
 ### Vision Models
 *Coming soon...*
@@ -50,8 +50,8 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/peterlau123/NovaLLM.git
-cd NovaLLM
+git clone https://github.com/peterlau123/Peregrine.git
+cd Peregrine
 ```
 
 2. **Install dependencies and build**
@@ -153,7 +153,7 @@ make ENABLE_TESTS=ON test
 ctest --output-on-failure
 
 # Run specific test
-./bin/NovaLLM_tests
+./bin/Peregrine_tests
 ```
 
 ### Development
@@ -185,19 +185,19 @@ open build/docs/html/index.html
 ### Model Quantization
 
 ```cpp
-#include <NovaLLM/quantization.hpp>
+#include <Peregrine/quantization.hpp>
 
 // Example quantization code
-auto quantized_model = NovaLLM::quantize_model(model, NovaLLM::QuantizationType::INT8);
+auto quantized_model = Peregrine::quantize_model(model, Peregrine::QuantizationType::INT8);
 ```
 
 ### Custom Kernel Integration
 
 ```cpp
-#include <NovaLLM/kernels.hpp>
+#include <Peregrine/kernels.hpp>
 
 // Example custom kernel usage
-NovaLLM::register_custom_kernel("my_kernel", kernel_function);
+Peregrine::register_custom_kernel("my_kernel", kernel_function);
 ```
 
 ## Contributing
@@ -215,9 +215,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-- GitHub Issues: [Create an issue](https://github.com/peterlau123/NovaLLM/issues)
+- GitHub Issues: [Create an issue](https://github.com/peterlau123/Peregrine/issues)
 - Email: [Your email]
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=peterlau123/NovaLLM&type=Date)](https://star-history.com/#peterlau123/NovaLLM&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=peterlau123/Peregrine&type=Date)](https://star-history.com/#peterlau123/Peregrine&Date)
+
+
+
+

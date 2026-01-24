@@ -1,5 +1,9 @@
-#include "NovaLLM/model/model.h"
+#include "Peregrine/model/model.h"
 
-namespace nova_llm {
+namespace peregrine {
 // Implementation
-}  // namespace nova_llm
+}  // namespace peregrine
+
+
+
+

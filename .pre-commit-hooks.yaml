@@ -1,4 +1,4 @@
-# Pre-commit hooks metadata for NovaLLM
+# Pre-commit hooks metadata for Peregrine
 # This allows the hooks to be used as pre-commit hooks
 
 - id: check-branch-name
@@ -9,3 +9,7 @@
   pass_filenames: false
   always_run: true
   stages: [post-checkout]
+
+
+
+

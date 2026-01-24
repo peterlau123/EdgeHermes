@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "NovaLLM/parser/parser.h"
-#include "NovaLLM/pipeline/pipeline.h"
+#include "Peregrine/parser/parser.h"
+#include "Peregrine/pipeline/pipeline.h"
 
-namespace nova_llm {
+namespace peregrine {
 
 class EngineImpl {
  public:
@@ -30,4 +30,8 @@ class EngineImpl {
 
 using EngineImplPtr = EngineImpl::EngineImplPtr;
 
-}  // namespace nova_llm
+}  // namespace peregrine
+
+
+
+

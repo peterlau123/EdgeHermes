@@ -2,7 +2,7 @@
 Language: Cpp
 BasedOnStyle: Google
 
-# 增加行间距
+# 增加行间�?
 KeepEmptyLinesAtTheStartOfBlocks: true
 MaxEmptyLinesToKeep: 2
 SeparateDefinitionBlocks: Always
@@ -20,10 +20,13 @@ AllowAllArgumentsOnNextLine: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 BreakConstructorInitializers: BeforeComma
 
-# 空格和对齐
+# 空格和对�?
 SpaceBeforeParens: ControlStatements
 SpaceAfterTemplateKeyword: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeCpp11BracedList: true
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
+
+
+

@@ -51,10 +51,10 @@ jobs:
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1 || true)
           if [ -n "$TOOLCHAIN_FILE" ]; then
             echo "Using toolchain file: $TOOLCHAIN_FILE"
-            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DNOVA_LLM_BUILD_TESTS=OFF -DNOVA_LLM_ENABLE_LOGGING=OFF
+            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -Dperegrine_BUILD_TESTS=OFF -Dperegrine_ENABLE_LOGGING=OFF
           else
             echo "No conan_toolchain.cmake found, configuring without toolchain"
-            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DNOVA_LLM_BUILD_TESTS=OFF -DNOVA_LLM_ENABLE_LOGGING=OFF
+            cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -Dperegrine_BUILD_TESTS=OFF -Dperegrine_ENABLE_LOGGING=OFF
           fi
 
       - name: Install Doxygen
@@ -88,3 +88,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 
+
+
+

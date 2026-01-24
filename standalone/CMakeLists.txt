@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-project(NovaLLMStandalone LANGUAGES CXX)
+project(PeregrineStandalone LANGUAGES CXX)
 
 # --- Import tools ----
 
@@ -10,8 +10,8 @@ include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # ---- Dependencies ----
 
-# Find NovaLLM package and its dependencies
-find_package(NovaLLM REQUIRED)
+# Find peregrine package and its dependencies
+find_package(peregrine REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(cxxopts REQUIRED)
@@ -22,11 +22,11 @@ file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 
 add_executable(${PROJECT_NAME} ${sources})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "NovaLLM")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "peregrine")
 
-target_link_libraries(${PROJECT_NAME} 
-    PRIVATE 
-    NovaLLM::NovaLLM
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    peregrine::peregrine
     fmt::fmt
     spdlog::spdlog
     cxxopts::cxxopts

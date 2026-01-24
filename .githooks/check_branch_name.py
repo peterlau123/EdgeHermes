@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Branch name validator for NovaLLM
+Branch name validator for EdgeHermes
 Works on all platforms (Windows, macOS, Linux)
 """
 import re
@@ -61,7 +61,7 @@ def print_error_message(branch_name):
     """Print helpful error message for invalid branch names."""
     error_msg = f"""
 {'='*70}
-              ‚ùå INVALID BRANCH NAME
+              ‚ù?INVALID BRANCH NAME
 {'='*70}
 
 Branch: {branch_name}
@@ -70,25 +70,25 @@ Branch names must follow this format:
   <type>-<description>  or  <type>/<description>
 
 Valid types:
-  ‚Ä¢ feat      - New feature
-  ‚Ä¢ fix       - Bug fix
-  ‚Ä¢ docs      - Documentation changes
-  ‚Ä¢ style     - Code style changes
-  ‚Ä¢ refactor  - Code refactoring
-  ‚Ä¢ perf      - Performance improvements
-  ‚Ä¢ test      - Test changes
-  ‚Ä¢ build     - Build system changes
-  ‚Ä¢ ci        - CI/CD changes
-  ‚Ä¢ chore     - Other changes
+  ‚Ä?feat      - New feature
+  ‚Ä?fix       - Bug fix
+  ‚Ä?docs      - Documentation changes
+  ‚Ä?style     - Code style changes
+  ‚Ä?refactor  - Code refactoring
+  ‚Ä?perf      - Performance improvements
+  ‚Ä?test      - Test changes
+  ‚Ä?build     - Build system changes
+  ‚Ä?ci        - CI/CD changes
+  ‚Ä?chore     - Other changes
 
-‚úÖ Valid examples:
+‚ú?Valid examples:
   feat-buffer-pooling
   fix-windows-dll-exports
   docs-update-readme
   refactor/simplify-tensor-allocation
   ci-add-coverage-reporting
 
-‚ùå Current branch: {branch_name}
+‚ù?Current branch: {branch_name}
 
 To fix this, rename your branch:
   git branch -m {branch_name} <type>-<proper-description>
@@ -121,9 +121,13 @@ def main():
         sys.exit(1)
 
     # Branch name is valid
-    print(f"‚úÖ Branch name '{branch_name}' is valid")
+    print(f"‚ú?Branch name '{branch_name}' is valid")
     sys.exit(0)
 
 
 if __name__ == "__main__":
     main()
+
+
+
+

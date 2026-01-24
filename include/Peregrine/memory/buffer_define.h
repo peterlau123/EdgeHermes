@@ -1,0 +1,20 @@
+#pragma once
+#include <cstddef>
+#include <cstdint>
+
+#include "Peregrine/common/device.h"
+
+namespace peregrine {
+
+struct Buffer {
+  uint8_t* data {nullptr};
+  size_t size = 0;  // in bytes
+  DeviceType device_type = DeviceType::CPU;
+};
+
+
+}  // namespace peregrine
+
+
+
+

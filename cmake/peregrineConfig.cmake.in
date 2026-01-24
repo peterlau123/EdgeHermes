@@ -1,0 +1,13 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(fmt)
+if(@edgehermes_ENABLE_LOGGING@)
+    find_dependency(spdlog)
+endif()
+if(@edgehermes_BUILD_TESTS@)
+    find_dependency(GTest)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/edgehermesTargets.cmake")

@@ -1,4 +1,4 @@
-# NovaLLM Development Setup
+# Peregrine Development Setup
 
 Quick guide for new contributors.
 
@@ -26,10 +26,10 @@ Format: `<type>-<description>`
 
 **Examples:**
 ```bash
-git checkout -b feat-add-buffer-pooling     ‚úÖ
-git checkout -b fix-memory-leak             ‚úÖ
-git checkout -b docs-update-readme          ‚úÖ
-git checkout -b my-branch                   ‚ùå (no type prefix)
+git checkout -b feat-add-buffer-pooling     ‚ú?
+git checkout -b fix-memory-leak             ‚ú?
+git checkout -b docs-update-readme          ‚ú?
+git checkout -b my-branch                   ‚ù?(no type prefix)
 ```
 
 ### Commit Messages
@@ -38,10 +38,10 @@ Format: `<type>(<scope>): <subject>`
 
 **Examples:**
 ```bash
-git commit -m "feat(memory): add buffer pooling"     ‚úÖ
-git commit -m "fix(build): correct DLL exports"      ‚úÖ
-git commit -m "docs(readme): update setup guide"     ‚úÖ
-git commit -m "update code"                          ‚ùå (no type)
+git commit -m "feat(memory): add buffer pooling"     ‚ú?
+git commit -m "fix(build): correct DLL exports"      ‚ú?
+git commit -m "docs(readme): update setup guide"     ‚ú?
+git commit -m "update code"                          ‚ù?(no type)
 ```
 
 ## What Happens Automatically
@@ -49,21 +49,21 @@ git commit -m "update code"                          ‚ùå (no type)
 After setup, the hooks will:
 
 1. **On `git checkout -b new-branch`:**
-   - ‚úÖ Validate branch name format
-   - ‚ùå Reject invalid branch names with helpful error
+   - ‚ú?Validate branch name format
+   - ‚ù?Reject invalid branch names with helpful error
 
 2. **On `git commit`:**
-   - ‚úÖ Format C++ code with clang-format
-   - ‚úÖ Check for trailing whitespace, large files, etc.
-   - ‚úÖ Validate commit message format
-   - ‚ùå Reject invalid commits with helpful error
+   - ‚ú?Format C++ code with clang-format
+   - ‚ú?Check for trailing whitespace, large files, etc.
+   - ‚ú?Validate commit message format
+   - ‚ù?Reject invalid commits with helpful error
 
 ## Cross-Platform Support
 
 Works on:
-- ‚úÖ macOS (zsh, bash)
-- ‚úÖ Linux (bash, zsh, sh)
-- ‚úÖ Windows (Git Bash, PowerShell, WSL)
+- ‚ú?macOS (zsh, bash)
+- ‚ú?Linux (bash, zsh, sh)
+- ‚ú?Windows (Git Bash, PowerShell, WSL)
 
 Requirements:
 - Python 3.6+ (comes with most systems)
@@ -99,3 +99,7 @@ See [.pre-commit-setup.md](.pre-commit-setup.md) for complete documentation.
 ## Build Instructions
 
 See [README.md](README.md) for build and development instructions.
+
+
+
+

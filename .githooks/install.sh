@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Install git hooks for NovaLLM
+# Install git hooks for EdgeHermes
 # This script sets up both pre-commit hooks and custom git hooks
 
 set -euo pipefail
 
-echo "🔧 Installing NovaLLM Git Hooks..."
+echo "🔧 Installing EdgeHermes Git Hooks..."
 echo ""
 
 # Get the repository root
@@ -14,14 +14,14 @@ HOOKS_DIR="$REPO_ROOT/.githooks"
 # 1. Configure git to use custom hooks directory
 echo "📁 Configuring git to use custom hooks directory..."
 git config core.hooksPath "$HOOKS_DIR"
-echo "   ✅ Git hooks path set to: $HOOKS_DIR"
+echo "   �?Git hooks path set to: $HOOKS_DIR"
 echo ""
 
 # 2. Install pre-commit hooks
 if command -v pre-commit &> /dev/null; then
   echo "📦 Installing pre-commit hooks..."
   pre-commit install --hook-type commit-msg --hook-type pre-commit
-  echo "   ✅ Pre-commit hooks installed"
+  echo "   �?Pre-commit hooks installed"
 else
   echo "⚠️  pre-commit not found. Install it with:"
   echo "   pip install pre-commit"
@@ -32,7 +32,7 @@ echo ""
 # 3. Make all hook scripts executable
 echo "🔐 Making hook scripts executable..."
 chmod +x "$HOOKS_DIR"/* 2>/dev/null || true
-echo "   ✅ Hook scripts are executable"
+echo "   �?Hook scripts are executable"
 echo ""
 
 # 4. Test branch name validation (if on a feature branch)
@@ -43,13 +43,13 @@ echo "📋 Current branch: $CURRENT_BRANCH"
 cat <<EOF
 
 ╔════════════════════════════════════════════════════════════════╗
-║                  ✅ HOOKS INSTALLED SUCCESSFULLY               ║
+�?                 �?HOOKS INSTALLED SUCCESSFULLY               �?
 ╚════════════════════════════════════════════════════════════════╝
 
 Installed hooks:
-  ✓ post-checkout     - Validates branch names
-  ✓ commit-msg        - Validates commit messages
-  ✓ pre-commit        - Code quality checks
+  �?post-checkout     - Validates branch names
+  �?commit-msg        - Validates commit messages
+  �?pre-commit        - Code quality checks
 
 Branch name format:
   <type>-<description> or <type>/<description>
@@ -69,3 +69,7 @@ Try it out:
 For more info, see: .pre-commit-setup.md
 
 EOF
+
+
+
+

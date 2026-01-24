@@ -57,10 +57,10 @@ jobs:
           cd build
           conan install .. --output-folder=. --build=missing -s build_type=Release -o build_tests=True
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
-          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Release -Dperegrine_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Release
           cmake --install . --config Release
-      - name: Create NovaLLM package (conan, Release)
+      - name: Create Peregrine package (conan, Release)
         run: |
           cd "$GITHUB_WORKSPACE"
           conan create . --user=local --channel=testing --build=missing -s build_type=Release || (
@@ -91,10 +91,10 @@ jobs:
           cd build-debug
           conan install .. --output-folder=. --build=missing -s build_type=Debug -o build_tests=True
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
-          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Debug  -DNOVA_LLM_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+          cmake -S .. -B . -DCMAKE_BUILD_TYPE=Debug  -Dperegrine_ENABLE_LOGGING=ON -DCMAKE_INSTALL_PREFIX=../install-debug -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Debug
           cmake --install . --config Debug
-      - name: Create NovaLLM package (conan, Debug)
+      - name: Create Peregrine package (conan, Debug)
         run: |
           cd "$GITHUB_WORKSPACE"
           conan create . --user=local --channel=testing --build=missing -s build_type=Debug || (
@@ -166,7 +166,7 @@ jobs:
 
           # Run tests one by one to ensure proper execution and output
           echo "Running tests individually..."
-          for test_file in $(find . -name "NovaLLMTests*" -type f -executable); do
+          for test_file in $(find . -name "PeregrineTests*" -type f -executable); do
             echo "Running $test_file..."
             $test_file --gtest_output=xml:test_results.xml --gtest_filter="*Concurrent*" || (
               echo "Test $test_file completed with issues, checking for coverage data..."
@@ -245,4 +245,8 @@ jobs:
           TOOLCHAIN_FILE=$(find $(pwd) -name "conan_toolchain.cmake" -type f | head -1)
           cmake -S ../standalone -B . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
           cmake --build . --config Release
-          # 可选：运行可执行文件
+          # 可选：运行可执行文�?
+
+
+
+
