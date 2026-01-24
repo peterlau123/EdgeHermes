@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/peterlau123/Peregrine/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/Peregrine)
 
 <p align="center">
-  <img src="documentation/images/Peregrine_logo.png" height="200" width="250" />
+  <img src="documentation/images/peregrine.png" height="300" width="200" />
 </p>
 
 # Peregrine
@@ -18,8 +18,8 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 - ğŸš€ **Lightweight**: Minimal dependencies, focusing on core functionality
 - ğŸ”§ **Extensible**: Easy to extend with custom models and optimizations
 - ğŸ¯ **Efficient**: Support for low-bit quantization and custom kernels
-- ğŸ› ï¸?**Portable**: Support inference on MacOS/Linux/Windows platforms
-- ğŸ‘¨â€ğŸ’?**Developer-friendly**: Easy to use and integrate into other projects
+- ğŸ› ï¿½?**Portable**: Support inference on MacOS/Linux/Windows platforms
+- ğŸ‘¨â€ï¿½?**Developer-friendly**: Easy to use and integrate into other projects
 
 ## Supported Models
 
@@ -28,11 +28,11 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 | Model | Parameters | Status |
 |-------|------------|--------|
 | Qwen | 1.8B | ğŸŸ¡ In Development |
-| | 7B | âš?Planned |
-| | 14B | âš?Planned |
-| DeepSeek | 7B | âš?Planned |
-| | 67B | âš?Planned |
-| Llama | 7B | âš?Planned |
+| | 7B | ï¿½?Planned |
+| | 14B | ï¿½?Planned |
+| DeepSeek | 7B | ï¿½?Planned |
+| | 67B | ï¿½?Planned |
+| Llama | 7B | ï¿½?Planned |
 
 ### Vision Models
 *Coming soon...*
