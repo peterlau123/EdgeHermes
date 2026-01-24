@@ -1,9 +1,9 @@
-# EdgeHermes Makefile
+# Peregrine Makefile
 # Usage: make [target] [options]
 # Options:
 #   BUILD_TYPE=Debug|Release (default: Release)
 #   ENABLE_TESTS=ON|OFF (default: OFF)   # influences dependencies via Conan
-#   ENABLE_LOGGING=ON|OFF (default: ON)  # passes -Dedgehermes_ENABLE_LOGGING to CMake
+#   ENABLE_LOGGING=ON|OFF (default: ON)  # passes -Dperegrine_ENABLE_LOGGING to CMake
 #   INSTALL_DIR=<path>                   # default: install or install-<type>
 #   CLEAN=1                              # clean build directory before building
 
@@ -71,7 +71,7 @@ configure: check_tools $(BUILD_DIR)
 	@cd $(BUILD_DIR) && \
 	  cmake -S .. -B . \
 	    -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
-	    -Dedgehermes_ENABLE_LOGGING=$(ENABLE_LOGGING) \
+	    -Dperegrine_ENABLE_LOGGING=$(ENABLE_LOGGING) \
 	    -DCMAKE_INSTALL_PREFIX=$$(cd .. && pwd)/$(INSTALL_DIR) \
 	    -DCMAKE_TOOLCHAIN_FILE=$$(find . -name conan_toolchain.cmake -type f | head -1)
 
@@ -131,7 +131,7 @@ config:
 
 # Show help
 help:
-	$(call print_info,"EdgeHermes Makefile Usage:")
+	$(call print_info,"Peregrine Makefile Usage:")
 	@echo "make [target] [options]"
 	@echo ""
 	@echo "Targets:"
@@ -141,7 +141,7 @@ help:
 	@echo "  install       Build and install the project"
 	@echo "  test          Build and (optionally) run tests"
 	@echo "  docs          Generate documentation"
-	@echo "  package       Create a Conan package of EdgeHermes"
+	@echo "  package       Create a Conan package of Peregrine"
 	@echo "  script-build  Run scripts/build.sh with current Make variables"
 	@echo "  script-test   Run scripts/build.sh with tests enabled"
 	@echo "  config        Show current build configuration"
