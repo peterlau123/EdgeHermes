@@ -1,4 +1,4 @@
-# EdgeHermes System Architecture (系统架构�?
+# Peregrine System Architecture (系统架构�?
 
 ## Complete System Overview
 
@@ -18,8 +18,8 @@ graph TB
         SDK[SDK & Libraries<br/>开发工具包]
     end
 
-    %% Core EdgeHermes System
-    subgraph "🧠 EdgeHermes Core<br/>EdgeHermes核心"
+    %% Core Peregrine System
+    subgraph "🧠 Peregrine Core<br/>Peregrine核心"
         ENGINE[LLM Engine<br/>LLM引擎<br/>Inference Pipeline]
 
         subgraph "⚙️ Engine Components<br/>引擎组件"
@@ -162,16 +162,16 @@ graph TB
 ## System Components Overview
 
 ### 1. External Ecosystem (外部生�?
-- **End Users**: Applications using EdgeHermes (chatbots, analysis tools)
+- **End Users**: Applications using Peregrine (chatbots, analysis tools)
 - **Developers**: SDK users building applications
 - **Systems**: Enterprise integrations via APIs
 
 ### 2. Application Layer (应用�?
-- **User Applications**: Client applications built on EdgeHermes
+- **User Applications**: Client applications built on Peregrine
 - **HTTP API**: REST/gRPC interfaces for system integration
 - **SDK & Libraries**: Development tools and language bindings
 
-### 3. EdgeHermes Core (EdgeHermes核心)
+### 3. Peregrine Core (Peregrine核心)
 - **LLM Engine**: Main inference pipeline orchestration
 - **Engine Components**:
   - Tokenizer: Text processing and tokenization

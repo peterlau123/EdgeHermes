@@ -1,8 +1,8 @@
-# EdgeHermes Memory Management System Redesign
+# Peregrine Memory Management System Redesign
 
 ## 1. Executive Summary
 
-This document describes the completed redesign of the EdgeHermes memory management system, migrating from the current Segregated Free List (BufferHub) approach to an Adaptive Memory Pool (AMP) system with pluggable third-party allocators integration.
+This document describes the completed redesign of the Peregrine memory management system, migrating from the current Segregated Free List (BufferHub) approach to an Adaptive Memory Pool (AMP) system with pluggable third-party allocators integration.
 
 **Status**: âœ?**FULLY IMPLEMENTED AND PRODUCTION READY**
 
@@ -117,7 +117,7 @@ class SizeClassSystem {
 
 **Migration Strategy:**
 ```cpp
-class AMPBufferManager : public edgehermes::BufferManager {
+class AMPBufferManager : public peregrine::BufferManager {
 private:
     // New internal implementation
     std::unique_ptr<AMP::Arena> arenas_[DeviceType::COUNT];
@@ -166,7 +166,7 @@ apt-get install libgoogle-perftools-dev
 # CMake integration
 find_package(PkgConfig)
 pkg_check_modules(TCMALLOC REQUIRED libtcmalloc)
-target_link_libraries(EdgeHermes ${TCMALLOC_LIBRARIES})
+target_link_libraries(Peregrine ${TCMALLOC_LIBRARIES})
 ```
 
 **Wrapper Implementation:**
@@ -199,7 +199,7 @@ brew install jemalloc
 
 # CMake
 find_library(JEMALLOC_LIBRARY jemalloc)
-target_link_libraries(EdgeHermes ${JEMALLOC_LIBRARY})
+target_link_libraries(Peregrine ${JEMALLOC_LIBRARY})
 ```
 
 ### 5.4 Mimalloc Integration
@@ -208,7 +208,7 @@ target_link_libraries(EdgeHermes ${JEMALLOC_LIBRARY})
 ```cmake
 # CMakeLists.txt
 add_subdirectory(external/mimalloc)
-target_link_libraries(EdgeHermes mimalloc)
+target_link_libraries(Peregrine mimalloc)
 ```
 
 **Header-Only Usage:**
@@ -493,7 +493,7 @@ struct MemoryStats {
 - [x] Comprehensive documentation and implementation comments
 - [ ] Production deployment validation (pending integration testing)
 
-This redesign provides a modern, flexible memory management system that can evolve with EdgeHermes's needs while maintaining compatibility and improving performance across all use cases.
+This redesign provides a modern, flexible memory management system that can evolve with Peregrine's needs while maintaining compatibility and improving performance across all use cases.
 
 
 

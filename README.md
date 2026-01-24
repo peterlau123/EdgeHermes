@@ -1,15 +1,15 @@
-[![Ubuntu](https://github.com/peterlau123/EdgeHermes/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/EdgeHermes/actions/workflows/ubuntu.yml)
-[![Windows](https://github.com/peterlau123/EdgeHermes/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/EdgeHermes/actions/workflows/windows.yml)
-[![MacOS](https://github.com/peterlau123/EdgeHermes/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/EdgeHermes/actions/workflows/macos.yml)
-[![Code Quality](https://github.com/peterlau123/EdgeHermes/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/EdgeHermes/actions/workflows/code-quality.yml)
-[![Documentation](https://github.com/peterlau123/EdgeHermes/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/EdgeHermes/actions/workflows/documentation.yml)
-[![codecov](https://codecov.io/gh/peterlau123/EdgeHermes/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/EdgeHermes)
+[![Ubuntu](https://github.com/peterlau123/Peregrine/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/ubuntu.yml)
+[![Windows](https://github.com/peterlau123/Peregrine/actions/workflows/windows.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/windows.yml)
+[![MacOS](https://github.com/peterlau123/Peregrine/actions/workflows/macos.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/macos.yml)
+[![Code Quality](https://github.com/peterlau123/Peregrine/actions/workflows/code-quality.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/code-quality.yml)
+[![Documentation](https://github.com/peterlau123/Peregrine/actions/workflows/documentation.yml/badge.svg)](https://github.com/peterlau123/Peregrine/actions/workflows/documentation.yml)
+[![codecov](https://codecov.io/gh/peterlau123/Peregrine/branch/master/graph/badge.svg)](https://codecov.io/gh/peterlau123/Peregrine)
 
 <p align="center">
-  <img src="documentation/images/EdgeHermes_logo.png" height="200" width="250" />
+  <img src="documentation/images/Peregrine_logo.png" height="200" width="250" />
 </p>
 
-# EdgeHermes
+# Peregrine
 
 A lightweight and efficient C/C++ library for Large Language Model (LLM) inference. The name **Nova** reflects our goal to bring a new, powerful, and efficient approach to LLM deployment, making it accessible everywhere.
 
@@ -50,8 +50,8 @@ A lightweight and efficient C/C++ library for Large Language Model (LLM) inferen
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/peterlau123/EdgeHermes.git
-cd EdgeHermes
+git clone https://github.com/peterlau123/Peregrine.git
+cd Peregrine
 ```
 
 2. **Install dependencies and build**
@@ -153,7 +153,7 @@ make ENABLE_TESTS=ON test
 ctest --output-on-failure
 
 # Run specific test
-./bin/EdgeHermes_tests
+./bin/Peregrine_tests
 ```
 
 ### Development
@@ -185,19 +185,19 @@ open build/docs/html/index.html
 ### Model Quantization
 
 ```cpp
-#include <EdgeHermes/quantization.hpp>
+#include <Peregrine/quantization.hpp>
 
 // Example quantization code
-auto quantized_model = EdgeHermes::quantize_model(model, EdgeHermes::QuantizationType::INT8);
+auto quantized_model = Peregrine::quantize_model(model, Peregrine::QuantizationType::INT8);
 ```
 
 ### Custom Kernel Integration
 
 ```cpp
-#include <EdgeHermes/kernels.hpp>
+#include <Peregrine/kernels.hpp>
 
 // Example custom kernel usage
-EdgeHermes::register_custom_kernel("my_kernel", kernel_function);
+Peregrine::register_custom_kernel("my_kernel", kernel_function);
 ```
 
 ## Contributing
@@ -215,12 +215,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-- GitHub Issues: [Create an issue](https://github.com/peterlau123/EdgeHermes/issues)
+- GitHub Issues: [Create an issue](https://github.com/peterlau123/Peregrine/issues)
 - Email: [Your email]
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=peterlau123/EdgeHermes&type=Date)](https://star-history.com/#peterlau123/EdgeHermes&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=peterlau123/Peregrine&type=Date)](https://star-history.com/#peterlau123/Peregrine&Date)
 
 
 

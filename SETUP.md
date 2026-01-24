@@ -1,4 +1,4 @@
-# EdgeHermes Development Setup
+# Peregrine Development Setup
 
 Quick guide for new contributors.
 
