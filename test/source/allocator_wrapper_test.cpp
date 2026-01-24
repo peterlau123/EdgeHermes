@@ -1,11 +1,11 @@
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <thread>
 #include <unordered_map>
 #include <vector>
 
-using namespace edgehermes::amp;
+using namespace peregrine::amp;
 
 class AllocatorWrapperTest : public ::testing::Test {
  protected:

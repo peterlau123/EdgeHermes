@@ -1,10 +1,10 @@
-#include "EdgeHermes/memory/buffer_manager.h"
+#include "Peregrine/memory/buffer_manager.h"
 
 #include <gtest/gtest.h>
 #include <thread>
 #include <vector>
 
-using namespace edgehermes;
+using namespace peregrine;
 
 class BufferManagerTest : public ::testing::Test {
  protected:

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "EdgeHermes/EdgeHermes-cpp.h"
+#include "Peregrine/Peregrine-cpp.h"
 
-using namespace edgehermes;
+using namespace peregrine;
 
 // Test fixture for EngineImpl
 class EngineImplTest : public ::testing::Test {

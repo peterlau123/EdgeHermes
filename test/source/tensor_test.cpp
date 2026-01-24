@@ -1,9 +1,9 @@
-#include "EdgeHermes/data/tensor.h"
-#include "EdgeHermes/memory/buffer_manager.h"
+#include "Peregrine/data/tensor.h"
+#include "Peregrine/memory/buffer_manager.h"
 
 #include <gtest/gtest.h>
 
-using namespace edgehermes;
+using namespace peregrine;
 
 class TensorTest : public ::testing::Test {
  protected:

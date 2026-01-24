@@ -1,12 +1,12 @@
-#include "EdgeHermes/memory/amp_buffer_manager.h"
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/amp_buffer_manager.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <thread>
 #include <vector>
 #include <atomic>
 
-using namespace edgehermes;
+using namespace peregrine;
 
 class AMPBufferManagerTest : public ::testing::Test {
  protected:
@@ -28,7 +28,7 @@ TEST_F(AMPBufferManagerTest, Construction) {
 
   // Add CPU allocator
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   EXPECT_NO_THROW({
     AMPBufferManager manager(config);
@@ -42,7 +42,7 @@ TEST_F(AMPBufferManagerTest, BuilderBuild) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
   EXPECT_NE(manager, nullptr);
@@ -55,7 +55,7 @@ TEST_F(AMPBufferManagerTest, FetchCpuSmall) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -75,7 +75,7 @@ TEST_F(AMPBufferManagerTest, FetchCpuVariousSizes) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -102,7 +102,7 @@ TEST_F(AMPBufferManagerTest, FetchZeroSize) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -118,7 +118,7 @@ TEST_F(AMPBufferManagerTest, PutInvalidBuffer) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -132,7 +132,7 @@ TEST_F(AMPBufferManagerTest, MultipleOperations) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -164,7 +164,7 @@ TEST_F(AMPBufferManagerTest, ConcurrentAccess) {
   config.amp_config.thread_cache_size_kb = 1024;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -200,7 +200,7 @@ TEST_F(AMPBufferManagerTest, GetStats) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -222,7 +222,7 @@ TEST_F(AMPBufferManagerTest, IsHealthy) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
   EXPECT_TRUE(manager->IsHealthy());
@@ -234,7 +234,7 @@ TEST_F(AMPBufferManagerTest, GetArenaRouter) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
   EXPECT_NE(manager->GetArenaRouter(), nullptr);
@@ -249,7 +249,7 @@ TEST_F(AMPBufferManagerTest, DifferentConfigurations) {
     config.amp_config.thread_cache_size_kb = cache_size;
     config.device_flags.set(DeviceType::CPU);
     config.allocators[DeviceType::CPU] =
-        edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+        peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
     auto manager = AMPBufferManager::Builder::Build(config);
     EXPECT_TRUE(manager->IsInitialized());
@@ -267,7 +267,7 @@ TEST_F(AMPBufferManagerTest, EdgeCases) {
   config.amp_config.thread_cache_size_kb = 512;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -291,7 +291,7 @@ TEST_F(AMPBufferManagerTest, BufferReuse) {
   config.amp_config.thread_cache_size_kb = 1024;
   config.device_flags.set(DeviceType::CPU);
   config.allocators[DeviceType::CPU] =
-      edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+      peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
   auto manager = AMPBufferManager::Builder::Build(config);
 
@@ -315,7 +315,7 @@ TEST_F(AMPBufferManagerTest, DestructorCleanup) {
     config.amp_config.thread_cache_size_kb = 512;
     config.device_flags.set(DeviceType::CPU);
     config.allocators[DeviceType::CPU] =
-        edgehermes::amp::AllocatorFactory::Create(edgehermes::amp::AllocatorType::STANDARD);
+        peregrine::amp::AllocatorFactory::Create(peregrine::amp::AllocatorType::STANDARD);
 
     auto manager = AMPBufferManager::Builder::Build(config);
 

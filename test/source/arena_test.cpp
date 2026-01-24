@@ -1,11 +1,11 @@
-#include "EdgeHermes/memory/arena.h"
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/arena.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
 
-using namespace edgehermes::amp;
+using namespace peregrine::amp;
 
 class ArenaTest : public ::testing::Test {
  protected:

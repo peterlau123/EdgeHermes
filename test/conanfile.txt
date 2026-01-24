@@ -1,5 +1,5 @@
 [requires]
-EdgeHermes/0.1.0@local/testing
+Peregrine/0.1.0@local/testing
 gtest/1.12.1
 fmt/10.2.1
 spdlog/1.12.0

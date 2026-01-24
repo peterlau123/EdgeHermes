@@ -1,9 +1,9 @@
-#include "EdgeHermes/memory/allocator.h"
+#include "Peregrine/memory/allocator.h"
 
 #include <gtest/gtest.h>
 #include <unordered_map>
 
-using namespace edgehermes::amp;
+using namespace peregrine::amp;
 
 class CUDAAllocatorTest : public ::testing::Test {
  protected:

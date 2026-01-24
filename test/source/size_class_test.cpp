@@ -1,9 +1,9 @@
-#include "EdgeHermes/memory/size_class.h"
+#include "Peregrine/memory/size_class.h"
 
 #include <gtest/gtest.h>
 #include <unordered_set>
 
-using namespace edgehermes::amp;
+using namespace peregrine::amp;
 
 class SizeClassTest : public ::testing::Test {
  protected:

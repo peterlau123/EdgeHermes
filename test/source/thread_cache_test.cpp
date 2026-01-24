@@ -1,4 +1,4 @@
-#include "EdgeHermes/memory/thread_cache.h"
+#include "Peregrine/memory/thread_cache.h"
 #include "memory/thread_cache_storage.h"
 
 #include <gtest/gtest.h>
@@ -6,7 +6,7 @@
 #include <vector>
 #include <atomic>
 
-using namespace edgehermes::amp;
+using namespace peregrine::amp;
 
 class ThreadCacheTest : public ::testing::Test {
  protected:
