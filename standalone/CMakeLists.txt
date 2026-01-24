@@ -11,7 +11,7 @@ include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 # ---- Dependencies ----
 
 # Find edgehermes package and its dependencies
-find_package(edgehermes REQUIRED)
+find_package(peregrine REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(cxxopts REQUIRED)
@@ -26,7 +26,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "ed
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-    edgehermes::edgehermes
+    peregrine::edgehermes
     fmt::fmt
     spdlog::spdlog
     cxxopts::cxxopts

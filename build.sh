@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # ============================================================================
-# EdgeHermes Build Script for macOS and Linux
+# Peregrine Build Script for macOS and Linux
 # ============================================================================
-# This script provides a unified interface for building the EdgeHermes project
+# This script provides a unified interface for building the Peregrine project
 # with support for different build types, configurations, and targets.
 #
 # Usage: ./build.sh [options]
@@ -94,7 +94,7 @@ print_error() {
 
 show_help() {
     cat << EOF
-EdgeHermes Build Script
+Peregrine Build Script
 
 Usage: $0 [options]
 
@@ -307,7 +307,7 @@ setup_conan() {
 # ============================================================================
 
 check_package_exists() {
-    local package_ref="EdgeHermes/0.1.0@local/testing"
+    local package_ref="Peregrine/0.1.0@local/testing"
     if conan list "$package_ref" 2>/dev/null | grep -q "$package_ref"; then
         return 0  # Package exists
     else
@@ -316,7 +316,7 @@ check_package_exists() {
 }
 
 get_package_timestamp() {
-    local package_ref="EdgeHermes/0.1.0@local/testing"
+    local package_ref="Peregrine/0.1.0@local/testing"
     # Get the package folder path from conan cache
     local cache_info
     cache_info=$(conan cache path "$package_ref" 2>/dev/null)
@@ -494,7 +494,7 @@ build_main_project() {
     print_info "Configuring CMake..."
     cmake -S .. -B . \
         -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-        -Dedgehermes_ENABLE_LOGGING="$ENABLE_LOGGING" \
+        -Dperegrine_ENABLE_LOGGING="$ENABLE_LOGGING" \
         -DCMAKE_INSTALL_PREFIX="../$INSTALL_DIR" \
         -DCMAKE_TOOLCHAIN_FILE="$toolchain_file"
     

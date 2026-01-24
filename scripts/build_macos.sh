@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# build_macos.sh â€?Build EdgeHermes on macOS using Conan + CMake
+# build_macos.sh â€?Build Peregrine on macOS using Conan + CMake
 # Mirrors the CI steps in .github/workflows/macos.yml
 #
 # Usage:
@@ -69,7 +69,7 @@ echo "Using toolchain: $TOOLCHAIN_FILE"
 
 cmake -S .. -B . \
   -DCMAKE_BUILD_TYPE="$TYPE" \
-  -Dedgehermes_ENABLE_LOGGING="$ENABLE_LOGGING" \
+  -Dperegrine_ENABLE_LOGGING="$ENABLE_LOGGING" \
   -DCMAKE_INSTALL_PREFIX="$(cd .. && realpath "$INSTALL_DIR")" \
   -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
 
