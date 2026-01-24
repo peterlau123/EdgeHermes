@@ -22,13 +22,13 @@ class PEREGRINE_API AMPBufferManager {
    * @brief Configuration for AMP Buffer Manager
    */
   struct Config {
-    edgehermes::amp::AMPConfig amp_config;
+    peregrine::amp::AMPConfig amp_config;
 
     // Legacy compatibility - device flags
     DeviceTypeFlags device_flags;
 
     // Allocator options for each device type
-    std::unordered_map<DeviceType, edgehermes::amp::IMemoryAllocatorSharedPtr> allocators;
+    std::unordered_map<DeviceType, peregrine::amp::IMemoryAllocatorSharedPtr> allocators;
   };
 
   /**
@@ -86,7 +86,7 @@ class PEREGRINE_API AMPBufferManager {
    * @brief Get memory statistics
    * @return Memory usage statistics
    */
-  edgehermes::amp::MemoryStats GetStats() const;
+  peregrine::amp::MemoryStats GetStats() const;
 
   /**
    * @brief Check if all arenas are healthy
@@ -98,7 +98,7 @@ class PEREGRINE_API AMPBufferManager {
    * @brief Get the underlying arena router (for advanced usage)
    * @return Pointer to the arena router
    */
-  edgehermes::amp::ArenaRouter* GetArenaRouter() { return arena_router_.get(); }
+  peregrine::amp::ArenaRouter* GetArenaRouter() { return arena_router_.get(); }
 
   /**
    * @brief Destructor
@@ -116,7 +116,7 @@ class PEREGRINE_API AMPBufferManager {
   // Member variables
   bool initialized_ = false;
   Config config_;
-  std::unique_ptr<edgehermes::amp::ArenaRouter> arena_router_;
+  std::unique_ptr<peregrine::amp::ArenaRouter> arena_router_;
 
   // Global instance for singleton pattern
   static std::unique_ptr<AMPBufferManager> global_instance_;

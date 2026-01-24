@@ -15,7 +15,7 @@ include(${PROJECT_ROOT}/cmake/tools.cmake OPTIONAL)
 
 # ---- Dependencies ----
 
-# Find edgehermes package
+# Find peregrine package
 find_package(peregrine REQUIRED)
 find_package(GTest REQUIRED)
 find_package(fmt REQUIRED)
@@ -35,7 +35,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-    peregrine::edgehermes
+    peregrine::peregrine
     GTest::gtest
     GTest::gtest_main
     GTest::gmock

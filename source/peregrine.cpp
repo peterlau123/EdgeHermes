@@ -1,6 +1,6 @@
 #include <fmt/format.h>
 
-#include "Peregrine/EdgeHermes-cpp.h"
+#include "Peregrine/Peregrine-cpp.h"
 #include "Peregrine/utils/log.h"
 #include "engine/EngineImpl.h"
 

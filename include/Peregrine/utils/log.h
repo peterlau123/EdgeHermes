@@ -1,14 +1,14 @@
 #pragma once
 
 // Logger wrapper:
-//  - If edgehermes_ENABLE_LOGGING is defined and spdlog is available, use spdlog.
+//  - If peregrine_ENABLE_LOGGING is defined and spdlog is available, use spdlog.
 //  - Otherwise provide a no-op Logger and a minimal spdlog::level::level_enum so callers compile.
 
 #include <memory>
 #include <string>
 
 // Prefer spdlog when logging is enabled and available
-#if defined(edgehermes_ENABLE_LOGGING) && edgehermes_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
+#if defined(peregrine_ENABLE_LOGGING) && peregrine_ENABLE_LOGGING && __has_include(<spdlog/spdlog.h>)
 
 #if __has_include(<fmt/ostream.h>)
 #include <fmt/ostream.h>
@@ -135,21 +135,21 @@ class Logger {
 #endif
 
 // Convenience macros (same API in both branches)
-#define LOG_TRACE(...) edgehermes::Logger::getInstance().trace(__VA_ARGS__)
-#define LOG_DEBUG(...) edgehermes::Logger::getInstance().debug(__VA_ARGS__)
-#define LOG_INFO(...) edgehermes::Logger::getInstance().info(__VA_ARGS__)
-#define LOG_WARN(...) edgehermes::Logger::getInstance().warn(__VA_ARGS__)
-#define LOG_ERROR(...) edgehermes::Logger::getInstance().error(__VA_ARGS__)
-#define LOG_CRITICAL(...) edgehermes::Logger::getInstance().critical(__VA_ARGS__)
+#define LOG_TRACE(...) peregrine::Logger::getInstance().trace(__VA_ARGS__)
+#define LOG_DEBUG(...) peregrine::Logger::getInstance().debug(__VA_ARGS__)
+#define LOG_INFO(...) peregrine::Logger::getInstance().info(__VA_ARGS__)
+#define LOG_WARN(...) peregrine::Logger::getInstance().warn(__VA_ARGS__)
+#define LOG_ERROR(...) peregrine::Logger::getInstance().error(__VA_ARGS__)
+#define LOG_CRITICAL(...) peregrine::Logger::getInstance().critical(__VA_ARGS__)
 
 // Initialize logger macro
-#define LOG_INIT(name, logFile, level) edgehermes::Logger::getInstance().init(name, logFile, level)
+#define LOG_INIT(name, logFile, level) peregrine::Logger::getInstance().init(name, logFile, level)
 
 // Set log level macro
-#define LOG_SET_LEVEL(level) edgehermes::Logger::getInstance().setLevel(level)
+#define LOG_SET_LEVEL(level) peregrine::Logger::getInstance().setLevel(level)
 
 // Flush logs macro
-#define LOG_FLUSH() edgehermes::Logger::getInstance().flush()
+#define LOG_FLUSH() peregrine::Logger::getInstance().flush()
 
 
 
